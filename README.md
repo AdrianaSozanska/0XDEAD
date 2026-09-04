@@ -92,6 +92,23 @@ assets/img/                   Placeholder cover art + favicon (SVG)
     other cities are still placeholders. Precise in-district placement
     (and the real photos for the popups) can be refined once provided.
 
+## Publish countdown gate
+
+On every page load, a fullscreen "LOADING" gate appears first with a
+progress bar and a live D/H/M/S countdown to the publish date, before the
+"0xDEAD" button reveals the site underneath (already fully rendered, just
+hidden behind the gate — clicking through is instant). Edit the two dates
+in `assets/js/main.js`:
+
+- `PUBLISH_DATE` — the release date the countdown counts down to.
+- `CAMPAIGN_START` — where the progress bar's 0% starts. The bar's fill is
+  just elapsed-time-since-start divided by total time until `PUBLISH_DATE`,
+  so pushing `CAMPAIGN_START` earlier/later changes how "full" the bar
+  looks today without touching the actual countdown numbers.
+
+If `PUBLISH_DATE` has already passed when the page loads, the gate is
+skipped entirely and visitors land straight on the site.
+
 ## Newsletter signup
 
 The signup form in the "Запросити доступ" section is currently a front-end

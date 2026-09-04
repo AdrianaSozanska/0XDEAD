@@ -15,6 +15,34 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
+<div class="gate" id="gateScreen" role="dialog" aria-modal="true" aria-label="Завантаження">
+  <canvas class="gate__rain" id="gateRainCanvas" aria-hidden="true"></canvas>
+  <div class="gate__scanlines" aria-hidden="true"></div>
+
+  <div class="gate__content">
+    <p class="gate__eyebrow">// system.boot</p>
+    <h1 class="gate__title">LOADING</h1>
+    <p class="gate__subtitle">Компіляція книги «0xDEAD: Код смерті». Реліз: <strong>01.11.2026</strong></p>
+
+    <div class="gate__progress">
+      <div class="gate__progress-bar">
+        <div class="gate__progress-fill" id="gateProgressFill"></div>
+      </div>
+      <span class="gate__progress-pct" id="gateProgressPct">0%</span>
+    </div>
+
+    <div class="gate__countdown" aria-live="polite">
+      <div class="gate__countdown-unit"><span id="gateDays">00</span><small>днів</small></div>
+      <div class="gate__countdown-unit"><span id="gateHours">00</span><small>год</small></div>
+      <div class="gate__countdown-unit"><span id="gateMinutes">00</span><small>хв</small></div>
+      <div class="gate__countdown-unit"><span id="gateSeconds">00</span><small>сек</small></div>
+    </div>
+
+    <button type="button" class="btn btn--primary gate__enter" id="gateEnter">0x<span>DEAD</span></button>
+    <p class="gate__hint">Переглянути сайт заздалегідь</p>
+  </div>
+</div>
+
 <header class="site-header">
   <nav class="nav" aria-label="Primary">
     <a class="nav__brand" href="#top">0x<span>DEAD</span></a>

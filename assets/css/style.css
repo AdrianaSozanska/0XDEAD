@@ -411,6 +411,137 @@ code {
   overflow: hidden;
 }
 
+/* ---------- publish countdown gate ---------- */
+
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 30%, rgba(57,255,20,0.08), transparent 60%), var(--bg);
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+.gate.is-leaving { opacity: 0; pointer-events: none; }
+
+.gate__rain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  pointer-events: none;
+}
+.gate__scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.025) 0px,
+    rgba(255,255,255,0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+}
+
+.gate__content {
+  position: relative;
+  z-index: 1;
+  width: min(480px, 90vw);
+  text-align: center;
+  padding: 2rem;
+}
+.gate__eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--cyan);
+  margin: 0 0 0.75rem;
+}
+.gate__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 9vw, 3.6rem);
+  letter-spacing: 0.08em;
+  color: var(--green);
+  margin: 0 0 1rem;
+  text-shadow: 0 0 20px rgba(57,255,20,0.5);
+}
+.gate__subtitle {
+  color: var(--text-dim);
+  font-size: 1rem;
+  margin: 0 0 2rem;
+}
+.gate__subtitle strong { color: var(--green-soft); font-family: var(--font-display); font-weight: normal; }
+
+.gate__progress {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0 0 2rem;
+}
+.gate__progress-bar {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  overflow: hidden;
+}
+.gate__progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--green), var(--cyan));
+  box-shadow: 0 0 10px rgba(57,255,20,0.5);
+  transition: width 0.6s ease;
+}
+.gate__progress-pct {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--green-soft);
+  min-width: 3.5ch;
+  text-align: right;
+}
+
+.gate__countdown {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.75rem, 4vw, 1.5rem);
+  margin: 0 0 2.25rem;
+}
+.gate__countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3.2rem;
+}
+.gate__countdown-unit span {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  color: var(--text);
+}
+.gate__countdown-unit small {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+.gate__enter {
+  min-width: 200px;
+}
+.gate__enter span { color: #04120a; }
+.gate__hint {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
 /* ---------- synopsis ---------- */
 
 .synopsis { max-width: 68ch; color: var(--text-dim); }

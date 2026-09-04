@@ -48,8 +48,8 @@
 
   /* ---------------- hero digital rain ---------------- */
 
-  function initRain() {
-    const canvas = document.getElementById("rainCanvas");
+  function initRain(canvasId) {
+    const canvas = document.getElementById(canvasId);
     if (!canvas || prefersReducedMotion) return;
 
     const ctx = canvas.getContext("2d");
@@ -97,7 +97,71 @@
     observer.observe(canvas);
   }
 
-  initRain();
+  initRain("rainCanvas");
+  initRain("gateRainCanvas");
+
+  /* ---------------- publish countdown gate ---------------- */
+
+  const PUBLISH_DATE = new Date("2026-11-01T00:00:00");
+  const CAMPAIGN_START = new Date("2026-09-04T00:00:00"); // edit to change how "progress" is measured
+
+  const gateScreen = document.getElementById("gateScreen");
+  const gateProgressFill = document.getElementById("gateProgressFill");
+  const gateProgressPct = document.getElementById("gateProgressPct");
+  const gateDays = document.getElementById("gateDays");
+  const gateHours = document.getElementById("gateHours");
+  const gateMinutes = document.getElementById("gateMinutes");
+  const gateSeconds = document.getElementById("gateSeconds");
+  const gateEnter = document.getElementById("gateEnter");
+
+  let gateInterval = null;
+
+  function hideGate(instant) {
+    if (!gateScreen) return;
+    if (gateInterval) {
+      clearInterval(gateInterval);
+      gateInterval = null;
+    }
+    document.body.classList.remove("no-scroll");
+
+    if (instant || prefersReducedMotion) {
+      gateScreen.style.display = "none";
+      return;
+    }
+    gateScreen.classList.add("is-leaving");
+    setTimeout(() => { gateScreen.style.display = "none"; }, 500);
+  }
+
+  function updateGateCountdown() {
+    const now = new Date();
+    const remainingMs = PUBLISH_DATE - now;
+
+    if (remainingMs <= 0) {
+      hideGate(true);
+      return;
+    }
+
+    const totalMs = PUBLISH_DATE - CAMPAIGN_START;
+    const elapsedMs = now - CAMPAIGN_START;
+    const pct = Math.min(100, Math.max(0, (elapsedMs / totalMs) * 100));
+    gateProgressFill.style.width = pct + "%";
+    gateProgressPct.textContent = Math.round(pct) + "%";
+
+    const day = 24 * 60 * 60 * 1000;
+    const hour = 60 * 60 * 1000;
+    const minute = 60 * 1000;
+    gateDays.textContent = String(Math.floor(remainingMs / day)).padStart(2, "0");
+    gateHours.textContent = String(Math.floor((remainingMs % day) / hour)).padStart(2, "0");
+    gateMinutes.textContent = String(Math.floor((remainingMs % hour) / minute)).padStart(2, "0");
+    gateSeconds.textContent = String(Math.floor((remainingMs % minute) / 1000)).padStart(2, "0");
+  }
+
+  if (gateScreen) {
+    document.body.classList.add("no-scroll");
+    updateGateCountdown();
+    gateInterval = setInterval(updateGateCountdown, 1000);
+    gateEnter?.addEventListener("click", () => hideGate(false));
+  }
 
   /* ---------------- classified archive ---------------- */
 
