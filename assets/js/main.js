@@ -406,6 +406,7 @@
   /* ---------------- map ---------------- */
 
   const mapData = typeof MAP_DATA !== "undefined" ? MAP_DATA : [];
+  const kyivDistricts = typeof KYIV_DISTRICTS !== "undefined" ? KYIV_DISTRICTS : [];
   const mapModal = document.getElementById("mapModal");
   const mapBackdrop = document.getElementById("mapBackdrop");
   const mapPanel = document.getElementById("mapPanel");
@@ -416,14 +417,75 @@
   const mapClose = document.getElementById("mapClose");
 
   let mapLastFocused = null;
+  let mapActiveView = null; // 'country' | 'kyiv' | 'city' | 'error'
 
-  /* Simplified Ukraine outline (from real boundary data, lightly simplified for a
-     clean vector look) in a 0-100 viewBox matching the city x/y percentages in
-     map-data.js. Crimea is included in the same contour, connected as it really is. */
-  const UKRAINE_OUTLINE = "M79.6,86.9 L73.6,88.9 L66.0,95.7 L62.9,93.4 L64.1,87.8 L58.1,84.4 L59.1,82.1 L64.4,78.2 L62.8,75.5 L54.1,72.5 L53.8,68.2 L48.6,69.6 L42.2,84.8 L39.7,82.8 L37.1,84.7 L34.6,82.5 L38.5,73.4 L38.1,71.3 L39.3,70.4 L39.8,72.0 L44.6,71.5 L41.2,60.6 L39.2,58.7 L39.6,54.7 L30.7,47.4 L23.3,50.3 L21.9,53.1 L15.9,56.0 L13.3,53.2 L6.3,51.8 L3.9,54.3 L3.6,51.2 L0.5,48.0 L3.1,40.2 L4.3,40.9 L2.9,35.6 L7.9,25.8 L10.7,24.4 L11.3,21.1 L8.5,10.8 L11.1,10.4 L14.2,7.2 L18.5,6.9 L34.7,10.9 L36.8,12.6 L38.8,10.6 L40.3,13.3 L45.3,12.8 L47.5,13.9 L47.9,8.0 L49.6,5.4 L56.4,5.2 L57.8,2.5 L65.3,1.9 L68.8,8.6 L67.5,11.0 L67.9,14.6 L72.3,15.2 L74.2,22.6 L81.3,26.8 L85.5,24.9 L88.9,30.4 L92.2,30.3 L100.4,34.1 L98.2,43.7 L99.4,50.2 L98.5,54.1 L93.2,55.0 L90.3,58.3 L90.1,63.5 L85.7,64.4 L82.0,68.3 L76.8,68.9 L72.0,73.3 L72.3,80.6 L75.1,83.4 L80.7,82.7 Z";
+  /* Ukraine outline traced from real boundary data, simplified for a clean vector
+     look. Coordinates are percent positions (0-100 x, 0-100 y) matching the city
+     x/y in map-data.js — COUNTRY_ASPECT is the real width:height ratio of that
+     bounding box, applied at render time so the shape isn't stretched/squashed. */
+  const UKRAINE_OUTLINE = "M79.2,90.6 L73.1,92.7 L65.6,100.0 L62.5,97.4 L63.7,91.6 L57.6,87.9 L58.6,85.5 L63.9,81.3 L62.3,78.4 L53.7,75.3 L53.3,70.6 L48.1,72.1 L41.8,88.3 L39.3,86.2 L36.6,88.2 L34.2,85.9 L38.1,76.2 L37.7,74.0 L38.8,73.0 L39.4,74.7 L44.1,74.1 L40.7,62.6 L38.7,60.5 L39.1,56.3 L30.2,48.5 L25.2,51.6 L22.8,51.6 L21.5,54.5 L15.5,57.7 L12.9,54.6 L5.9,53.2 L3.5,55.8 L3.1,52.5 L0.0,49.1 L2.6,40.8 L3.8,41.5 L2.4,35.8 L7.5,25.4 L10.2,24.0 L10.8,20.4 L8.0,9.5 L10.7,9.0 L13.7,5.6 L18.0,5.3 L34.2,9.6 L36.3,11.4 L38.4,9.2 L39.8,12.1 L44.9,11.5 L47.1,12.7 L47.4,6.4 L49.1,3.7 L56.0,3.4 L57.4,0.6 L64.8,0.0 L68.4,7.1 L67.0,9.6 L67.5,13.5 L71.9,14.1 L73.7,22.0 L80.8,26.5 L85.1,24.5 L88.5,30.3 L91.7,30.2 L99.9,34.3 L97.7,44.5 L99.0,51.5 L98.1,55.6 L92.7,56.6 L89.9,60.1 L89.7,65.6 L85.2,66.6 L81.5,70.7 L76.3,71.3 L71.6,76.0 L71.9,83.8 L74.6,86.9 L80.3,86.1 Z";
+  const COUNTRY_ASPECT = 1.5; // real width:height of the outline's bounding box
+  const KYIV_ASPECT = 1; // Kyiv's district bounding box is close to square
+
+  /* Sizes `.map-view` so its content box has exactly `aspect` (width/height),
+     centered within `.map-modal__stage` — keeps an SVG shape (and any HTML pins
+     positioned as percentages of `.map-view`) from being stretched or misaligned
+     regardless of the stage's own pixel aspect ratio. */
+  function fitMapView(aspect) {
+    const view = mapStage?.querySelector(".map-view");
+    if (!view) return;
+    const outerW = mapStage.clientWidth;
+    const outerH = mapStage.clientHeight;
+    let width, height;
+    if (outerW / outerH > aspect) {
+      height = outerH;
+      width = height * aspect;
+    } else {
+      width = outerW;
+      height = width / aspect;
+    }
+    view.style.left = (outerW - width) / 2 + "px";
+    view.style.top = (outerH - height) / 2 + "px";
+    view.style.width = width + "px";
+    view.style.height = height + "px";
+  }
+
+  function fillMapView() {
+    const view = mapStage?.querySelector(".map-view");
+    if (!view) return;
+    view.style.left = "0";
+    view.style.top = "0";
+    view.style.width = "100%";
+    view.style.height = "100%";
+  }
+
+  function showLocationPopup(pin, location) {
+    mapStage.querySelector(".map-popup")?.remove();
+    mapStage.querySelectorAll(".map-pin--street").forEach((p) => p.classList.remove("map-pin--active"));
+    pin.classList.add("map-pin--active");
+
+    const popup = document.createElement("div");
+    popup.className = "map-popup";
+    popup.style.left = pin.style.left;
+    popup.style.top = pin.style.top;
+    popup.innerHTML = `
+      <button type="button" class="map-popup__close" aria-label="Закрити">✕</button>
+      <div class="map-popup__image" aria-hidden="true"><span>Фото буде додано</span></div>
+      <p class="map-popup__name">${location.name}</p>
+      ${location.address ? `<p class="map-popup__address">${location.address}</p>` : ""}
+      <span class="map-popup__arrow" aria-hidden="true"></span>
+    `;
+    popup.querySelector(".map-popup__close").addEventListener("click", (e) => {
+      e.stopPropagation();
+      popup.remove();
+      pin.classList.remove("map-pin--active");
+    });
+    mapStage.querySelector(".map-pins")?.appendChild(popup);
+  }
 
   function renderCountryMap() {
     if (!mapStage) return;
+    mapActiveView = "country";
     mapTitle.textContent = "Україна";
     mapBack.hidden = true;
     mapInfo.textContent = "Обери місто на карті, щоб наблизити його.";
@@ -437,12 +499,13 @@
 
     mapStage.innerHTML = `
       <div class="map-view">
-        <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           <path class="map-outline" d="${UKRAINE_OUTLINE}"></path>
         </svg>
         <div class="map-pins">${pins}</div>
       </div>
     `;
+    fitMapView(COUNTRY_ASPECT);
 
     mapStage.querySelectorAll(".map-pin").forEach((pin) => {
       pin.addEventListener("click", () => openCityMap(pin.dataset.city));
@@ -462,6 +525,15 @@
     return html;
   }
 
+  function attachLocationPinHandlers(streets) {
+    mapStage.querySelectorAll(".map-pin--street").forEach((pin) => {
+      pin.addEventListener("click", () => {
+        const location = streets.find((s) => s.id === pin.dataset.street);
+        if (location) showLocationPopup(pin, location);
+      });
+    });
+  }
+
   function openCityMap(cityId) {
     if (!mapStage) return;
     const city = mapData.find((c) => c.id === cityId);
@@ -472,10 +544,6 @@
       return;
     }
 
-    mapTitle.textContent = city.name;
-    mapBack.hidden = false;
-    mapInfo.textContent = "Обери мітку, щоб переглянути деталі.";
-
     const streets = city.streets || [];
     const pins = streets.map((s) => `
       <button class="map-pin map-pin--street" style="left:${s.x}%; top:${s.y}%" data-street="${s.id}" aria-label="${s.name}">
@@ -484,28 +552,44 @@
       </button>
     `).join("");
 
-    mapStage.innerHTML = `
-      <div class="map-view">
-        <div class="map-district-grid" aria-hidden="true">${buildSectorGridHTML()}</div>
-        <div class="map-pins">${pins}</div>
-      </div>
-    `;
+    mapTitle.textContent = city.name;
+    mapBack.hidden = false;
+    mapInfo.textContent = "Обери мітку, щоб переглянути деталі.";
 
-    mapStage.querySelectorAll(".map-pin--street").forEach((pin) => {
-      pin.addEventListener("click", () => {
-        mapStage.querySelectorAll(".map-pin--street").forEach((p) => p.classList.remove("map-pin--active"));
-        pin.classList.add("map-pin--active");
-        const street = streets.find((s) => s.id === pin.dataset.street);
-        if (!street) return;
-        const addressLine = street.address ? `<span class="map-info__address">${street.address}</span>` : "";
-        const note = street.note ? ` ${street.note}` : "";
-        mapInfo.innerHTML = `<strong>${street.name}</strong>${addressLine}${note}`;
-      });
-    });
+    if (city.realDistricts && kyivDistricts.length) {
+      mapActiveView = "kyiv";
+      const districtShapes = kyivDistricts.map((d, i) => `
+        <path class="map-district-path${i % 2 ? " map-district-path--alt" : ""}" d="${d.path}"></path>
+      `).join("");
+      const districtLabels = kyivDistricts.map((d) => `
+        <span class="map-district-label" style="left:${d.centroid[0]}%; top:${d.centroid[1]}%">${d.name}</span>
+      `).join("");
+
+      mapStage.innerHTML = `
+        <div class="map-view">
+          <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${districtShapes}</svg>
+          <div class="map-district-labels" aria-hidden="true">${districtLabels}</div>
+          <div class="map-pins">${pins}</div>
+        </div>
+      `;
+      fitMapView(KYIV_ASPECT);
+    } else {
+      mapActiveView = "city";
+      mapStage.innerHTML = `
+        <div class="map-view">
+          <div class="map-district-grid" aria-hidden="true">${buildSectorGridHTML()}</div>
+          <div class="map-pins">${pins}</div>
+        </div>
+      `;
+      fillMapView();
+    }
+
+    attachLocationPinHandlers(streets);
   }
 
   function showMapError(message) {
     if (!mapStage) return;
+    mapActiveView = "error";
     mapTitle.textContent = "Помилка";
     mapBack.hidden = true;
     mapInfo.textContent = "";
@@ -546,12 +630,16 @@
     mapPanel.style.width = target.width + "px";
     mapPanel.style.height = target.height + "px";
 
-    renderCountryMap();
+    mapPanel.style.transition = "none";
+    mapPanel.style.transform = flipTransformFrom(originRect, target);
     mapModal.classList.add("is-active");
     document.body.classList.add("no-scroll");
 
-    mapPanel.style.transition = "none";
-    mapPanel.style.transform = flipTransformFrom(originRect, target);
+    /* Renders after is-active so mapStage has real layout dimensions —
+       fitMapView() (used by country/Kyiv views) measures clientWidth/Height,
+       which are 0 while the modal is still display:none. */
+    renderCountryMap();
+
     void mapPanel.offsetWidth;
     mapPanel.style.transition = "";
 
@@ -598,6 +686,10 @@
       mapPanel.style.left = target.left + "px";
       mapPanel.style.width = target.width + "px";
       mapPanel.style.height = target.height + "px";
+
+      if (mapActiveView === "country") fitMapView(COUNTRY_ASPECT);
+      else if (mapActiveView === "kyiv") fitMapView(KYIV_ASPECT);
+      else if (mapActiveView === "city") fillMapView();
     });
   }
 

@@ -60,24 +60,37 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   `assets/js/main.js`.
 - **Terminal `map` command**: typing `map` in the terminal opens a
   fullscreen map modal with an outline of Ukraine (traced from real
-  boundary data, then simplified for a clean vector look — see
-  `UKRAINE_OUTLINE` in `assets/js/main.js`) with pins for Львів,
-  Тернопіль, Вінниця, Київ, and Харків. Clicking a city pin zooms into a
-  per-city "district" view (a decorative sector grid) with street/address
-  pins; clicking a pin shows its name, address, and note in the info panel
-  below the map. Edit `assets/js/map-data.js` to change cities or streets:
+  boundary data, simplified for a clean vector look — see
+  `UKRAINE_OUTLINE` and `COUNTRY_ASPECT` in `assets/js/main.js`) with pins
+  for Львів, Тернопіль, Вінниця, Київ, and Харків, positioned from real
+  coordinates. The `fitMapView()` helper keeps the shape and its pins from
+  being stretched: it sizes `.map-view` to the outline's real aspect ratio
+  before laying out anything inside it, so the outline and the percentage-
+  positioned pins always agree regardless of the modal's actual pixel
+  dimensions — reuse this pattern for any future real-geography shape.
+
+  Clicking a city pin zooms in. Київ drills into its **real administrative
+  districts** (районы) — see `KYIV_DISTRICTS` in `assets/js/map-data.js`,
+  also traced from real boundary data. The other cities still show a
+  decorative placeholder sector grid until real district data is provided
+  for them too. Clicking a location pin opens a small popup anchored above
+  the pin with an image placeholder ("Фото буде додано" — swap in the real
+  photo when provided), name, and address.
+
+  Edit `assets/js/map-data.js` to change cities or locations:
   - Each city has `x`/`y` — percentage position (0-100) on the country map.
   - A city with `unavailable: true` shows `errorMessage` instead of
     drilling in (currently used for Харків, standing in for data still
     being prepared) — set it back to normal by removing `unavailable`/
     `errorMessage` and filling in its `streets` array once ready.
+  - A city with `realDistricts: true` (currently only Київ) uses
+    `KYIV_DISTRICTS` for its backdrop instead of the placeholder grid.
   - Each city's `streets` array has its own `x`/`y` — percentage position
-    (0-100) within that city's zoomed view — plus `name`, `address`, and
-    `note` shown when the pin is clicked. Kyiv already has three real
-    addresses wired in; the others are still placeholders. Position is the
-    only approximate part: convert real coordinates to a 0-100 position
-    within the city view (or ask to have this wired up to precise
-    coordinates) as they're provided.
+    (0-100) within that city's zoomed view — plus `name` and `address`
+    shown in the popup. Kyiv's three pins are real addresses positioned in
+    their correct district (Подільський, Печерський, Дніпровський); the
+    other cities are still placeholders. Precise in-district placement
+    (and the real photos for the popups) can be refined once provided.
 
 ## Newsletter signup
 
