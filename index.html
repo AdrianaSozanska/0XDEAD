@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0xDEAD: Код смерті — Official Site</title>
+<meta name="description" content="Official promo site for 0xDEAD: Код смерті — enter the archive, decrypt bonus case files, and get the book.">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a class="nav__brand" href="#top">0x<span>DEAD</span></a>
+
+    <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav__menu" id="navMenu">
+      <li><a href="#synopsis">Синопсис</a></li>
+      <li><a href="#terminal">Термінал</a></li>
+      <li><a href="#archive">Архів <span class="nav__badge" id="unlockBadge">0/6</span></a></li>
+      <li><a href="#author">Автор</a></li>
+      <li><a href="#reviews">Відгуки</a></li>
+      <li><a class="nav__cta" href="#buy">Отримати книгу</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <canvas class="hero__rain" id="rainCanvas" aria-hidden="true"></canvas>
+    <div class="hero__scanlines" aria-hidden="true"></div>
+
+    <div class="hero__content">
+      <p class="hero__eyebrow">// case_file: 0x000</p>
+      <h1 class="glitch" data-text="0xDEAD: КОД СМЕРТІ">0xDEAD: КОД СМЕРТІ</h1>
+      <p class="hero__tagline">Lorem ipsum dolor sit amet — у місті, де кожен рядок коду може стати останнім, одна хакерка стоїть між правдою і смертю.</p>
+      <div class="hero__actions">
+        <a href="#buy" class="btn btn--primary">Отримати книгу</a>
+        <a href="#archive" class="btn btn--ghost">Увійти в архів</a>
+      </div>
+    </div>
+
+    <div class="hero__cover">
+      <div class="cover-frame">
+        <img src="assets/img/cover-placeholder.svg" alt="Обкладинка книги 0xDEAD: Код смерті (заповнювач)" width="420" height="600">
+      </div>
+    </div>
+
+    <a class="hero__scroll" href="#synopsis" aria-label="Прокрутити вниз">
+      <span></span>
+    </a>
+  </section>
+
+  <!-- SYNOPSIS -->
+  <section class="section" id="synopsis">
+    <div class="section__inner">
+      <p class="section__eyebrow">// 01 — synopsis.txt</p>
+      <h2 class="section__title">Про книгу</h2>
+      <div class="synopsis">
+        <p class="synopsis__lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, deep in the neon-lit underlayers of a city that never stops compiling.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <blockquote class="pull-quote">
+          «Lorem ipsum dolor sit amet — деякі коди не можна відмінити.»
+        </blockquote>
+        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TERMINAL -->
+  <section class="section section--dark" id="terminal">
+    <div class="section__inner">
+      <p class="section__eyebrow">// 02 — terminal.exe</p>
+      <h2 class="section__title">Підключення до мережі</h2>
+      <p class="section__lede">Спробуй сам. Введи <code>help</code>, щоб побачити доступні команди.</p>
+
+      <div class="terminal" id="terminal-window">
+        <div class="terminal__bar">
+          <span class="terminal__dot terminal__dot--r"></span>
+          <span class="terminal__dot terminal__dot--y"></span>
+          <span class="terminal__dot terminal__dot--g"></span>
+          <span class="terminal__title">guest@0xdead:~</span>
+        </div>
+        <div class="terminal__body" id="terminalBody" tabindex="0"></div>
+        <form class="terminal__form" id="terminalForm" autocomplete="off">
+          <span class="terminal__prompt">guest@0xdead:~$</span>
+          <input class="terminal__input" id="terminalInput" type="text" aria-label="Термінальна команда" spellcheck="false">
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHIVE -->
+  <section class="section" id="archive">
+    <div class="section__inner">
+      <p class="section__eyebrow">// 03 — archive/</p>
+      <h2 class="section__title">Класифікований архів</h2>
+      <p class="section__lede">Бонусні файли світу книги. Розшифруй кожен, натиснувши на картку — твій прогрес зберігається локально, у твоєму браузері.</p>
+
+      <div class="archive-progress">
+        <div class="archive-progress__bar">
+          <div class="archive-progress__fill" id="archiveFill"></div>
+        </div>
+        <span id="archiveCount">0 / 6 файлів розшифровано</span>
+      </div>
+
+      <div class="archive-grid" id="archiveGrid"></div>
+    </div>
+  </section>
+
+  <!-- AUTHOR -->
+  <section class="section section--dark" id="author">
+    <div class="section__inner section__inner--split">
+      <div class="author__portrait" aria-hidden="true">
+        <div class="author__portrait-frame"></div>
+      </div>
+      <div class="author__bio">
+        <p class="section__eyebrow">// 04 — author.md</p>
+        <h2 class="section__title">Про авторку</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Адріана Созанська — автор циклу кіберпанк-трилерів, пише про міста з обличчям з бетону і серцем зі схем.</p>
+        <p>Nulla porttitor accumsan tincidunt. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.</p>
+        <div class="author__socials">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="Twitter/X">X</a>
+          <a href="#" aria-label="Email">@</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section" id="reviews">
+    <div class="section__inner">
+      <p class="section__eyebrow">// 05 — reviews.log</p>
+      <h2 class="section__title">Що кажуть читачі</h2>
+
+      <div class="carousel" id="carousel">
+        <div class="carousel__track" id="carouselTrack"></div>
+        <div class="carousel__dots" id="carouselDots"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="section section--dark" id="buy">
+    <div class="section__inner section__inner--center">
+      <p class="section__eyebrow">// 06 — access_request.sh</p>
+      <h2 class="section__title">Запросити доступ</h2>
+      <p class="section__lede">Lorem ipsum — залиш email, щоб першим дізнатись про вихід книги та отримати бонусні матеріали.</p>
+
+      <form class="signup" id="signupForm">
+        <label class="sr-only" for="signupEmail">Email</label>
+        <input class="signup__input" id="signupEmail" type="email" placeholder="you@example.com" required>
+        <button class="btn btn--primary" type="submit">Підписатись</button>
+      </form>
+      <p class="signup__status" id="signupStatus" role="status"></p>
+
+      <div class="buy-links">
+        <a href="#" class="btn btn--ghost">Amazon</a>
+        <a href="#" class="btn btn--ghost">Yakaboo</a>
+        <a href="#" class="btn btn--ghost">EPUB / PDF</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p>0x<span>DEAD</span>: Код смерті — © 2026 Адріана Созанська. Усі права захищено.</p>
+    <div class="site-footer__links">
+      <a href="#top">Нагору</a>
+      <a href="#archive">Архів</a>
+      <a href="#buy">Контакт</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/archive-data.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
