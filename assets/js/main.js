@@ -48,7 +48,7 @@
 
   /* ---------------- hero digital rain ---------------- */
 
-  function initRain(canvasId) {
+  function initRain(canvasId, frameDelayMs = 0) {
     const canvas = document.getElementById(canvasId);
     if (!canvas || prefersReducedMotion) return;
 
@@ -58,6 +58,7 @@
     let fontSize = 16;
     let rafId = null;
     let visible = true;
+    let lastDraw = 0;
 
     function resize() {
       const rect = canvas.parentElement.getBoundingClientRect();
@@ -67,7 +68,13 @@
       columns = new Array(count).fill(0).map(() => Math.random() * -50);
     }
 
-    function draw() {
+    function draw(timestamp) {
+      if (timestamp - lastDraw < frameDelayMs) {
+        if (visible) rafId = requestAnimationFrame(draw);
+        return;
+      }
+      lastDraw = timestamp;
+
       ctx.fillStyle = "rgba(5,7,10,0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.font = fontSize + "px monospace";
@@ -98,12 +105,12 @@
   }
 
   initRain("rainCanvas");
-  initRain("gateRainCanvas");
+  initRain("gateRainCanvas", 110);
 
   /* ---------------- publish countdown gate ---------------- */
 
   const PUBLISH_DATE = new Date("2026-11-01T00:00:00");
-  const CAMPAIGN_START = new Date("2026-09-04T00:00:00"); // edit to change how "progress" is measured
+  const CAMPAIGN_START = new Date("2026-02-26T00:00:00"); // edit to change how "progress" is measured
 
   const gateScreen = document.getElementById("gateScreen");
   const gateProgressFill = document.getElementById("gateProgressFill");
@@ -523,6 +530,31 @@
     view.style.height = "100%";
   }
 
+  function positionPopup(popup, pin, container) {
+    const stageRect = mapStage.getBoundingClientRect();
+    const pinRect = pin.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const gap = 16;
+    const edgeMargin = 8;
+
+    const popupW = popup.offsetWidth;
+    const popupH = popup.offsetHeight;
+    const pinCenterX = pinRect.left + pinRect.width / 2;
+
+    const spaceAbove = pinRect.top - stageRect.top;
+    const placeAbove = spaceAbove >= popupH + gap;
+    const top = placeAbove ? pinRect.top - popupH - gap : pinRect.bottom + gap;
+
+    const minLeft = stageRect.left + edgeMargin;
+    const maxLeft = stageRect.right - popupW - edgeMargin;
+    const left = Math.max(minLeft, Math.min(pinCenterX - popupW / 2, maxLeft));
+
+    popup.style.left = (left - containerRect.left) + "px";
+    popup.style.top = (top - containerRect.top) + "px";
+    popup.classList.toggle("map-popup--below", !placeAbove);
+    popup.style.setProperty("--arrow-x", (pinCenterX - left) + "px");
+  }
+
   function showLocationPopup(pin, location) {
     mapStage.querySelector(".map-popup")?.remove();
     mapStage.querySelectorAll(".map-pin--street").forEach((p) => p.classList.remove("map-pin--active"));
@@ -530,8 +562,6 @@
 
     const popup = document.createElement("div");
     popup.className = "map-popup";
-    popup.style.left = pin.style.left;
-    popup.style.top = pin.style.top;
     popup.innerHTML = `
       <button type="button" class="map-popup__close" aria-label="Закрити">✕</button>
       <div class="map-popup__image" aria-hidden="true"><span>Фото буде додано</span></div>
@@ -544,7 +574,11 @@
       popup.remove();
       pin.classList.remove("map-pin--active");
     });
-    mapStage.querySelector(".map-pins")?.appendChild(popup);
+
+    const pinsLayer = mapStage.querySelector(".map-pins");
+    if (!pinsLayer) return;
+    pinsLayer.appendChild(popup);
+    positionPopup(popup, pin, pinsLayer);
   }
 
   function renderCountryMap() {
@@ -612,7 +646,6 @@
     const pins = streets.map((s) => `
       <button class="map-pin map-pin--street" style="left:${s.x}%; top:${s.y}%" data-street="${s.id}" aria-label="${s.name}">
         <span class="map-pin__dot"></span>
-        <span class="map-pin__label">${s.name}</span>
       </button>
     `).join("");
 
@@ -625,14 +658,10 @@
       const districtShapes = kyivDistricts.map((d, i) => `
         <path class="map-district-path${i % 2 ? " map-district-path--alt" : ""}" d="${d.path}"></path>
       `).join("");
-      const districtLabels = kyivDistricts.map((d) => `
-        <span class="map-district-label" style="left:${d.centroid[0]}%; top:${d.centroid[1]}%">${d.name}</span>
-      `).join("");
 
       mapStage.innerHTML = `
         <div class="map-view">
           <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${districtShapes}</svg>
-          <div class="map-district-labels" aria-hidden="true">${districtLabels}</div>
           <div class="map-pins">${pins}</div>
         </div>
       `;

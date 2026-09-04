@@ -1121,17 +1121,6 @@ code {
   fill: rgba(0,229,255,0.06);
   stroke: var(--cyan);
 }
-.map-district-labels { position: absolute; inset: 0; pointer-events: none; }
-.map-district-label {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-display);
-  font-size: 0.6rem;
-  color: var(--text-dim);
-  opacity: 0.75;
-  white-space: nowrap;
-  text-align: center;
-}
 .map-district-grid {
   position: absolute;
   inset: 0;
@@ -1255,7 +1244,6 @@ code {
 
 .map-popup {
   position: absolute;
-  transform: translate(-50%, calc(-100% - 18px));
   width: 190px;
   background: var(--panel);
   border: 1px solid var(--green-soft);
@@ -1267,8 +1255,8 @@ code {
   animation: mapPopupIn 0.15s ease;
 }
 @keyframes mapPopupIn {
-  from { opacity: 0; transform: translate(-50%, calc(-100% - 10px)); }
-  to { opacity: 1; transform: translate(-50%, calc(-100% - 18px)); }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .map-popup__close {
   position: absolute;
@@ -1319,13 +1307,21 @@ code {
 .map-popup__arrow {
   position: absolute;
   bottom: -6px;
-  left: 50%;
+  left: var(--arrow-x, 50%);
   width: 12px;
   height: 12px;
   transform: translateX(-50%) rotate(45deg);
   background: var(--panel);
   border-right: 1px solid var(--green-soft);
   border-bottom: 1px solid var(--green-soft);
+}
+.map-popup--below .map-popup__arrow {
+  bottom: auto;
+  top: -6px;
+  border-right: none;
+  border-bottom: none;
+  border-left: 1px solid var(--green-soft);
+  border-top: 1px solid var(--green-soft);
 }
 
 .map-info {
