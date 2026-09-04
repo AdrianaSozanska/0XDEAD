@@ -152,59 +152,175 @@
   renderArchive();
   updateArchiveProgress();
 
-  /* ---------------- dossier ---------------- */
+  /* ---------------- dossier: folder cards + file-opening modal ---------------- */
 
   const dossierGrid = document.getElementById("dossierGrid");
   const dossierFiles = typeof DOSSIER_FILES !== "undefined" ? DOSSIER_FILES : [];
+  const dossierModal = document.getElementById("dossierModal");
+  const dossierBackdrop = document.getElementById("dossierBackdrop");
+  const dossierPanel = document.getElementById("dossierPanel");
+  const dossierModalContent = document.getElementById("dossierModalContent");
+  const dossierClose = document.getElementById("dossierClose");
+  const dossierPrev = document.getElementById("dossierPrev");
+  const dossierNext = document.getElementById("dossierNext");
 
-  function renderDossier() {
+  const DOSSIER_ROTATIONS = [-1.6, 1.1, -0.7, 1.7, -1.1, 0.8];
+
+  let dossierOpenIndex = null;
+  let dossierOriginRect = null;
+  let dossierLastFocused = null;
+
+  function buildDossierModalHTML(person) {
+    const isDeceased = person.statusClass === "deceased";
+    const isRedacted = person.statusClass === "redacted";
+
+    const notesHtml = isRedacted
+      ? `<div class="redaction"></div><div class="redaction"></div><div class="redaction"></div>
+         <p class="dossier-modal__redacted-note">${person.statusLabel}</p>`
+      : person.notes.map((line) => `<p class="dossier-modal__note">${line}</p>`).join("");
+
+    return `
+      <span class="dossier-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
+      <span class="dossier-modal__case">СПРАВА №${person.caseNo}</span>
+      <h3 class="dossier-modal__name">${person.name}</h3>
+      <p class="dossier-modal__role">${person.roleTag}</p>
+      <div class="dossier-modal__body">
+        <div class="dossier-modal__photo${isDeceased ? " dossier-modal__photo--deceased" : ""}" aria-hidden="true"></div>
+        <div class="dossier-modal__details">
+          ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
+          ${notesHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderDossierGrid() {
     if (!dossierGrid) return;
     dossierGrid.innerHTML = "";
 
-    dossierFiles.forEach((person) => {
+    dossierFiles.forEach((person, idx) => {
       const isDeceased = person.statusClass === "deceased";
       const isRedacted = person.statusClass === "redacted";
 
       const card = document.createElement("button");
       card.type = "button";
-      card.className = "dossier-card" + (isDeceased ? " dossier-card--deceased" : "");
-      card.setAttribute("aria-expanded", "false");
-
-      const notesHtml = isRedacted
-        ? `<div class="redaction"></div><div class="redaction"></div><div class="redaction"></div>
-           <p class="dossier-card__redacted-note">${person.statusLabel}</p>`
-        : person.notes.map((line) => `<p class="dossier-card__note">${line}</p>`).join("");
+      card.className = "dossier-card" + (isDeceased ? " dossier-card--deceased" : "") + (isRedacted ? " dossier-card--redacted" : "");
+      card.style.setProperty("--rot", DOSSIER_ROTATIONS[idx % DOSSIER_ROTATIONS.length] + "deg");
 
       card.innerHTML = `
-        <div class="dossier-card__tab">
-          <div class="dossier-card__heading">
-            <span class="dossier-card__id">СПРАВА №${person.caseNo}</span>
-            <h3 class="dossier-card__name">${person.name}</h3>
-            <span class="dossier-card__role">${person.roleTag}</span>
-          </div>
-          <span class="dossier-card__chevron" aria-hidden="true">▶</span>
-        </div>
-        <div class="dossier-card__content">
-          <div class="dossier-card__body">
-            <div class="dossier-card__photo" aria-hidden="true"></div>
-            <div class="dossier-card__details">
-              ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
-              ${notesHtml}
-            </div>
-          </div>
-        </div>
+        <span class="dossier-card__id">СПРАВА №${person.caseNo}</span>
+        <h3 class="dossier-card__name">${person.name}</h3>
+        <span class="dossier-card__role">${person.roleTag}</span>
+        <span class="dossier-card__hint">Відкрити файл</span>
       `;
 
-      card.addEventListener("click", () => {
-        const isOpen = card.classList.toggle("is-open");
-        card.setAttribute("aria-expanded", String(isOpen));
-      });
-
+      card.addEventListener("click", () => openDossier(idx, card));
       dossierGrid.appendChild(card);
     });
   }
 
-  renderDossier();
+  function computeDossierTargetRect() {
+    const width = Math.min(window.innerWidth * 0.92, 760);
+    const height = Math.min(window.innerHeight * 0.86, 620);
+    return {
+      top: (window.innerHeight - height) / 2,
+      left: (window.innerWidth - width) / 2,
+      width,
+      height
+    };
+  }
+
+  function flipTransformFrom(rect, target) {
+    const scaleX = rect.width / target.width;
+    const scaleY = rect.height / target.height;
+    const translateX = rect.left - target.left;
+    const translateY = rect.top - target.top;
+    return `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`;
+  }
+
+  function openDossier(idx, originEl) {
+    if (!dossierModal || !dossierPanel) return;
+
+    dossierOpenIndex = idx;
+    dossierOriginRect = originEl.getBoundingClientRect();
+    dossierLastFocused = originEl;
+
+    const target = computeDossierTargetRect();
+    dossierPanel.style.top = target.top + "px";
+    dossierPanel.style.left = target.left + "px";
+    dossierPanel.style.width = target.width + "px";
+    dossierPanel.style.height = target.height + "px";
+
+    dossierModalContent.innerHTML = buildDossierModalHTML(dossierFiles[idx]);
+    dossierModal.classList.add("is-active");
+    document.body.classList.add("no-scroll");
+
+    dossierPanel.style.transition = "none";
+    dossierPanel.style.transform = flipTransformFrom(dossierOriginRect, target);
+    void dossierPanel.offsetWidth;
+    dossierPanel.style.transition = "";
+
+    requestAnimationFrame(() => {
+      dossierModal.classList.add("is-visible");
+      dossierPanel.style.transform = "translate(0, 0) scale(1, 1)";
+    });
+
+    document.addEventListener("keydown", onDossierKeydown);
+    dossierPanel.focus();
+  }
+
+  function closeDossier() {
+    if (dossierOpenIndex === null || !dossierPanel) return;
+
+    const target = computeDossierTargetRect();
+    const rect = dossierOriginRect || target;
+    dossierModal.classList.remove("is-visible");
+    dossierPanel.style.transform = flipTransformFrom(rect, target);
+
+    setTimeout(() => {
+      dossierModal.classList.remove("is-active");
+      dossierPanel.style.transform = "";
+      document.body.classList.remove("no-scroll");
+    }, prefersReducedMotion ? 0 : 500);
+
+    document.removeEventListener("keydown", onDossierKeydown);
+    dossierOpenIndex = null;
+    if (dossierLastFocused) dossierLastFocused.focus();
+  }
+
+  function showDossierAt(newIdx) {
+    if (dossierOpenIndex === null) return;
+    const len = dossierFiles.length;
+    dossierOpenIndex = (newIdx + len) % len;
+
+    dossierModalContent.classList.add("is-swapping");
+    setTimeout(() => {
+      dossierModalContent.innerHTML = buildDossierModalHTML(dossierFiles[dossierOpenIndex]);
+      dossierModalContent.classList.remove("is-swapping");
+    }, prefersReducedMotion ? 0 : 160);
+  }
+
+  function onDossierKeydown(e) {
+    if (e.key === "Escape") closeDossier();
+    if (e.key === "ArrowLeft") showDossierAt(dossierOpenIndex - 1);
+    if (e.key === "ArrowRight") showDossierAt(dossierOpenIndex + 1);
+  }
+
+  if (dossierGrid) {
+    renderDossierGrid();
+    dossierClose?.addEventListener("click", closeDossier);
+    dossierBackdrop?.addEventListener("click", closeDossier);
+    dossierPrev?.addEventListener("click", () => showDossierAt(dossierOpenIndex - 1));
+    dossierNext?.addEventListener("click", () => showDossierAt(dossierOpenIndex + 1));
+    window.addEventListener("resize", () => {
+      if (dossierOpenIndex === null) return;
+      const target = computeDossierTargetRect();
+      dossierPanel.style.top = target.top + "px";
+      dossierPanel.style.left = target.left + "px";
+      dossierPanel.style.width = target.width + "px";
+      dossierPanel.style.height = target.height + "px";
+    });
+  }
 
   /* ---------------- terminal ---------------- */
 
