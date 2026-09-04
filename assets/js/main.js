@@ -417,10 +417,10 @@
 
   let mapLastFocused = null;
 
-  /* Stylized, simplified Ukraine outline (not survey-accurate) in a 0-100 viewBox
-     matching the city x/y percentages in map-data.js. Crimea is a separate shape. */
-  const UKRAINE_OUTLINE = "M3,10 L20,4 L45,3 L58,9 L67,7 L75,14 L82,18 L90,24 L96,29 L94,38 L98,44 L92,50 L88,56 L78,58 L70,62 L60,63 L50,64 L40,63 L30,61 L20,58 L14,52 L9,46 L6,38 L4,30 L2,22 L3,15 Z";
-  const CRIMEA_OUTLINE = "M56,64 L60,63 L66,66 L70,72 L68,80 L62,86 L55,84 L50,78 L52,70 Z";
+  /* Simplified Ukraine outline (from real boundary data, lightly simplified for a
+     clean vector look) in a 0-100 viewBox matching the city x/y percentages in
+     map-data.js. Crimea is included in the same contour, connected as it really is. */
+  const UKRAINE_OUTLINE = "M79.6,86.9 L73.6,88.9 L66.0,95.7 L62.9,93.4 L64.1,87.8 L58.1,84.4 L59.1,82.1 L64.4,78.2 L62.8,75.5 L54.1,72.5 L53.8,68.2 L48.6,69.6 L42.2,84.8 L39.7,82.8 L37.1,84.7 L34.6,82.5 L38.5,73.4 L38.1,71.3 L39.3,70.4 L39.8,72.0 L44.6,71.5 L41.2,60.6 L39.2,58.7 L39.6,54.7 L30.7,47.4 L23.3,50.3 L21.9,53.1 L15.9,56.0 L13.3,53.2 L6.3,51.8 L3.9,54.3 L3.6,51.2 L0.5,48.0 L3.1,40.2 L4.3,40.9 L2.9,35.6 L7.9,25.8 L10.7,24.4 L11.3,21.1 L8.5,10.8 L11.1,10.4 L14.2,7.2 L18.5,6.9 L34.7,10.9 L36.8,12.6 L38.8,10.6 L40.3,13.3 L45.3,12.8 L47.5,13.9 L47.9,8.0 L49.6,5.4 L56.4,5.2 L57.8,2.5 L65.3,1.9 L68.8,8.6 L67.5,11.0 L67.9,14.6 L72.3,15.2 L74.2,22.6 L81.3,26.8 L85.5,24.9 L88.9,30.4 L92.2,30.3 L100.4,34.1 L98.2,43.7 L99.4,50.2 L98.5,54.1 L93.2,55.0 L90.3,58.3 L90.1,63.5 L85.7,64.4 L82.0,68.3 L76.8,68.9 L72.0,73.3 L72.3,80.6 L75.1,83.4 L80.7,82.7 Z";
 
   function renderCountryMap() {
     if (!mapStage) return;
@@ -439,7 +439,6 @@
       <div class="map-view">
         <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           <path class="map-outline" d="${UKRAINE_OUTLINE}"></path>
-          <path class="map-crimea" d="${CRIMEA_OUTLINE}"></path>
         </svg>
         <div class="map-pins">${pins}</div>
       </div>
@@ -450,10 +449,28 @@
     });
   }
 
+  function buildSectorGridHTML() {
+    const cols = 4;
+    const rows = 3;
+    let html = "";
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const label = "СЕКТОР " + String.fromCharCode(65 + c) + (r + 1);
+        html += `<div class="map-sector"><span class="map-sector__label">${label}</span></div>`;
+      }
+    }
+    return html;
+  }
+
   function openCityMap(cityId) {
     if (!mapStage) return;
     const city = mapData.find((c) => c.id === cityId);
     if (!city) return;
+
+    if (city.unavailable) {
+      showMapError(city.errorMessage || "Не вдалося завантажити дані.");
+      return;
+    }
 
     mapTitle.textContent = city.name;
     mapBack.hidden = false;
@@ -469,7 +486,7 @@
 
     mapStage.innerHTML = `
       <div class="map-view">
-        <div class="map-city-grid" aria-hidden="true"></div>
+        <div class="map-district-grid" aria-hidden="true">${buildSectorGridHTML()}</div>
         <div class="map-pins">${pins}</div>
       </div>
     `;
@@ -479,9 +496,30 @@
         mapStage.querySelectorAll(".map-pin--street").forEach((p) => p.classList.remove("map-pin--active"));
         pin.classList.add("map-pin--active");
         const street = streets.find((s) => s.id === pin.dataset.street);
-        if (street) mapInfo.innerHTML = `<strong>${street.name}</strong>${street.note}`;
+        if (!street) return;
+        const addressLine = street.address ? `<span class="map-info__address">${street.address}</span>` : "";
+        const note = street.note ? ` ${street.note}` : "";
+        mapInfo.innerHTML = `<strong>${street.name}</strong>${addressLine}${note}`;
       });
     });
+  }
+
+  function showMapError(message) {
+    if (!mapStage) return;
+    mapTitle.textContent = "Помилка";
+    mapBack.hidden = true;
+    mapInfo.textContent = "";
+
+    mapStage.innerHTML = `
+      <div class="map-error">
+        <span class="map-error__icon" aria-hidden="true">⚠</span>
+        <p class="map-error__code">ERR_CITY_DATA_UNAVAILABLE</p>
+        <p class="map-error__message">${message}</p>
+        <button type="button" class="btn btn--ghost map-error__back" id="mapErrorBack">‹ Назад до карти країни</button>
+      </div>
+    `;
+
+    document.getElementById("mapErrorBack")?.addEventListener("click", renderCountryMap);
   }
 
   function computeMapTargetRect() {

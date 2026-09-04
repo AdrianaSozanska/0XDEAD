@@ -58,18 +58,26 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   hero section of `index.html`.
 - **Terminal easter egg commands**: edit `TERMINAL_COMMANDS` in
   `assets/js/main.js`.
-- **Terminal `map` command**: typing `map` in the terminal opens a stylized
-  (not survey-accurate) Ukraine map with pins for Львів, Тернопіль,
-  Вінниця, Київ, and Харків. Clicking a city pin zooms into a per-city view
-  with street-level pins. Edit `assets/js/map-data.js` to change cities or
-  streets:
+- **Terminal `map` command**: typing `map` in the terminal opens a
+  fullscreen map modal with an outline of Ukraine (traced from real
+  boundary data, then simplified for a clean vector look — see
+  `UKRAINE_OUTLINE` in `assets/js/main.js`) with pins for Львів,
+  Тернопіль, Вінниця, Київ, and Харків. Clicking a city pin zooms into a
+  per-city "district" view (a decorative sector grid) with street/address
+  pins; clicking a pin shows its name, address, and note in the info panel
+  below the map. Edit `assets/js/map-data.js` to change cities or streets:
   - Each city has `x`/`y` — percentage position (0-100) on the country map.
+  - A city with `unavailable: true` shows `errorMessage` instead of
+    drilling in (currently used for Харків, standing in for data still
+    being prepared) — set it back to normal by removing `unavailable`/
+    `errorMessage` and filling in its `streets` array once ready.
   - Each city's `streets` array has its own `x`/`y` — percentage position
-    (0-100) within that city's zoomed view — plus a `name` and `note`
-    shown when the pin is clicked. These are placeholders now; once real
-    street coordinates are available, convert them to a 0-100 percentage
-    position within the city view (or ask to have this wired up to precise
-    coordinates) and swap in the real `name`/`note` text.
+    (0-100) within that city's zoomed view — plus `name`, `address`, and
+    `note` shown when the pin is clicked. Kyiv already has three real
+    addresses wired in; the others are still placeholders. Position is the
+    only approximate part: convert real coordinates to a 0-100 position
+    within the city view (or ask to have this wired up to precise
+    coordinates) as they're provided.
 
 ## Newsletter signup
 
