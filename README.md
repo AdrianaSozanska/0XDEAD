@@ -33,6 +33,7 @@ assets/css/style.css          All styling (cyberpunk theme, CSS variables)
 assets/js/main.js             Nav, hero rain effect, terminal, archive
                                unlock logic, reviews carousel, signup form
 assets/js/archive-data.js     Lorem-ipsum bonus "case file" lore entries
+assets/js/dossier-data.js     Police dossier entries on the syndicate cell
 assets/img/                   Placeholder cover art + favicon (SVG)
 ```
 
@@ -44,6 +45,11 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   array in `assets/js/archive-data.js`. Add/remove objects (`id`, `title`,
   `body`) — the grid, unlock counter, and progress bar update automatically.
   `id` values must stay unique since they're used as the localStorage key.
+- **Syndicate dossier entries**: edit the `DOSSIER_FILES` array in
+  `assets/js/dossier-data.js`. Each entry has a `statusClass` of `active`,
+  `deceased`, or `redacted` (redacted entries render as a blacked-out file
+  with no `notes` shown, for characters the police know exist but have no
+  data on) — the card's status badge and stamp follow this automatically.
 - **Reviews carousel**: edit the `REVIEWS` array near the top of the
   "reviews carousel" section in `assets/js/main.js`.
 - **Real book cover**: replace `assets/img/cover-placeholder.svg` with the

@@ -570,6 +570,156 @@ code {
 }
 .case-file.is-unlocked .case-file__lock { color: var(--text-dim); }
 
+/* ---------- dossier ---------- */
+
+.dossier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.dossier-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 0;
+  cursor: pointer;
+  color: var(--text);
+  overflow: hidden;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.dossier-card:hover, .dossier-card:focus-visible {
+  border-color: var(--cyan);
+  transform: translateY(-3px);
+}
+.dossier-card.is-open {
+  border-color: var(--green-soft);
+  box-shadow: 0 0 18px rgba(57,255,20,0.1);
+}
+
+.dossier-card__tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.dossier-card__id {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--cyan);
+}
+.dossier-card__heading { flex: 1; }
+.dossier-card__name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 0 0 0.25rem;
+}
+.dossier-card__role {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.dossier-card__chevron {
+  font-family: var(--font-display);
+  color: var(--green-soft);
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.dossier-card.is-open .dossier-card__chevron { transform: rotate(90deg); }
+
+.dossier-card__content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+  border-top: 1px solid transparent;
+}
+.dossier-card.is-open .dossier-card__content {
+  max-height: 600px;
+  opacity: 1;
+  border-top-color: var(--panel-border);
+}
+
+.dossier-card__body {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+.dossier-card__photo {
+  position: relative;
+  flex-shrink: 0;
+  width: 84px;
+  height: 104px;
+  border: 1px solid var(--panel-border);
+  border-radius: 3px;
+  background:
+    linear-gradient(135deg, rgba(57,255,20,0.1), rgba(0,229,255,0.06)),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 6px);
+}
+.dossier-card__details { flex: 1; min-width: 0; }
+
+.dossier-status {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  padding: 0.25em 0.6em;
+  border-radius: 3px;
+  margin-bottom: 0.75rem;
+  border: 1px solid currentColor;
+}
+.dossier-status--active { color: var(--green-soft); }
+.dossier-status--deceased { color: var(--red); }
+.dossier-status--redacted { color: var(--text-dim); }
+
+.dossier-card__note {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 0 0 0.6rem;
+}
+
+.dossier-card--deceased .dossier-card__photo::after {
+  content: "ЛІКВІДОВАНО";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-16deg);
+  border: 2px solid var(--red);
+  color: var(--red);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  padding: 0.2em 0.35em;
+  white-space: nowrap;
+  background: rgba(5,7,10,0.6);
+}
+
+.redaction {
+  height: 0.85em;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    #000 0px, #000 6px,
+    #0a0d0f 6px, #0a0d0f 8px
+  );
+  margin: 0.55rem 0;
+}
+.redaction:nth-child(1) { width: 92%; }
+.redaction:nth-child(2) { width: 68%; }
+.redaction:nth-child(3) { width: 78%; }
+.dossier-card__redacted-note {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.75rem;
+}
+
 /* ---------- author ---------- */
 
 .author__portrait-frame {

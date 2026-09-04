@@ -152,6 +152,60 @@
   renderArchive();
   updateArchiveProgress();
 
+  /* ---------------- dossier ---------------- */
+
+  const dossierGrid = document.getElementById("dossierGrid");
+  const dossierFiles = typeof DOSSIER_FILES !== "undefined" ? DOSSIER_FILES : [];
+
+  function renderDossier() {
+    if (!dossierGrid) return;
+    dossierGrid.innerHTML = "";
+
+    dossierFiles.forEach((person) => {
+      const isDeceased = person.statusClass === "deceased";
+      const isRedacted = person.statusClass === "redacted";
+
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "dossier-card" + (isDeceased ? " dossier-card--deceased" : "");
+      card.setAttribute("aria-expanded", "false");
+
+      const notesHtml = isRedacted
+        ? `<div class="redaction"></div><div class="redaction"></div><div class="redaction"></div>
+           <p class="dossier-card__redacted-note">${person.statusLabel}</p>`
+        : person.notes.map((line) => `<p class="dossier-card__note">${line}</p>`).join("");
+
+      card.innerHTML = `
+        <div class="dossier-card__tab">
+          <div class="dossier-card__heading">
+            <span class="dossier-card__id">СПРАВА №${person.caseNo}</span>
+            <h3 class="dossier-card__name">${person.name}</h3>
+            <span class="dossier-card__role">${person.roleTag}</span>
+          </div>
+          <span class="dossier-card__chevron" aria-hidden="true">▶</span>
+        </div>
+        <div class="dossier-card__content">
+          <div class="dossier-card__body">
+            <div class="dossier-card__photo" aria-hidden="true"></div>
+            <div class="dossier-card__details">
+              ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
+              ${notesHtml}
+            </div>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener("click", () => {
+        const isOpen = card.classList.toggle("is-open");
+        card.setAttribute("aria-expanded", String(isOpen));
+      });
+
+      dossierGrid.appendChild(card);
+    });
+  }
+
+  renderDossier();
+
   /* ---------------- terminal ---------------- */
 
   const terminalBody = document.getElementById("terminalBody");
@@ -186,6 +240,7 @@
       "  help      — список команд",
       "  about     — про книгу",
       "  archive   — перейти до архіву",
+      "  dossier   — перейти до досьє угруповання",
       "  unlock    — підказка щодо розшифрування файлів",
       "  clear     — очистити термінал"
     ],
@@ -196,6 +251,10 @@
     archive: () => {
       document.getElementById("archive")?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
       return ["> перенаправлення до /archive ..."];
+    },
+    dossier: () => {
+      document.getElementById("dossier")?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
+      return ["> перенаправлення до /dossier ..."];
     },
     unlock: () => [`розшифровано файлів: ${unlocked.size} / ${files.length}. натисни на картку в архіві, щоб розшифрувати наступний.`],
     clear: () => { if (terminalBody) terminalBody.innerHTML = ""; return []; }
