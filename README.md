@@ -34,6 +34,7 @@ assets/js/main.js             Nav, hero rain effect, terminal, archive
                                unlock logic, reviews carousel, signup form
 assets/js/archive-data.js     Lorem-ipsum bonus "case file" lore entries
 assets/js/dossier-data.js     Police dossier entries on the syndicate cell
+assets/js/map-data.js         Cities + street pins for the terminal "map" command
 assets/img/                   Placeholder cover art + favicon (SVG)
 ```
 
@@ -57,6 +58,18 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   hero section of `index.html`.
 - **Terminal easter egg commands**: edit `TERMINAL_COMMANDS` in
   `assets/js/main.js`.
+- **Terminal `map` command**: typing `map` in the terminal opens a stylized
+  (not survey-accurate) Ukraine map with pins for Львів, Тернопіль,
+  Вінниця, Київ, and Харків. Clicking a city pin zooms into a per-city view
+  with street-level pins. Edit `assets/js/map-data.js` to change cities or
+  streets:
+  - Each city has `x`/`y` — percentage position (0-100) on the country map.
+  - Each city's `streets` array has its own `x`/`y` — percentage position
+    (0-100) within that city's zoomed view — plus a `name` and `note`
+    shown when the pin is clicked. These are placeholders now; once real
+    street coordinates are available, convert them to a 0-100 percentage
+    position within the city view (or ask to have this wired up to precise
+    coordinates) and swap in the real `name`/`note` text.
 
 ## Newsletter signup
 

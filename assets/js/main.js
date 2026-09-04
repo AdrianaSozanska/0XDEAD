@@ -357,6 +357,7 @@
       "  about     — про книгу",
       "  archive   — перейти до архіву",
       "  dossier   — перейти до досьє угруповання",
+      "  map       — відкрити карту мережі",
       "  unlock    — підказка щодо розшифрування файлів",
       "  clear     — очистити термінал"
     ],
@@ -373,6 +374,10 @@
       return ["> перенаправлення до /dossier ..."];
     },
     unlock: () => [`розшифровано файлів: ${unlocked.size} / ${files.length}. натисни на картку в архіві, щоб розшифрувати наступний.`],
+    map: () => {
+      openMapModal();
+      return ["> ініціалізація мережевої карти...", "> знайдено 5 активних вузлів"];
+    },
     clear: () => { if (terminalBody) terminalBody.innerHTML = ""; return []; }
   };
 
@@ -395,6 +400,166 @@
       }
 
       terminalInput.value = "";
+    });
+  }
+
+  /* ---------------- map ---------------- */
+
+  const mapData = typeof MAP_DATA !== "undefined" ? MAP_DATA : [];
+  const mapModal = document.getElementById("mapModal");
+  const mapBackdrop = document.getElementById("mapBackdrop");
+  const mapPanel = document.getElementById("mapPanel");
+  const mapStage = document.getElementById("mapStage");
+  const mapTitle = document.getElementById("mapTitle");
+  const mapBack = document.getElementById("mapBack");
+  const mapInfo = document.getElementById("mapInfo");
+  const mapClose = document.getElementById("mapClose");
+
+  let mapLastFocused = null;
+
+  /* Stylized, simplified Ukraine outline (not survey-accurate) in a 0-100 viewBox
+     matching the city x/y percentages in map-data.js. Crimea is a separate shape. */
+  const UKRAINE_OUTLINE = "M3,10 L20,4 L45,3 L58,9 L67,7 L75,14 L82,18 L90,24 L96,29 L94,38 L98,44 L92,50 L88,56 L78,58 L70,62 L60,63 L50,64 L40,63 L30,61 L20,58 L14,52 L9,46 L6,38 L4,30 L2,22 L3,15 Z";
+  const CRIMEA_OUTLINE = "M56,64 L60,63 L66,66 L70,72 L68,80 L62,86 L55,84 L50,78 L52,70 Z";
+
+  function renderCountryMap() {
+    if (!mapStage) return;
+    mapTitle.textContent = "Україна";
+    mapBack.hidden = true;
+    mapInfo.textContent = "Обери місто на карті, щоб наблизити його.";
+
+    const pins = mapData.map((city) => `
+      <button class="map-pin" style="left:${city.x}%; top:${city.y}%" data-city="${city.id}" aria-label="${city.name}">
+        <span class="map-pin__dot"></span>
+        <span class="map-pin__label">${city.name}</span>
+      </button>
+    `).join("");
+
+    mapStage.innerHTML = `
+      <div class="map-view">
+        <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <path class="map-outline" d="${UKRAINE_OUTLINE}"></path>
+          <path class="map-crimea" d="${CRIMEA_OUTLINE}"></path>
+        </svg>
+        <div class="map-pins">${pins}</div>
+      </div>
+    `;
+
+    mapStage.querySelectorAll(".map-pin").forEach((pin) => {
+      pin.addEventListener("click", () => openCityMap(pin.dataset.city));
+    });
+  }
+
+  function openCityMap(cityId) {
+    if (!mapStage) return;
+    const city = mapData.find((c) => c.id === cityId);
+    if (!city) return;
+
+    mapTitle.textContent = city.name;
+    mapBack.hidden = false;
+    mapInfo.textContent = "Обери мітку, щоб переглянути деталі.";
+
+    const streets = city.streets || [];
+    const pins = streets.map((s) => `
+      <button class="map-pin map-pin--street" style="left:${s.x}%; top:${s.y}%" data-street="${s.id}" aria-label="${s.name}">
+        <span class="map-pin__dot"></span>
+        <span class="map-pin__label">${s.name}</span>
+      </button>
+    `).join("");
+
+    mapStage.innerHTML = `
+      <div class="map-view">
+        <div class="map-city-grid" aria-hidden="true"></div>
+        <div class="map-pins">${pins}</div>
+      </div>
+    `;
+
+    mapStage.querySelectorAll(".map-pin--street").forEach((pin) => {
+      pin.addEventListener("click", () => {
+        mapStage.querySelectorAll(".map-pin--street").forEach((p) => p.classList.remove("map-pin--active"));
+        pin.classList.add("map-pin--active");
+        const street = streets.find((s) => s.id === pin.dataset.street);
+        if (street) mapInfo.innerHTML = `<strong>${street.name}</strong>${street.note}`;
+      });
+    });
+  }
+
+  function computeMapTargetRect() {
+    const width = Math.min(window.innerWidth * 0.94, 920);
+    const height = Math.min(window.innerHeight * 0.88, 680);
+    return {
+      top: (window.innerHeight - height) / 2,
+      left: (window.innerWidth - width) / 2,
+      width,
+      height
+    };
+  }
+
+  function openMapModal() {
+    if (!mapModal || !mapPanel) return;
+
+    const originEl = document.getElementById("terminal-window") || terminalBody;
+    const originRect = originEl ? originEl.getBoundingClientRect() : computeMapTargetRect();
+    mapLastFocused = document.activeElement;
+
+    const target = computeMapTargetRect();
+    mapPanel.style.top = target.top + "px";
+    mapPanel.style.left = target.left + "px";
+    mapPanel.style.width = target.width + "px";
+    mapPanel.style.height = target.height + "px";
+
+    renderCountryMap();
+    mapModal.classList.add("is-active");
+    document.body.classList.add("no-scroll");
+
+    mapPanel.style.transition = "none";
+    mapPanel.style.transform = flipTransformFrom(originRect, target);
+    void mapPanel.offsetWidth;
+    mapPanel.style.transition = "";
+
+    requestAnimationFrame(() => {
+      mapModal.classList.add("is-visible");
+      mapPanel.style.transform = "translate(0, 0) scale(1, 1)";
+    });
+
+    document.addEventListener("keydown", onMapKeydown);
+    mapPanel.focus();
+  }
+
+  function closeMapModal() {
+    if (!mapModal || !mapModal.classList.contains("is-active")) return;
+
+    const target = computeMapTargetRect();
+    const originEl = document.getElementById("terminal-window") || terminalBody;
+    const rect = originEl ? originEl.getBoundingClientRect() : target;
+    mapModal.classList.remove("is-visible");
+    mapPanel.style.transform = flipTransformFrom(rect, target);
+
+    setTimeout(() => {
+      mapModal.classList.remove("is-active");
+      mapPanel.style.transform = "";
+      document.body.classList.remove("no-scroll");
+    }, prefersReducedMotion ? 0 : 500);
+
+    document.removeEventListener("keydown", onMapKeydown);
+    if (mapLastFocused && mapLastFocused.focus) mapLastFocused.focus();
+  }
+
+  function onMapKeydown(e) {
+    if (e.key === "Escape") closeMapModal();
+  }
+
+  if (mapModal) {
+    mapClose?.addEventListener("click", closeMapModal);
+    mapBackdrop?.addEventListener("click", closeMapModal);
+    mapBack?.addEventListener("click", renderCountryMap);
+    window.addEventListener("resize", () => {
+      if (!mapModal.classList.contains("is-active")) return;
+      const target = computeMapTargetRect();
+      mapPanel.style.top = target.top + "px";
+      mapPanel.style.left = target.left + "px";
+      mapPanel.style.width = target.width + "px";
+      mapPanel.style.height = target.height + "px";
     });
   }
 

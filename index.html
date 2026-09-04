@@ -141,6 +141,20 @@
     </div>
   </div>
 
+  <div class="map-modal" id="mapModal">
+    <div class="map-modal__backdrop" id="mapBackdrop"></div>
+    <div class="map-modal__panel" id="mapPanel" role="dialog" aria-modal="true" tabindex="-1">
+      <button class="map-modal__close" id="mapClose" aria-label="Закрити карту">✕</button>
+      <div class="map-modal__header">
+        <span class="map-modal__eyebrow">// mapa.sys — мережа спостереження</span>
+        <h3 class="map-modal__title" id="mapTitle">Україна</h3>
+        <button class="map-modal__back" id="mapBack" hidden>‹ Назад до карти країни</button>
+      </div>
+      <div class="map-modal__stage" id="mapStage"></div>
+      <p class="map-info" id="mapInfo">Обери місто на карті, щоб наблизити його.</p>
+    </div>
+  </div>
+
   <!-- AUTHOR -->
   <section class="section" id="author">
     <div class="section__inner section__inner--split">
@@ -211,6 +225,7 @@
 
 <script src="assets/js/archive-data.js"></script>
 <script src="assets/js/dossier-data.js"></script>
+<script src="assets/js/map-data.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
