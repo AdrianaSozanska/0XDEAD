@@ -399,6 +399,36 @@
   const terminalForm = document.getElementById("terminalForm");
   const terminalInput = document.getElementById("terminalInput");
   const terminalCursor = document.getElementById("terminalCursor");
+  const terminalPromptEl = document.getElementById("terminalPrompt");
+
+  const SUDO_PASSWORD = "0xDEAD";
+  const SUDO_MAX_ATTEMPTS = 3;
+  /* Placeholder easter-egg file contents, revealed via `ls -a` / `cat <file>`
+     once sudo is authenticated. Filenames are intentionally odd-looking. */
+  const SUDO_FILES = {
+    "MmFsaWNl.README.txt": "Це наш. Я його змодифікував. Дані відновити не вийде. Я забрав бекапи.",
+    "MnNlcmhpaQ==.README.txt": "Більше ніколи не брати його справ"
+  };
+
+  let terminalMode = "command"; // "command" | "sudo-password"
+  let sudoAuthenticated = false;
+  let sudoAttempts = 0;
+
+  function setTerminalPrompt(text) {
+    if (terminalPromptEl) terminalPromptEl.textContent = text;
+  }
+
+  function enterSudoPasswordMode() {
+    terminalMode = "sudo-password";
+    terminalInput.type = "password";
+    setTerminalPrompt("Password:");
+  }
+
+  function exitSudoPasswordMode(promptText) {
+    terminalMode = "command";
+    terminalInput.type = "text";
+    setTerminalPrompt(promptText);
+  }
 
   const BOOT_LINES = [
     { text: "> booting 0xDEAD network shell...", cls: "t-dim" },
@@ -529,7 +559,16 @@
       openMapModal();
       return ["> ініціалізація мережевої карти...", "> знайдено 5 активних вузлів"];
     },
-    sudo: () => ["Permission denied. Nice try."],
+    sudo: () => {
+      enterSudoPasswordMode();
+      return ["[sudo] password for guest:"];
+    },
+    "ls -a": () => {
+      if (sudoAuthenticated) {
+        return [".", "..", "MmFsaWNl.README.txt", "MnNlcmhpaQ==.README.txt"];
+      }
+      return [".", ".."];
+    },
     matrix: () => {
       runMatrixEffect(6000);
       return ["> ініціалізація matrix.exe..."];
@@ -548,18 +587,55 @@
       e.preventDefault();
       const raw = terminalInput.value.trim();
       if (!raw) return;
+      terminalInput.value = "";
 
-      printLine("guest@0xdead:~$ " + raw, "");
+      if (terminalMode === "sudo-password") {
+        if (raw === SUDO_PASSWORD) {
+          sudoAuthenticated = true;
+          sudoAttempts = 0;
+          exitSudoPasswordMode("root@0xdead:~#");
+          printLine("Пароль прийнято.", "t-cyan");
+          printLine("Вітаємо, guest. Доступ root надано.", "");
+          printLine("Спробуй ввести: ls -a", "t-dim");
+        } else {
+          sudoAttempts += 1;
+          if (sudoAttempts >= SUDO_MAX_ATTEMPTS) {
+            printLine("sudo: 3 некоректні спроби пароля.", "t-red");
+            printLine("Permission denied. Nice try.", "t-red");
+            sudoAttempts = 0;
+            exitSudoPasswordMode("guest@0xdead:~$");
+          } else {
+            printLine("Sorry, try again.", "t-red");
+          }
+        }
+        updateTerminalCursor();
+        return;
+      }
+
+      const promptText = terminalPromptEl ? terminalPromptEl.textContent : "guest@0xdead:~$";
+      printLine(promptText + " " + raw, "");
       const cmd = raw.toLowerCase();
-      const handler = TERMINAL_COMMANDS[cmd];
 
+      if (cmd.startsWith("cat ")) {
+        const filename = raw.slice(4).trim();
+        if (!sudoAuthenticated) {
+          printLine(`cat: ${filename}: Дозвіл заборонено`, "t-red");
+        } else if (Object.prototype.hasOwnProperty.call(SUDO_FILES, filename)) {
+          printLine(`«${SUDO_FILES[filename]}»`, "t-dim");
+        } else {
+          printLine(`cat: ${filename}: Файл не знайдено`, "t-red");
+        }
+        updateTerminalCursor();
+        return;
+      }
+
+      const handler = TERMINAL_COMMANDS[cmd];
       if (handler) {
         handler().forEach((line) => printLine(line, "t-dim"));
       } else {
         printLine(`команду не знайдено: "${raw}". введи 'help'.`, "t-red");
       }
 
-      terminalInput.value = "";
       updateTerminalCursor();
     });
   }

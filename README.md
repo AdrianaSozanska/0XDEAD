@@ -60,11 +60,22 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   hero section of `index.html`.
 - **Terminal commands**: edit `TERMINAL_COMMANDS` in `assets/js/main.js`.
   `about` and `author` print placeholder lorem-ipsum lines — replace the
-  text when it's ready. `sudo` and `matrix` are undocumented easter eggs
-  (not listed in `help`, on purpose — part of the fun is finding them):
-  `sudo` prints a joke refusal, `matrix` overlays a falling-code animation
-  on top of the terminal's existing scrollback for a few seconds (via
-  `runMatrixEffect()`) without touching it, then removes itself.
+  text when it's ready. `sudo`, `ls -a`, `cat <file>`, and `matrix` are
+  undocumented easter eggs (not listed in `help`, on purpose — part of the
+  fun is finding them).
+- **`sudo` easter egg**: typing `sudo` switches the input to a masked
+  password prompt (`terminalInput.type = "password"`, prompt text changes
+  to "Password:"). The password is `0xDEAD` (`SUDO_PASSWORD` in
+  `main.js`). Three wrong attempts locks it out with a joke refusal
+  ("Permission denied. Nice try."); the right one sets `sudoAuthenticated`,
+  switches the live prompt to `root@0xdead:~#` for the rest of the visit,
+  and suggests `ls -a`. Once authenticated, `ls -a` also lists two oddly
+  named files, and `cat <filename>` prints their contents — both the
+  filenames and the file contents (in Ukrainian, framed as found notes)
+  are set in `SUDO_FILES` in `main.js`.
+- **`matrix` easter egg**: overlays a falling-code animation on top of the
+  terminal's existing scrollback for a few seconds (via `runMatrixEffect()`)
+  without touching it, then removes itself.
 - **Terminal `timeline` command**: opens a modal that streams
   `TIMELINE_EVENTS` (from `assets/js/timeline-data.js`) into a scrolling,
   `tail -f`-style log — each `{date, text}` entry appears a beat after the
