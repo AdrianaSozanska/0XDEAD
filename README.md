@@ -59,6 +59,11 @@ assets/img/                   Placeholder cover art + favicon (SVG)
 - **Real book cover**: replace `assets/img/cover-placeholder.svg` with the
   real artwork (e.g. `cover.jpg`) and update the `<img src="...">` in the
   hero section of `index.html`.
+- **Real author photo**: drop the file in as `assets/img/author.jpg` — no
+  other change needed. `.author__portrait-frame` layers that path over the
+  gradient placeholder (`center top / cover`, cropped to the 3:4 frame), so
+  until the file exists the browser just skips that layer and the gradient
+  shows through instead of a broken-image icon.
 - **Terminal commands**: edit `TERMINAL_COMMANDS` in `assets/js/main.js`.
   `about` and `author` print placeholder lorem-ipsum lines — replace the
   text when it's ready. `sudo`, `ls -a`, `cat <file>`, and `matrix` are
