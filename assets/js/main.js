@@ -6,8 +6,7 @@
   /* ---------------- storage helpers ---------------- */
 
   const STORAGE_KEYS = {
-    unlocked: "0xdead:unlockedFiles",
-    signup: "0xdead:signup"
+    unlocked: "0xdead:unlockedFiles"
   };
 
   function loadJSON(key, fallback) {
@@ -1214,28 +1213,4 @@
     });
   }
 
-  /* ---------------- newsletter signup (front-end demo) ---------------- */
-
-  const signupForm = document.getElementById("signupForm");
-  const signupEmail = document.getElementById("signupEmail");
-  const signupStatus = document.getElementById("signupStatus");
-
-  const existingSignup = loadJSON(STORAGE_KEYS.signup, null);
-  if (existingSignup && signupStatus) {
-    signupStatus.textContent = `✓ ${existingSignup.email} вже підписано на оновлення.`;
-  }
-
-  if (signupForm) {
-    signupForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const email = signupEmail.value.trim();
-      if (!email) return;
-
-      /* Front-end only for now: persists locally as a working demo.
-         Wire this up to a real email service (e.g. Buttondown/Mailchimp) later. */
-      saveJSON(STORAGE_KEYS.signup, { email, ts: Date.now() });
-      signupStatus.textContent = `✓ Дякуємо! ${email} додано до списку очікування.`;
-      signupForm.reset();
-    });
-  }
 })();

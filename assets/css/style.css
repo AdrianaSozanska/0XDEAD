@@ -326,6 +326,13 @@ code {
   max-width: 46ch;
   font-size: 1.05rem;
 }
+.hero__blurb {
+  color: var(--text-dim);
+  max-width: 56ch;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -409,6 +416,10 @@ code {
   border-radius: var(--radius);
   box-shadow: 0 0 40px rgba(0,229,255,0.12), 0 20px 60px rgba(0,0,0,0.6);
   overflow: hidden;
+}
+.cover-frame img {
+  width: 100%;
+  height: auto;
 }
 
 /* ---------- publish countdown gate ---------- */
@@ -1553,32 +1564,6 @@ code {
 
 /* ---------- signup ---------- */
 
-.signup {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 1.75rem 0 0.75rem;
-}
-.signup__input {
-  flex: 1;
-  min-width: 220px;
-  max-width: 320px;
-  padding: 0.85em 1em;
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 1rem;
-}
-.signup__input:focus { border-color: var(--green-soft); outline: none; }
-.signup__status {
-  min-height: 1.4em;
-  color: var(--green-soft);
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-}
 .buy-links {
   display: flex;
   gap: 0.75rem;

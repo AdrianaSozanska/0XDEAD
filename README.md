@@ -2,7 +2,7 @@
 
 Static promo website for the book *0xDEAD: Код смерті*. Plain HTML/CSS/JS,
 no build step, no backend — uses `localStorage` for its interactive
-persistence (bonus archive unlocks, newsletter signup demo).
+persistence (bonus archive unlocks).
 
 ## Running locally
 
@@ -31,7 +31,7 @@ static host:
 index.html                   Single-page site (sections linked by anchor)
 assets/css/style.css          All styling (cyberpunk theme, CSS variables)
 assets/js/main.js             Nav, hero rain effect, terminal, archive
-                               unlock logic, signup form
+                               unlock logic
 assets/js/archive-data.js     Lorem-ipsum bonus "case file" lore entries
 assets/js/dossier-data.js     Police dossier entries on the syndicate cell
 assets/js/map-data.js         Cities + street pins for the terminal "map" command
@@ -163,16 +163,8 @@ in `assets/js/main.js`:
 If `PUBLISH_DATE` has already passed when the page loads, the gate is
 skipped entirely and visitors land straight on the site.
 
-## Newsletter signup
-
-The signup form in the "Запросити доступ" section is currently a front-end
-only demo — it stores the submitted email in `localStorage` and shows a
-confirmation message, but does not send anything anywhere. To go live,
-wire the form submit handler in `assets/js/main.js` (marked with a comment)
-to a real email service (Buttondown, Mailchimp, ConvertKit, etc.).
-
 ## Notes on data persistence
 
-All "saved" state (archive unlock progress, newsletter demo signup) lives
-in the visitor's own browser via `localStorage` — there is no server or
-database. Clearing browser data resets it; it does not sync across devices.
+All "saved" state (archive unlock progress) lives in the visitor's own
+browser via `localStorage` — there is no server or database. Clearing
+browser data resets it; it does not sync across devices.
