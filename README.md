@@ -56,9 +56,19 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   `deceased`, or `redacted` (redacted entries render as a blacked-out file
   with no `notes` shown, for characters the police know exist but have no
   data on) — the card's status badge and stamp follow this automatically.
-- **Real book cover**: replace `assets/img/cover-placeholder.svg` with the
-  real artwork (e.g. `cover.jpg`) and update the `<img src="...">` in the
-  hero section of `index.html`.
+- **Book cover**: the hero now shows the real cover art
+  (`assets/img/initialbookcover.jpeg`) — it's a deliberately partial
+  reveal (a puzzle-piece treatment baked into the artwork itself, not a
+  CSS effect), meant to be swapped for the fully-revealed cover closer to
+  release. Just replace the file and update the `<img>`'s `width`/`height`
+  attributes in the hero section of `index.html` to match its real pixel
+  dimensions (avoids layout shift).
+- **Marketplace links** (`// 05 — access_request.sh` / "Де купити"): the
+  three buttons are currently non-interactive placeholders
+  (`<span class="btn btn--ghost btn--disabled">`, not real links) with
+  "— скоро" labels, since presell marketplace links don't exist yet. Once
+  they do, swap each `<span>` back to a real `<a href="...">` (drop the
+  `btn--disabled` class and the "— скоро" text) in `index.html`.
 - **Real author photo**: drop the file in as `assets/img/author.jpg` — no
   other change needed. `.author__portrait-frame` layers that path over the
   gradient placeholder (`center top / cover`, cropped to the 3:4 frame), so
