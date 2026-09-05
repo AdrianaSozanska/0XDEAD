@@ -31,7 +31,7 @@ static host:
 index.html                   Single-page site (sections linked by anchor)
 assets/css/style.css          All styling (cyberpunk theme, CSS variables)
 assets/js/main.js             Nav, hero rain effect, terminal, archive
-                               unlock logic, reviews carousel, signup form
+                               unlock logic, signup form
 assets/js/archive-data.js     Lorem-ipsum bonus "case file" lore entries
 assets/js/dossier-data.js     Police dossier entries on the syndicate cell
 assets/js/map-data.js         Cities + street pins for the terminal "map" command
@@ -40,8 +40,11 @@ assets/img/                   Placeholder cover art + favicon (SVG)
 
 ## Editing content
 
-- **Synopsis / author bio / hero tagline**: edit the text directly in
-  `index.html` — all current copy is lorem ipsum placeholder.
+- **Author bio / hero tagline / terminal section lede**: edit the text
+  directly in `index.html` — all current copy is lorem ipsum placeholder.
+  The "Термінал" section is the site's flagship — it's meant to sell the
+  book's vibe through the interactive terminal, so give its lede real
+  personality when the time comes rather than treating it as filler.
 - **Bonus lore "Classified Archive" entries**: edit the `ARCHIVE_FILES`
   array in `assets/js/archive-data.js`. Add/remove objects (`id`, `title`,
   `body`) — the grid, unlock counter, and progress bar update automatically.
@@ -51,8 +54,6 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   `deceased`, or `redacted` (redacted entries render as a blacked-out file
   with no `notes` shown, for characters the police know exist but have no
   data on) — the card's status badge and stamp follow this automatically.
-- **Reviews carousel**: edit the `REVIEWS` array near the top of the
-  "reviews carousel" section in `assets/js/main.js`.
 - **Real book cover**: replace `assets/img/cover-placeholder.svg` with the
   real artwork (e.g. `cover.jpg`) and update the `<img src="...">` in the
   hero section of `index.html`.

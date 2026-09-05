@@ -105,7 +105,7 @@
   }
 
   initRain("rainCanvas");
-  initRain("gateRainCanvas", 110);
+  initRain("gateRainCanvas", 60);
 
   /* ---------------- publish countdown gate ---------------- */
 
@@ -784,54 +784,6 @@
       else if (mapActiveView === "kyiv") fitMapView(KYIV_ASPECT);
       else if (mapActiveView === "city") fillMapView();
     });
-  }
-
-  /* ---------------- reviews carousel ---------------- */
-
-  const REVIEWS = [
-    { quote: "Lorem ipsum dolor sit amet — не могла відірватись від першої сторінки до останньої.", meta: "— Читачка, Goodreads" },
-    { quote: "Атмосфера настільки густа, що відчуваєш неон на шкірі. Consectetur adipiscing elit.", meta: "— Книжковий блогер" },
-    { quote: "Найкращий кіберпанк-трилер, який я читав за останні роки. Sed do eiusmod tempor.", meta: "— Читач, Instagram" }
-  ];
-
-  const track = document.getElementById("carouselTrack");
-  const dotsWrap = document.getElementById("carouselDots");
-  let activeReview = 0;
-  let carouselTimer = null;
-
-  function renderCarousel() {
-    if (!track || !dotsWrap) return;
-    track.innerHTML = "";
-    dotsWrap.innerHTML = "";
-
-    REVIEWS.forEach((review, i) => {
-      const card = document.createElement("blockquote");
-      card.className = "review-card" + (i === activeReview ? " is-active" : "");
-      card.innerHTML = `<p class="review-card__quote">"${review.quote}"</p><cite class="review-card__meta">${review.meta}</cite>`;
-      track.appendChild(card);
-
-      const dot = document.createElement("button");
-      dot.type = "button";
-      dot.setAttribute("aria-label", `Відгук ${i + 1}`);
-      if (i === activeReview) dot.classList.add("is-active");
-      dot.addEventListener("click", () => { activeReview = i; renderCarousel(); resetCarouselTimer(); });
-      dotsWrap.appendChild(dot);
-    });
-  }
-
-  function nextReview() {
-    activeReview = (activeReview + 1) % REVIEWS.length;
-    renderCarousel();
-  }
-
-  function resetCarouselTimer() {
-    if (carouselTimer) clearInterval(carouselTimer);
-    if (!prefersReducedMotion) carouselTimer = setInterval(nextReview, 6000);
-  }
-
-  if (track) {
-    renderCarousel();
-    resetCarouselTimer();
   }
 
   /* ---------------- newsletter signup (front-end demo) ---------------- */

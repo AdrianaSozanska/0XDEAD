@@ -52,12 +52,10 @@
     </button>
 
     <ul class="nav__menu" id="navMenu">
-      <li><a href="#synopsis">Синопсис</a></li>
       <li><a href="#terminal">Термінал</a></li>
       <li><a href="#archive">Архів <span class="nav__badge" id="unlockBadge">0/6</span></a></li>
       <li><a href="#dossier">Досьє</a></li>
       <li><a href="#author">Автор</a></li>
-      <li><a href="#reviews">Відгуки</a></li>
       <li><a class="nav__cta" href="#buy">Отримати книгу</a></li>
     </ul>
   </nav>
@@ -86,35 +84,19 @@
       </div>
     </div>
 
-    <a class="hero__scroll" href="#synopsis" aria-label="Прокрутити вниз">
+    <a class="hero__scroll" href="#terminal" aria-label="Прокрутити вниз">
       <span></span>
     </a>
   </section>
 
-  <!-- SYNOPSIS -->
-  <section class="section" id="synopsis">
-    <div class="section__inner">
-      <p class="section__eyebrow">// 01 — synopsis.txt</p>
-      <h2 class="section__title">Про книгу</h2>
-      <div class="synopsis">
-        <p class="synopsis__lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, deep in the neon-lit underlayers of a city that never stops compiling.</p>
-        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <blockquote class="pull-quote">
-          «Lorem ipsum dolor sit amet — деякі коди не можна відмінити.»
-        </blockquote>
-        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-      </div>
-    </div>
-  </section>
-
   <!-- TERMINAL -->
-  <section class="section section--dark" id="terminal">
+  <section class="section section--dark terminal-section" id="terminal">
     <div class="section__inner">
-      <p class="section__eyebrow">// 02 — terminal.exe</p>
+      <p class="section__eyebrow">// 01 — terminal.exe</p>
       <h2 class="section__title">Підключення до мережі</h2>
-      <p class="section__lede">Спробуй сам. Введи <code>help</code>, щоб побачити доступні команди.</p>
+      <p class="section__lede">Кожен рядок коду тут — слід, залишений кимось живим. Підключись до мережі книги і відчуй її атмосферу на власній шкірі: введи <code>help</code>, щоб побачити доступні команди.</p>
 
-      <div class="terminal" id="terminal-window">
+      <div class="terminal terminal--featured" id="terminal-window">
         <div class="terminal__bar">
           <span class="terminal__dot terminal__dot--r"></span>
           <span class="terminal__dot terminal__dot--y"></span>
@@ -133,7 +115,7 @@
   <!-- ARCHIVE -->
   <section class="section" id="archive">
     <div class="section__inner">
-      <p class="section__eyebrow">// 03 — archive/</p>
+      <p class="section__eyebrow">// 02 — archive/</p>
       <h2 class="section__title">Класифікований архів</h2>
       <p class="section__lede">Бонусні файли світу книги. Розшифруй кожен, натиснувши на картку — твій прогрес зберігається локально, у твоєму браузері.</p>
 
@@ -151,7 +133,7 @@
   <!-- DOSSIER -->
   <section class="section section--dark" id="dossier">
     <div class="section__inner">
-      <p class="section__eyebrow">// 04 — dossier/syndicate</p>
+      <p class="section__eyebrow">// 03 — dossier/syndicate</p>
       <h2 class="section__title">Досьє угруповання</h2>
       <p class="section__lede">Особові справи, зібрані поліцією на членів синдикату. Натисни на теку, щоб відкрити файл.</p>
 
@@ -190,7 +172,7 @@
         <div class="author__portrait-frame"></div>
       </div>
       <div class="author__bio">
-        <p class="section__eyebrow">// 05 — author.md</p>
+        <p class="section__eyebrow">// 04 — author.md</p>
         <h2 class="section__title">Про авторку</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Адріана Созанська — автор циклу кіберпанк-трилерів, пише про міста з обличчям з бетону і серцем зі схем.</p>
         <p>Nulla porttitor accumsan tincidunt. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.</p>
@@ -203,23 +185,10 @@
     </div>
   </section>
 
-  <!-- REVIEWS -->
-  <section class="section section--dark" id="reviews">
-    <div class="section__inner">
-      <p class="section__eyebrow">// 06 — reviews.log</p>
-      <h2 class="section__title">Що кажуть читачі</h2>
-
-      <div class="carousel" id="carousel">
-        <div class="carousel__track" id="carouselTrack"></div>
-        <div class="carousel__dots" id="carouselDots"></div>
-      </div>
-    </div>
-  </section>
-
   <!-- NEWSLETTER -->
-  <section class="section" id="buy">
+  <section class="section section--dark" id="buy">
     <div class="section__inner section__inner--center">
-      <p class="section__eyebrow">// 07 — access_request.sh</p>
+      <p class="section__eyebrow">// 05 — access_request.sh</p>
       <h2 class="section__title">Запросити доступ</h2>
       <p class="section__lede">Lorem ipsum — залиш email, щоб першим дізнатись про вихід книги та отримати бонусні матеріали.</p>
 
