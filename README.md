@@ -84,8 +84,9 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   — these take priority over the normal terminal commands only while
   `gameState.active` is true, and everything else (help, clear, sudo, ...)
   still falls through normally, so the game never traps a visitor. All
-  content — file text, the two solution commands, hints (capped at 3
-  total across the whole game, not per stage), and the ending message —
+  content — file text, the two solution commands, per-stage hints
+  (unlimited uses; `gameState.hintsUsed` just tracks a running total shown
+  in the ending stats), and the ending message —
   lives in `assets/js/game-data.js`; the engine (`main.js`) only holds the
   state machine and dispatch. A file only appears in `evidence`/`open`
   once its id is added to `gameState.unlockedFiles`; nothing about locked

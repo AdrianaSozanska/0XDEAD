@@ -551,7 +551,9 @@
     gameState.completed = false;
     gameStageHintIndex = 0;
     const intro = gameFiles.intro;
-    return intro ? [intro.content_ua] : ["Гру не вдалося завантажити."];
+    const lines = intro ? [intro.content_ua] : ["Гру не вдалося завантажити."];
+    lines.push("Введи 'game-help', щоб побачити список команд гри.");
+    return lines;
   }
 
   function gameEvidence() {
@@ -560,6 +562,7 @@
       const file = gameFiles[id];
       if (file) lines.push(`  ${id} — ${file.filename}`);
     });
+    lines.push("Введи 'open <file>', щоб прочитати вміст файлу.");
     return lines;
   }
 
@@ -608,9 +611,6 @@
   }
 
   function gameHint() {
-    if (gameState.hintsUsed >= 3) {
-      return ["Підказки закінчилися (3/3 використано)."];
-    }
     const hints = gameHints[gameState.stage] || [];
     if (gameStageHintIndex >= hints.length) {
       return ["Підказок для цього етапу більше немає."];
@@ -618,7 +618,7 @@
     const text = hints[gameStageHintIndex];
     gameStageHintIndex += 1;
     gameState.hintsUsed += 1;
-    return [`[Підказка ${gameState.hintsUsed}/3]: ${text}`];
+    return [`[Підказка ${gameStageHintIndex}/${hints.length}]: ${text}`];
   }
 
   function gameHelp() {
@@ -628,7 +628,7 @@
       "  open <file>             — відкрити файл",
       "  connect <code1> <code2> — зіставити два коди",
       "  decrypt <file> <code>   — розшифрувати файл кодом",
-      "  hint                    — підказка (макс. 3 за гру)",
+      "  hint                    — підказка для поточного етапу",
       "  game-help               — цей список команд"
     ];
   }
