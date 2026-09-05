@@ -35,6 +35,7 @@ assets/js/main.js             Nav, hero rain effect, terminal, archive
 assets/js/archive-data.js     Lorem-ipsum bonus "case file" lore entries
 assets/js/dossier-data.js     Police dossier entries on the syndicate cell
 assets/js/map-data.js         Cities + street pins for the terminal "map" command
+assets/js/timeline-data.js    Backstory events for the terminal "timeline" command
 assets/img/                   Placeholder cover art + favicon (SVG)
 ```
 
@@ -57,13 +58,24 @@ assets/img/                   Placeholder cover art + favicon (SVG)
 - **Real book cover**: replace `assets/img/cover-placeholder.svg` with the
   real artwork (e.g. `cover.jpg`) and update the `<img src="...">` in the
   hero section of `index.html`.
-- **Terminal easter egg commands**: edit `TERMINAL_COMMANDS` in
-  `assets/js/main.js`.
+- **Terminal commands**: edit `TERMINAL_COMMANDS` in `assets/js/main.js`.
+  `about` and `author` print placeholder lorem-ipsum lines — replace the
+  text when it's ready. `sudo` and `matrix` are undocumented easter eggs
+  (not listed in `help`, on purpose — part of the fun is finding them):
+  `sudo` prints a joke refusal, `matrix` overlays a falling-code animation
+  on top of the terminal's existing scrollback for a few seconds (via
+  `runMatrixEffect()`) without touching it, then removes itself.
+- **Terminal `timeline` command**: opens a modal that streams
+  `TIMELINE_EVENTS` (from `assets/js/timeline-data.js`) into a scrolling,
+  `tail -f`-style log — each `{date, text}` entry appears a beat after the
+  last, auto-scrolling, with a blinking cursor after the final line.
+  Content is lorem ipsum placeholder; swap in the real backstory events
+  whenever they're ready, same shape.
 - **Terminal `map` command**: typing `map` in the terminal opens a
   fullscreen map modal with an outline of Ukraine (traced from real
   boundary data, simplified for a clean vector look — see
   `UKRAINE_OUTLINE` and `COUNTRY_ASPECT` in `assets/js/main.js`) with pins
-  for Львів, Тернопіль, Вінниця, Київ, and Харків, positioned from real
+  for Тернопіль, Вінниця, Київ, and Харків, positioned from real
   coordinates. The `fitMapView()` helper keeps the shape and its pins from
   being stretched: it sizes `.map-view` to the outline's real aspect ratio
   before laying out anything inside it, so the outline and the percentage-

@@ -13,16 +13,6 @@
    their correct district; the other cities' pins are still placeholders. */
 const MAP_DATA = [
   {
-    id: "lviv",
-    name: "Львів",
-    x: 10.8,
-    y: 31.3,
-    streets: [
-      { id: "lviv-1", name: "Вулиця (уточнюється)", address: "Львів, Україна", x: 32, y: 40, note: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-      { id: "lviv-2", name: "Вулиця (уточнюється)", address: "Львів, Україна", x: 66, y: 62, note: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." }
-    ]
-  },
-  {
     id: "ternopil",
     name: "Тернопіль",
     x: 19.5,

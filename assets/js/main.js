@@ -398,6 +398,7 @@
   const terminalBody = document.getElementById("terminalBody");
   const terminalForm = document.getElementById("terminalForm");
   const terminalInput = document.getElementById("terminalInput");
+  const terminalCursor = document.getElementById("terminalCursor");
 
   const BOOT_LINES = [
     { text: "> booting 0xDEAD network shell...", cls: "t-dim" },
@@ -421,11 +422,81 @@
     });
   }
 
+  function updateTerminalCursor() {
+    if (!terminalCursor || !terminalInput) return;
+    const shouldHide = document.activeElement === terminalInput || terminalInput.value.length > 0;
+    terminalCursor.classList.toggle("is-hidden", shouldHide);
+  }
+
+  /* Classic falling-code takeover: overlays a canvas on top of the terminal's
+     existing scrollback (untouched underneath) for a few seconds, then removes it.
+     Appended to the outer `.terminal` (not the scrolling `.terminal__body`) and
+     positioned to match the body's rect — a child of the scrolling element would
+     scroll away with the content instead of staying pinned over what's visible. */
+  function runMatrixEffect(durationMs) {
+    if (!terminalBody) return;
+    const host = document.getElementById("terminal-window") || terminalBody.parentElement;
+    if (!host) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "terminal__matrix";
+    canvas.style.top = terminalBody.offsetTop + "px";
+    canvas.style.left = terminalBody.offsetLeft + "px";
+    canvas.style.width = terminalBody.offsetWidth + "px";
+    canvas.style.height = terminalBody.offsetHeight + "px";
+    host.appendChild(canvas);
+
+    if (prefersReducedMotion) {
+      setTimeout(() => {
+        canvas.remove();
+        printLine("> matrix.exe завершено. з'єднання відновлено.", "t-cyan");
+      }, 400);
+      return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    const glyphs = "01アイウエオカキクケコサシ0xDEAD".split("");
+    const fontSize = 15;
+    let columns = [];
+    let rafId = null;
+
+    function resize() {
+      canvas.width = terminalBody.offsetWidth;
+      canvas.height = terminalBody.offsetHeight;
+      const count = Math.floor(canvas.width / fontSize);
+      columns = new Array(count).fill(0).map(() => Math.random() * -30);
+    }
+
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,0,0.12)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + "px monospace";
+      columns.forEach((y, i) => {
+        const glyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+        ctx.fillStyle = Math.random() > 0.93 ? "#ffffff" : "#39ff14";
+        ctx.fillText(glyph, i * fontSize, y * fontSize);
+        columns[i] = y * fontSize > canvas.height && Math.random() > 0.975 ? 0 : y + 1;
+      });
+      rafId = requestAnimationFrame(draw);
+    }
+
+    resize();
+    rafId = requestAnimationFrame(draw);
+
+    setTimeout(() => {
+      if (rafId) cancelAnimationFrame(rafId);
+      canvas.remove();
+      printLine("> matrix.exe завершено. з'єднання відновлено.", "t-cyan");
+    }, durationMs);
+  }
+
   const TERMINAL_COMMANDS = {
     help: () => [
       "доступні команди:",
       "  help      — список команд",
       "  about     — про книгу",
+      "  author    — про авторку",
+      "  timeline  — ключові події історії",
       "  archive   — перейти до архіву",
       "  dossier   — перейти до досьє угруповання",
       "  map       — відкрити карту мережі",
@@ -436,6 +507,15 @@
       "0xDEAD: Код смерті — lorem ipsum кіберпанк-трилер про хакерку,",
       "яка розплутує мережу вбивств, закодовану глибоко в місті."
     ],
+    author: () => [
+      "Адріана Созанська — авторка.",
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod",
+      "tempor incididunt ut labore et dolore magna aliqua."
+    ],
+    timeline: () => {
+      openTimelineModal();
+      return ["> завантаження timeline.log..."];
+    },
     archive: () => {
       document.getElementById("archive")?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
       return ["> перенаправлення до /archive ..."];
@@ -449,11 +529,20 @@
       openMapModal();
       return ["> ініціалізація мережевої карти...", "> знайдено 5 активних вузлів"];
     },
+    sudo: () => ["Permission denied. Nice try."],
+    matrix: () => {
+      runMatrixEffect(6000);
+      return ["> ініціалізація matrix.exe..."];
+    },
     clear: () => { if (terminalBody) terminalBody.innerHTML = ""; return []; }
   };
 
   if (terminalForm && terminalInput) {
     bootTerminal();
+    updateTerminalCursor();
+    terminalInput.addEventListener("focus", updateTerminalCursor);
+    terminalInput.addEventListener("blur", updateTerminalCursor);
+    terminalInput.addEventListener("input", updateTerminalCursor);
 
     terminalForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -471,6 +560,127 @@
       }
 
       terminalInput.value = "";
+      updateTerminalCursor();
+    });
+  }
+
+  /* ---------------- timeline modal ---------------- */
+
+  const timelineEvents = typeof TIMELINE_EVENTS !== "undefined" ? TIMELINE_EVENTS : [];
+  const timelineModal = document.getElementById("timelineModal");
+  const timelineBackdrop = document.getElementById("timelineBackdrop");
+  const timelinePanel = document.getElementById("timelinePanel");
+  const timelineLog = document.getElementById("timelineLog");
+  const timelineClose = document.getElementById("timelineClose");
+
+  let timelineLastFocused = null;
+  let timelineTimers = [];
+
+  function computeTimelineTargetRect() {
+    const width = Math.min(window.innerWidth * 0.9, 640);
+    const height = Math.min(window.innerHeight * 0.8, 560);
+    return {
+      top: (window.innerHeight - height) / 2,
+      left: (window.innerWidth - width) / 2,
+      width,
+      height
+    };
+  }
+
+  function streamTimelineLog() {
+    if (!timelineLog) return;
+    timelineLog.innerHTML = "";
+    timelineTimers.forEach((id) => clearTimeout(id));
+    timelineTimers = [];
+
+    timelineEvents.forEach((event, i) => {
+      const delay = prefersReducedMotion ? 0 : i * 450;
+      const id = setTimeout(() => {
+        const line = document.createElement("p");
+        line.className = "timeline-modal__line";
+        line.innerHTML = `<span class="timeline-modal__date">[${event.date}]</span><span class="timeline-modal__text">${event.text}</span>`;
+        timelineLog.appendChild(line);
+        timelineLog.scrollTop = timelineLog.scrollHeight;
+
+        if (i === timelineEvents.length - 1) {
+          const cursor = document.createElement("span");
+          cursor.className = "timeline-modal__cursor";
+          cursor.setAttribute("aria-hidden", "true");
+          timelineLog.appendChild(cursor);
+        }
+      }, delay);
+      timelineTimers.push(id);
+    });
+  }
+
+  function openTimelineModal() {
+    if (!timelineModal || !timelinePanel) return;
+
+    const originEl = document.getElementById("terminal-window") || terminalBody;
+    const originRect = originEl ? originEl.getBoundingClientRect() : computeTimelineTargetRect();
+    timelineLastFocused = document.activeElement;
+
+    const target = computeTimelineTargetRect();
+    timelinePanel.style.top = target.top + "px";
+    timelinePanel.style.left = target.left + "px";
+    timelinePanel.style.width = target.width + "px";
+    timelinePanel.style.height = target.height + "px";
+
+    timelinePanel.style.transition = "none";
+    timelinePanel.style.transform = flipTransformFrom(originRect, target);
+    timelineModal.classList.add("is-active");
+    document.body.classList.add("no-scroll");
+
+    streamTimelineLog();
+
+    void timelinePanel.offsetWidth;
+    timelinePanel.style.transition = "";
+
+    requestAnimationFrame(() => {
+      timelineModal.classList.add("is-visible");
+      timelinePanel.style.transform = "translate(0, 0) scale(1, 1)";
+    });
+
+    document.addEventListener("keydown", onTimelineKeydown);
+    timelinePanel.focus();
+  }
+
+  function closeTimelineModal() {
+    if (!timelineModal || !timelineModal.classList.contains("is-active")) return;
+
+    timelineTimers.forEach((id) => clearTimeout(id));
+    timelineTimers = [];
+
+    const target = computeTimelineTargetRect();
+    const originEl = document.getElementById("terminal-window") || terminalBody;
+    const rect = originEl ? originEl.getBoundingClientRect() : target;
+    timelineModal.classList.remove("is-visible");
+    timelinePanel.style.transform = flipTransformFrom(rect, target);
+
+    setTimeout(() => {
+      timelineModal.classList.remove("is-active");
+      timelinePanel.style.transform = "";
+      document.body.classList.remove("no-scroll");
+    }, prefersReducedMotion ? 0 : 500);
+
+    document.removeEventListener("keydown", onTimelineKeydown);
+    if (timelineLastFocused && timelineLastFocused.focus) timelineLastFocused.focus();
+  }
+
+  function onTimelineKeydown(e) {
+    if (e.key === "Escape") closeTimelineModal();
+  }
+
+  if (timelineModal) {
+    timelineClose?.addEventListener("click", closeTimelineModal);
+    timelineBackdrop?.addEventListener("click", closeTimelineModal);
+    window.addEventListener("resize", () => {
+      if (!timelineModal.classList.contains("is-active")) return;
+      const target = computeTimelineTargetRect();
+      timelinePanel.style.top = target.top + "px";
+      timelinePanel.style.left = target.left + "px";
+      timelinePanel.style.width = target.width + "px";
+      timelinePanel.style.height = target.height + "px";
     });
   }
 

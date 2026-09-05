@@ -107,6 +107,7 @@
         <form class="terminal__form" id="terminalForm" autocomplete="off">
           <span class="terminal__prompt">guest@0xdead:~$</span>
           <input class="terminal__input" id="terminalInput" type="text" aria-label="Термінальна команда" spellcheck="false">
+          <span class="terminal__cursor" id="terminalCursor" aria-hidden="true"></span>
         </form>
       </div>
     </div>
@@ -148,6 +149,18 @@
       <button class="dossier-modal__nav dossier-modal__nav--prev" id="dossierPrev" aria-label="Попередній файл">‹</button>
       <button class="dossier-modal__nav dossier-modal__nav--next" id="dossierNext" aria-label="Наступний файл">›</button>
       <div class="dossier-modal__content" id="dossierModalContent"></div>
+    </div>
+  </div>
+
+  <div class="timeline-modal" id="timelineModal">
+    <div class="timeline-modal__backdrop" id="timelineBackdrop"></div>
+    <div class="timeline-modal__panel" id="timelinePanel" role="dialog" aria-modal="true" tabindex="-1">
+      <button class="timeline-modal__close" id="timelineClose" aria-label="Закрити">✕</button>
+      <div class="timeline-modal__header">
+        <span class="timeline-modal__eyebrow">// timeline.log — tail -f</span>
+        <h3 class="timeline-modal__title">Ключові події</h3>
+      </div>
+      <div class="timeline-modal__log" id="timelineLog" aria-live="polite"></div>
     </div>
   </div>
 
@@ -223,6 +236,7 @@
 <script src="assets/js/archive-data.js"></script>
 <script src="assets/js/dossier-data.js"></script>
 <script src="assets/js/map-data.js"></script>
+<script src="assets/js/timeline-data.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
