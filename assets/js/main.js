@@ -520,6 +520,119 @@
     }, durationMs);
   }
 
+  /* ---------------- mini-game: investigate ---------------- */
+
+  const gameFiles = typeof GAME_FILES !== "undefined" ? GAME_FILES : {};
+  const gameHints = typeof GAME_HINTS !== "undefined" ? GAME_HINTS : {};
+  const gameStage1Solution = typeof GAME_STAGE1_SOLUTION !== "undefined" ? GAME_STAGE1_SOLUTION : null;
+  const gameStage2Solution = typeof GAME_STAGE2_SOLUTION !== "undefined" ? GAME_STAGE2_SOLUTION : null;
+  const gameInitialUnlocked = typeof GAME_INITIAL_UNLOCKED !== "undefined" ? GAME_INITIAL_UNLOCKED : [];
+  const gameEndingMessage = typeof GAME_ENDING_MESSAGE_UA !== "undefined" ? GAME_ENDING_MESSAGE_UA : "";
+
+  const gameState = {
+    active: false,
+    stage: 1,
+    unlockedFiles: [],
+    connectionMade: false,
+    hintsUsed: 0,
+    completed: false
+  };
+  let gameStageHintIndex = 0;
+
+  function startGame() {
+    if (gameState.active && !gameState.completed) {
+      return ["Розслідування вже триває. Введи 'game-help' для списку команд."];
+    }
+    gameState.active = true;
+    gameState.stage = 1;
+    gameState.unlockedFiles = gameInitialUnlocked.slice();
+    gameState.connectionMade = false;
+    gameState.hintsUsed = 0;
+    gameState.completed = false;
+    gameStageHintIndex = 0;
+    const intro = gameFiles.intro;
+    return intro ? [intro.content_ua] : ["Гру не вдалося завантажити."];
+  }
+
+  function gameEvidence() {
+    const lines = ["[EVIDENCE] Розшифровані файли:"];
+    gameState.unlockedFiles.forEach((id) => {
+      const file = gameFiles[id];
+      if (file) lines.push(`  ${id} — ${file.filename}`);
+    });
+    return lines;
+  }
+
+  function gameOpen(fileId) {
+    if (!fileId) return ["Вкажи файл: open <fileId>"];
+    if (!gameState.unlockedFiles.includes(fileId) || !gameFiles[fileId]) {
+      return ["Файл не знайдено."];
+    }
+    const file = gameFiles[fileId];
+    const lines = [`[${file.filename}]`, file.content_ua];
+
+    if (fileId === "final_note" && gameState.stage === 3 && !gameState.completed) {
+      gameState.completed = true;
+      lines.push(gameEndingMessage.replace("{hintsUsed}", String(gameState.hintsUsed)));
+    }
+    return lines;
+  }
+
+  function gameConnect(code1, code2) {
+    if (!gameStage1Solution) return ["Файл не знайдено."];
+    if (gameState.stage !== 1) return ["Ця команда зараз не потрібна."];
+
+    const attempt = `connect ${code1 || ""} ${code2 || ""}`.trim().toLowerCase();
+    if (attempt === gameStage1Solution.requiredCommand.toLowerCase()) {
+      gameState.connectionMade = true;
+      gameState.unlockedFiles.push(...gameStage1Solution.unlocks);
+      gameState.stage = gameStage1Solution.advanceToStage;
+      gameStageHintIndex = 0;
+      return [gameStage1Solution.successMessage_ua];
+    }
+    return [gameStage1Solution.failMessage_ua];
+  }
+
+  function gameDecrypt(fileId, code) {
+    if (!gameStage2Solution) return ["Файл не знайдено."];
+    if (gameState.stage !== 2) return ["Ця команда зараз не потрібна."];
+
+    const attempt = `decrypt ${fileId || ""} ${code || ""}`.trim().toLowerCase();
+    if (attempt === gameStage2Solution.requiredCommand.toLowerCase()) {
+      gameState.unlockedFiles.push(...gameStage2Solution.unlocks);
+      gameState.stage = gameStage2Solution.advanceToStage;
+      gameStageHintIndex = 0;
+      return [gameStage2Solution.successMessage_ua];
+    }
+    return [gameStage2Solution.failMessage_ua];
+  }
+
+  function gameHint() {
+    if (gameState.hintsUsed >= 3) {
+      return ["Підказки закінчилися (3/3 використано)."];
+    }
+    const hints = gameHints[gameState.stage] || [];
+    if (gameStageHintIndex >= hints.length) {
+      return ["Підказок для цього етапу більше немає."];
+    }
+    const text = hints[gameStageHintIndex];
+    gameStageHintIndex += 1;
+    gameState.hintsUsed += 1;
+    return [`[Підказка ${gameState.hintsUsed}/3]: ${text}`];
+  }
+
+  function gameHelp() {
+    return [
+      "команди гри:",
+      "  evidence                — список розшифрованих файлів",
+      "  open <file>             — відкрити файл",
+      "  connect <code1> <code2> — зіставити два коди",
+      "  decrypt <file> <code>   — розшифрувати файл кодом",
+      "  hint                    — підказка (макс. 3 за гру)",
+      "  game-help               — цей список команд"
+    ];
+  }
+
   const TERMINAL_COMMANDS = {
     help: () => [
       "доступні команди:",
@@ -527,6 +640,7 @@
       "  about     — про книгу",
       "  author    — про авторку",
       "  timeline  — ключові події історії",
+      "  game      — розпочати міні-гру-розслідування",
       "  archive   — перейти до архіву",
       "  dossier   — перейти до досьє угруповання",
       "  map       — відкрити карту мережі",
@@ -559,13 +673,17 @@
       openMapModal();
       return ["> ініціалізація мережевої карти...", "> знайдено 5 активних вузлів"];
     },
+    game: () => startGame(),
     sudo: () => {
       enterSudoPasswordMode();
       return ["[sudo] password for guest:"];
     },
     "ls -a": () => {
       if (sudoAuthenticated) {
-        return [".", "..", "MmFsaWNl.README.txt", "MnNlcmhpaQ==.README.txt"];
+        return [
+          ".", "..", "MmFsaWNl.README.txt", "MnNlcmhpaQ==.README.txt",
+          "> підказка: спробуй cat <filename>"
+        ];
       }
       return [".", ".."];
     },
@@ -627,6 +745,30 @@
         }
         updateTerminalCursor();
         return;
+      }
+
+      /* While the investigate mini-game is active, its own commands take
+         priority — anything else (help, clear, sudo, ...) still falls
+         through to the normal dispatch below, so the game never traps you. */
+      if (gameState.active) {
+        let gameLines = null;
+        if (cmd === "evidence") gameLines = gameEvidence();
+        else if (cmd === "game-help") gameLines = gameHelp();
+        else if (cmd === "hint") gameLines = gameHint();
+        else if (cmd.startsWith("open ")) gameLines = gameOpen(cmd.slice(5).trim());
+        else if (cmd.startsWith("connect ")) {
+          const [c1, c2] = cmd.slice(8).trim().split(/\s+/);
+          gameLines = gameConnect(c1, c2);
+        } else if (cmd.startsWith("decrypt ")) {
+          const [fileId, code] = cmd.slice(8).trim().split(/\s+/);
+          gameLines = gameDecrypt(fileId, code);
+        }
+
+        if (gameLines) {
+          gameLines.forEach((line) => printLine(line, "t-dim"));
+          updateTerminalCursor();
+          return;
+        }
       }
 
       const handler = TERMINAL_COMMANDS[cmd];

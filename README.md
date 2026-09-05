@@ -36,6 +36,7 @@ assets/js/archive-data.js     Lorem-ipsum bonus "case file" lore entries
 assets/js/dossier-data.js     Police dossier entries on the syndicate cell
 assets/js/map-data.js         Cities + street pins for the terminal "map" command
 assets/js/timeline-data.js    Backstory events for the terminal "timeline" command
+assets/js/game-data.js        Files/hints/endings for the terminal "game" mini-game
 assets/img/                   Placeholder cover art + favicon (SVG)
 ```
 
@@ -76,6 +77,19 @@ assets/img/                   Placeholder cover art + favicon (SVG)
 - **`matrix` easter egg**: overlays a falling-code animation on top of the
   terminal's existing scrollback for a few seconds (via `runMatrixEffect()`)
   without touching it, then removes itself.
+- **`game` mini-game ("investigate")**: a documented command (listed in
+  `help`), unlike the easter eggs above. Typing `game` starts a three-stage
+  investigation with its own sub-commands (`evidence`, `open <file>`,
+  `connect <code1> <code2>`, `decrypt <file> <code>`, `hint`, `game-help`)
+  — these take priority over the normal terminal commands only while
+  `gameState.active` is true, and everything else (help, clear, sudo, ...)
+  still falls through normally, so the game never traps a visitor. All
+  content — file text, the two solution commands, hints (capped at 3
+  total across the whole game, not per stage), and the ending message —
+  lives in `assets/js/game-data.js`; the engine (`main.js`) only holds the
+  state machine and dispatch. A file only appears in `evidence`/`open`
+  once its id is added to `gameState.unlockedFiles`; nothing about locked
+  files is shown ahead of time.
 - **Terminal `timeline` command**: opens a modal that streams
   `TIMELINE_EVENTS` (from `assets/js/timeline-data.js`) into a scrolling,
   `tail -f`-style log — each `{date, text}` entry appears a beat after the
