@@ -1,8 +1,9 @@
 # 0xDEAD: Код смерті — Promo Site
 
 Static promo website for the book *0xDEAD: Код смерті*. Plain HTML/CSS/JS,
-no build step, no backend — uses `localStorage` for its interactive
-persistence (bonus archive unlocks).
+no build step, no backend, no server-side state — every interactive piece
+(terminal, map, dossier, archive) renders straight from the data files in
+`assets/js/`.
 
 ## Running locally
 
@@ -31,8 +32,9 @@ static host:
 index.html                   Single-page site (sections linked by anchor)
 assets/css/style.css          All styling (cyberpunk theme, CSS variables)
 assets/js/main.js             Nav, hero rain effect, terminal, archive
-                               unlock logic
-assets/js/archive-data.js     Lorem-ipsum bonus "case file" lore entries
+                               evidence viewer
+assets/js/archive-data.js     Evidence entries for the "Класифікований архів"
+                               cold-storage section
 assets/js/dossier-data.js     Police dossier entries on the syndicate cell
 assets/js/map-data.js         Cities + street pins for the terminal "map" command
 assets/js/timeline-data.js    Backstory events for the terminal "timeline" command
@@ -47,10 +49,25 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   The "Термінал" section is the site's flagship — it's meant to sell the
   book's vibe through the interactive terminal, so give its lede real
   personality when the time comes rather than treating it as filler.
-- **Bonus lore "Classified Archive" entries**: edit the `ARCHIVE_FILES`
-  array in `assets/js/archive-data.js`. Add/remove objects (`id`, `title`,
-  `body`) — the grid, unlock counter, and progress bar update automatically.
-  `id` values must stay unique since they're used as the localStorage key.
+- **Classified Archive** (`// 03 — archive/`): a police evidence cold
+  storage, not a puzzle — every file is viewable immediately, in any
+  order, with no unlock code or progress tracking. Edit the
+  `ARCHIVE_FILES` array in `assets/js/archive-data.js`: each entry has a
+  `tag` (e.g. "ДОК. №003"), `label`, `icon` (emoji shown on its grid
+  tile), and a `type` that picks which bespoke document template
+  `renderArchiveDoc()` in `assets/js/main.js` builds for it —
+  `"notice"` (Interpol-style RED NOTICE), `"mugshot"` (booking
+  protocol), `"chat"` (Telegram-like log), `"news"` (a news-site
+  clipping, styled with a light "paper" background instead of the dark
+  theme, to read like a captured screenshot), `"firewall"` (a FortiGate
+  traffic log — scrolls horizontally on its own, see `.firewall__log`)
+  and `"redacted"` (reuses the dossier's black-bar `.redaction` treatment
+  for a file with nothing recoverable on it). Each type's actual content
+  lives in a same-named field on the entry (`notice`, `mugshot`, `chat`,
+  `news`, `firewall`) — see the shape of the existing entries for each
+  field's exact keys. The modal itself (open/close/prev-next/FLIP
+  animation) is a straight duplicate of the dossier modal's, under
+  `archive-modal__*` / `openArchive()` etc.
 - **Syndicate dossier entries**: edit the `DOSSIER_FILES` array in
   `assets/js/dossier-data.js`. Each entry has a `statusClass` of `active`,
   `deceased`, or `redacted` (redacted entries render as a blacked-out file
@@ -204,9 +221,3 @@ in `assets/js/main.js`:
 
 If `PUBLISH_DATE` has already passed when the page loads, the gate is
 skipped entirely and visitors land straight on the site.
-
-## Notes on data persistence
-
-All "saved" state (archive unlock progress) lives in the visitor's own
-browser via `localStorage` — there is no server or database. Clearing
-browser data resets it; it does not sync across devices.

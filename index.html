@@ -54,7 +54,7 @@
     <ul class="nav__menu" id="navMenu">
       <li><a href="#terminal">Термінал</a></li>
       <li><a href="#dossier">Досьє</a></li>
-      <li><a href="#archive">Архів <span class="nav__badge" id="unlockBadge">0/6</span></a></li>
+      <li><a href="#archive">Архів</a></li>
       <li><a href="#author">Автор</a></li>
       <li><a class="nav__cta" href="#buy">Замовити книгу</a></li>
     </ul>
@@ -134,18 +134,21 @@
     <div class="section__inner">
       <p class="section__eyebrow">// 03 — archive/</p>
       <h2 class="section__title">Класифікований архів</h2>
-      <p class="section__lede">Бонусні файли світу книги. Розшифруй кожен, натиснувши на картку — твій прогрес зберігається локально, у твоєму браузері.</p>
-
-      <div class="archive-progress">
-        <div class="archive-progress__bar">
-          <div class="archive-progress__fill" id="archiveFill"></div>
-        </div>
-        <span id="archiveCount">0 / 6 файлів розшифровано</span>
-      </div>
+      <p class="section__lede">Холодне сховище поліції: докази у справі проти угруповання. Відкривай у будь-якому порядку — коду тут немає, бо нічого не заблоковано.</p>
 
       <div class="archive-grid" id="archiveGrid"></div>
     </div>
   </section>
+
+  <div class="archive-modal" id="archiveModal">
+    <div class="archive-modal__backdrop" id="archiveBackdrop"></div>
+    <div class="archive-modal__panel" id="archivePanel" role="dialog" aria-modal="true" tabindex="-1">
+      <button class="archive-modal__close" id="archiveClose" aria-label="Закрити файл">✕</button>
+      <button class="archive-modal__nav archive-modal__nav--prev" id="archivePrev" aria-label="Попередній файл">‹</button>
+      <button class="archive-modal__nav archive-modal__nav--next" id="archiveNext" aria-label="Наступний файл">›</button>
+      <div class="archive-modal__content" id="archiveModalContent"></div>
+    </div>
+  </div>
 
   <div class="dossier-modal" id="dossierModal">
     <div class="dossier-modal__backdrop" id="dossierBackdrop"></div>

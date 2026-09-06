@@ -3,29 +3,6 @@
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------------- storage helpers ---------------- */
-
-  const STORAGE_KEYS = {
-    unlocked: "0xdead:unlockedFiles"
-  };
-
-  function loadJSON(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : fallback;
-    } catch (e) {
-      return fallback;
-    }
-  }
-
-  function saveJSON(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-      /* localStorage unavailable (private mode / quota) — fail silently, feature degrades gracefully */
-    }
-  }
-
   /* ---------------- nav toggle ---------------- */
 
   const navToggle = document.getElementById("navToggle");
@@ -169,58 +146,242 @@
     gateEnter?.addEventListener("click", () => hideGate(false));
   }
 
-  /* ---------------- classified archive ---------------- */
+  /* ---------------- classified archive: evidence cold storage ---------------- */
 
   const archiveGrid = document.getElementById("archiveGrid");
-  const archiveFill = document.getElementById("archiveFill");
-  const archiveCount = document.getElementById("archiveCount");
-  const unlockBadge = document.getElementById("unlockBadge");
+  const archiveFiles = typeof ARCHIVE_FILES !== "undefined" ? ARCHIVE_FILES : [];
+  const archiveModal = document.getElementById("archiveModal");
+  const archiveBackdrop = document.getElementById("archiveBackdrop");
+  const archivePanel = document.getElementById("archivePanel");
+  const archiveModalContent = document.getElementById("archiveModalContent");
+  const archiveClose = document.getElementById("archiveClose");
+  const archivePrev = document.getElementById("archivePrev");
+  const archiveNext = document.getElementById("archiveNext");
 
-  const files = typeof ARCHIVE_FILES !== "undefined" ? ARCHIVE_FILES : [];
-  let unlocked = new Set(loadJSON(STORAGE_KEYS.unlocked, []));
+  let archiveOpenIndex = null;
+  let archiveOriginRect = null;
+  let archiveLastFocused = null;
 
-  function updateArchiveProgress() {
-    const total = files.length;
-    const count = unlocked.size;
-    const pct = total ? Math.round((count / total) * 100) : 0;
-    if (archiveFill) archiveFill.style.width = pct + "%";
-    if (archiveCount) archiveCount.textContent = `${count} / ${total} файлів розшифровано`;
-    if (unlockBadge) unlockBadge.textContent = `${count}/${total}`;
+  function noticeHTML(n) {
+    return `
+      <div class="archive-doc archive-doc--notice">
+        <div class="notice__bar">
+          <span class="notice__flag">🌐 INTERPOL</span>
+          <span class="notice__type">RED NOTICE</span>
+        </div>
+        <p class="notice__ref">Reference: ${n.reference}</p>
+        <h3 class="notice__subject">${n.subject}</h3>
+        <div class="notice__aliases">
+          <span class="notice__aliases-label">Відомі псевдоніми:</span>
+          <div class="notice__alias-list">${n.aliases.map((a) => `<span class="notice__alias">${a}</span>`).join("")}</div>
+        </div>
+        <div class="notice__charges">
+          <span class="notice__charges-label">Обвинувачення:</span>
+          <ul>${n.charges.map((c) => `<li>${c}</li>`).join("")}</ul>
+        </div>
+        <p class="notice__warning">${n.warning}</p>
+      </div>
+    `;
   }
 
-  function renderArchive() {
+  function mugshotHTML(m) {
+    return `
+      <div class="archive-doc archive-doc--mugshot">
+        <div class="mugshot__photo" aria-hidden="true"><span>Фото буде додано</span></div>
+        <div class="mugshot__plate">
+          <p><strong>Ім'я:</strong> ${m.name}</p>
+          <p><strong>Дата народження:</strong> ${m.dob}</p>
+          <p><strong>№ протоколу:</strong> ${m.bookingNo}</p>
+          <p><strong>Підрозділ:</strong> ${m.department}</p>
+          <p><strong>Звинувачення:</strong> ${m.charge}</p>
+          <p class="mugshot__note">${m.note}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function chatHTML(c) {
+    const bubbles = c.messages.map((m) => `
+      <div class="chat__msg chat__msg--${m.from === "ashln" ? "right" : "left"}">
+        <span class="chat__author">${m.from}</span>
+        <p>${m.text}</p>
+        <span class="chat__time">${m.time}</span>
+      </div>
+    `).join("");
+    return `
+      <div class="archive-doc archive-doc--chat">
+        <div class="chat__header">💬 ${c.participants}</div>
+        <div class="chat__log">${bubbles}</div>
+      </div>
+    `;
+  }
+
+  function newsHTML(n) {
+    return `
+      <div class="archive-doc archive-doc--news">
+        <div class="news__masthead">${n.outlet}</div>
+        <p class="news__meta">${n.section} · ${n.date}</p>
+        <h3 class="news__headline">${n.headline}</h3>
+        <p class="news__byline">${n.byline}</p>
+        ${n.paragraphs.map((p) => `<p class="news__paragraph">${p}</p>`).join("")}
+      </div>
+    `;
+  }
+
+  function firewallHTML(f) {
+    return `
+      <div class="archive-doc archive-doc--firewall">
+        <div class="firewall__header"># ${f.device} — traffic.log</div>
+        <pre class="firewall__log">${f.lines.join("\n")}</pre>
+      </div>
+    `;
+  }
+
+  function redactedDocHTML(note) {
+    return `
+      <div class="archive-doc archive-doc--redacted">
+        <div class="redaction"></div><div class="redaction"></div><div class="redaction"></div>
+        <p class="dossier-modal__redacted-note">${note}</p>
+      </div>
+    `;
+  }
+
+  function renderArchiveDoc(file) {
+    switch (file.type) {
+      case "notice": return noticeHTML(file.notice);
+      case "mugshot": return mugshotHTML(file.mugshot);
+      case "chat": return chatHTML(file.chat);
+      case "news": return newsHTML(file.news);
+      case "firewall": return firewallHTML(file.firewall);
+      case "redacted": return redactedDocHTML(file.redactedNote);
+      default: return "";
+    }
+  }
+
+  function buildArchiveModalHTML(file) {
+    return `
+      <span class="archive-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
+      <span class="archive-modal__tag">${file.tag}</span>
+      <h3 class="archive-modal__label">${file.label}</h3>
+      <div class="archive-modal__body">${renderArchiveDoc(file)}</div>
+    `;
+  }
+
+  function renderArchiveGrid() {
     if (!archiveGrid) return;
     archiveGrid.innerHTML = "";
 
-    files.forEach((file) => {
-      const isUnlocked = unlocked.has(file.id);
-
+    archiveFiles.forEach((file, idx) => {
       const card = document.createElement("button");
       card.type = "button";
-      card.className = "case-file" + (isUnlocked ? " is-unlocked" : "");
-      card.setAttribute("aria-pressed", String(isUnlocked));
+      card.className = "case-file" + (file.type === "redacted" ? " case-file--redacted" : "");
 
       card.innerHTML = `
-        <span class="case-file__id">${file.id}</span>
-        <h3 class="case-file__title">${file.title}</h3>
-        <p class="case-file__body">${file.body}</p>
-        <span class="case-file__lock">${isUnlocked ? "✓ Розшифровано" : "🔒 Натисни, щоб розшифрувати"}</span>
+        <span class="case-file__id">${file.tag}</span>
+        <span class="case-file__icon" aria-hidden="true">${file.icon}</span>
+        <h3 class="case-file__title">${file.label}</h3>
+        <span class="case-file__hint">Переглянути файл</span>
       `;
 
-      card.addEventListener("click", () => {
-        if (unlocked.has(file.id)) return;
-        unlocked.add(file.id);
-        saveJSON(STORAGE_KEYS.unlocked, Array.from(unlocked));
-        renderArchive();
-        updateArchiveProgress();
-      });
-
+      card.addEventListener("click", () => openArchive(idx, card));
       archiveGrid.appendChild(card);
     });
   }
 
-  renderArchive();
-  updateArchiveProgress();
+  function computeArchiveTargetRect() {
+    const width = Math.min(window.innerWidth * 0.92, 820);
+    const height = Math.min(window.innerHeight * 0.86, 680);
+    return {
+      top: (window.innerHeight - height) / 2,
+      left: (window.innerWidth - width) / 2,
+      width,
+      height
+    };
+  }
+
+  function openArchive(idx, originEl) {
+    if (!archiveModal || !archivePanel) return;
+
+    archiveOpenIndex = idx;
+    archiveOriginRect = originEl.getBoundingClientRect();
+    archiveLastFocused = originEl;
+
+    const target = computeArchiveTargetRect();
+    archivePanel.style.top = target.top + "px";
+    archivePanel.style.left = target.left + "px";
+    archivePanel.style.width = target.width + "px";
+    archivePanel.style.height = target.height + "px";
+
+    archiveModalContent.innerHTML = buildArchiveModalHTML(archiveFiles[idx]);
+    archiveModal.classList.add("is-active");
+    document.body.classList.add("no-scroll");
+
+    archivePanel.style.transition = "none";
+    archivePanel.style.transform = flipTransformFrom(archiveOriginRect, target);
+    void archivePanel.offsetWidth;
+    archivePanel.style.transition = "";
+
+    requestAnimationFrame(() => {
+      archiveModal.classList.add("is-visible");
+      archivePanel.style.transform = "translate(0, 0) scale(1, 1)";
+    });
+
+    document.addEventListener("keydown", onArchiveKeydown);
+    archivePanel.focus();
+  }
+
+  function closeArchive() {
+    if (archiveOpenIndex === null || !archivePanel) return;
+
+    const target = computeArchiveTargetRect();
+    const rect = archiveOriginRect || target;
+    archiveModal.classList.remove("is-visible");
+    archivePanel.style.transform = flipTransformFrom(rect, target);
+
+    setTimeout(() => {
+      archiveModal.classList.remove("is-active");
+      archivePanel.style.transform = "";
+      document.body.classList.remove("no-scroll");
+    }, prefersReducedMotion ? 0 : 500);
+
+    document.removeEventListener("keydown", onArchiveKeydown);
+    archiveOpenIndex = null;
+    if (archiveLastFocused) archiveLastFocused.focus();
+  }
+
+  function showArchiveAt(newIdx) {
+    if (archiveOpenIndex === null) return;
+    const len = archiveFiles.length;
+    archiveOpenIndex = (newIdx + len) % len;
+
+    archiveModalContent.classList.add("is-swapping");
+    setTimeout(() => {
+      archiveModalContent.innerHTML = buildArchiveModalHTML(archiveFiles[archiveOpenIndex]);
+      archiveModalContent.classList.remove("is-swapping");
+    }, prefersReducedMotion ? 0 : 160);
+  }
+
+  function onArchiveKeydown(e) {
+    if (e.key === "Escape") closeArchive();
+    if (e.key === "ArrowLeft") showArchiveAt(archiveOpenIndex - 1);
+    if (e.key === "ArrowRight") showArchiveAt(archiveOpenIndex + 1);
+  }
+
+  if (archiveGrid) {
+    renderArchiveGrid();
+    archiveClose?.addEventListener("click", closeArchive);
+    archiveBackdrop?.addEventListener("click", closeArchive);
+    archivePrev?.addEventListener("click", () => showArchiveAt(archiveOpenIndex - 1));
+    archiveNext?.addEventListener("click", () => showArchiveAt(archiveOpenIndex + 1));
+    window.addEventListener("resize", () => {
+      if (archiveOpenIndex === null) return;
+      const target = computeArchiveTargetRect();
+      archivePanel.style.top = target.top + "px";
+      archivePanel.style.left = target.left + "px";
+      archivePanel.style.width = target.width + "px";
+      archivePanel.style.height = target.height + "px";
+    });
+  }
 
   /* ---------------- dossier: network diagram + file-opening modal ---------------- */
 

@@ -1,34 +1,109 @@
-/* Bonus "case file" lore entries for the Classified Archive section.
-   Placeholder lorem ipsum copy — swap in real world-building content later. */
+/* Evidence lockers for the Classified Archive section — a police cold
+   storage, not a puzzle: nothing is locked, nothing needs a code, and
+   there's no order to open them in. Each entry has a `type` that picks
+   which bespoke template renderArchiveModal() builds for it in main.js
+   (see the switch there) — `redacted` gets the blackout treatment reused
+   from the dossier modal (see `.redaction` in style.css), everything else
+   gets its own in-universe document look.
+   Placeholder/lore content — swap in real world-building copy later. */
 const ARCHIVE_FILES = [
   {
-    id: "file-01",
-    title: "Сектор 7: Мертва мережа",
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tempus, nulla non facilisis feugiat, sem est cursus enim, id gravida turpis ligula sed ipsum."
+    id: "red-notice",
+    tag: "ДОК. №001",
+    label: "RED NOTICE — INTERPOL",
+    icon: "🛡",
+    type: "notice",
+    notice: {
+      reference: "№ 2024/771-UA",
+      subject: "Учасники кіберзлочинного угруповання «0xDEAD»",
+      aliases: ["xaerith", "rad0n", "stern", "kolOFF", "caterpillar99", "ashln"],
+      charges: [
+        "ст. 361 ККУ — несанкціоноване втручання в роботу комп'ютерних систем",
+        "ст. 209 ККУ — легалізація (відмивання) майна, одержаного злочинним шляхом",
+        "ст. 361-1 ККУ — створення шкідливого програмного забезпечення"
+      ],
+      warning: "ОСОБИ ВВАЖАЮТЬСЯ ІНФОРМАЦІЙНО НЕБЕЗПЕЧНИМИ. НЕ НАМАГАЙТЕСЯ ВСТАНОВИТИ КОНТАКТ САМОСТІЙНО — НЕГАЙНО ПОВІДОМТЕ НАЙБЛИЖЧИЙ ПІДРОЗДІЛ NCB."
+    }
   },
   {
-    id: "file-02",
-    title: "Досьє: Оператор Nyx",
-    body: "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae. Nyx з'явився в мережі за три дні до першого злому."
+    id: "alisa-mugshot",
+    tag: "ДОК. №002",
+    label: "Протокол затримання",
+    icon: "📸",
+    type: "mugshot",
+    mugshot: {
+      name: "Аліса [прізвище приховано]",
+      dob: "не встановлено",
+      charge: "ст. 309 ККУ — незаконне зберігання наркотичних засобів без мети збуту",
+      bookingNo: "KY-2019-04471",
+      department: "Слідчий ізолятор №13, м. Київ",
+      note: "Перше затримання. Відмовилась від адвоката. Відмовилась від показань."
+    }
   },
   {
-    id: "file-03",
-    title: "Протокол 0x000",
-    body: "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Кожен, хто активує протокол, зникає з усіх публічних реєстрів за 48 годин."
+    id: "chat-log",
+    tag: "ДОК. №003",
+    label: "Листування: ashln — caterpillar99",
+    icon: "💬",
+    type: "chat",
+    chat: {
+      participants: "ashln, caterpillar99",
+      messages: [
+        { from: "caterpillar99", time: "23:41", text: "не спи, є новини" },
+        { from: "caterpillar99", time: "23:41", text: "Куратор питав про тебе. знову." },
+        { from: "ashln", time: "23:42", text: "скажи що я закінчила з цим два роки тому" },
+        { from: "caterpillar99", time: "23:44", text: "я сказав. він не повірив" },
+        { from: "caterpillar99", time: "23:44", text: "не відповідай нікому крім мене найближчі кілька днів, добре?" },
+        { from: "ashln", time: "23:45", text: "марк, ти мене лякаєш" },
+        { from: "caterpillar99", time: "23:47", text: "просто довірся. так само як тоді, до AZ-5" },
+        { from: "ashln", time: "23:52", text: "добре. довіряю" }
+      ]
+    }
   },
   {
-    id: "file-04",
-    title: "Уламки: Старе місто",
-    body: "Donec rutrum congue leo eget malesuada. Nulla porttitor accumsan tincidunt. Під шаром неону лежить місто, яке ніхто не наважується індексувати."
+    id: "news-article",
+    tag: "ДОК. №004",
+    label: "Публікація у ЗМІ",
+    icon: "📰",
+    type: "news",
+    news: {
+      outlet: "СТОЛИЧНИЙ ВІСНИК",
+      section: "Кримінал",
+      date: "12 листопада",
+      headline: "У Подільському районі Києва за нез'ясованих обставин знайдено тіло чоловіка",
+      byline: "Редакція",
+      paragraphs: [
+        "Тіло 34-річного М. Гуменюка виявили в понеділок вранці мешканці одного з будинків у Подільському районі. За попередніми даними поліції, ознак насильницької смерті на місці не виявлено, проте слідство не виключає жодної версії.",
+        "За словами знайомих, чоловік працював фінансовим консультантом і \"тримався осторонь чужих справ\". Слідчі вже опитали кількох осіб з його оточення.",
+        "Причина смерті встановлюється. У поліції повідомили, що результати експертизи очікуються найближчим часом, а розслідування триває."
+      ]
+    }
   },
   {
-    id: "file-05",
-    title: "Розшифровка: Останній лист",
-    body: "Vivamus suscipit tortor eget felis porttitor volutpat. Lorem ipsum — цей файл був захищений трьома рівнями шифрування. Хтось дуже не хотів, щоб його прочитали."
+    id: "firewall-log",
+    tag: "ДОК. №005",
+    label: "Мережевий журнал (FortiGate)",
+    icon: "🧱",
+    type: "firewall",
+    firewall: {
+      device: "FGT-EDGE-03",
+      lines: [
+        "date=2024-11-09 time=03:14:02 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=notice srcip=10.20.4.71 srcport=51422 dstip=185.220.101.7 dstport=443 proto=6 action=accept service=HTTPS policyid=12 sessionid=884210",
+        "date=2024-11-09 time=03:14:19 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=warning srcip=10.20.4.71 srcport=51430 dstip=185.220.101.7 dstport=8443 proto=6 action=deny service=tcp/8443 policyid=12 utmaction=block crscore=87 crlevel=critical",
+        "date=2024-11-09 time=03:15:44 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=notice srcip=10.20.4.90 srcport=49102 dstip=45.83.191.14 dstport=22 proto=6 action=accept service=SSH policyid=07 sessionid=884233",
+        "date=2024-11-09 time=03:22:01 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=warning srcip=10.20.4.12 srcport=60011 dstip=45.83.191.14 dstport=3389 proto=6 action=deny service=RDP policyid=07 utmaction=block crscore=94 crlevel=critical",
+        "date=2024-11-09 time=03:22:03 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=warning srcip=10.20.4.12 srcport=60012 dstip=45.83.191.14 dstport=3389 proto=6 action=deny service=RDP policyid=07 utmaction=block crscore=94 crlevel=critical",
+        "date=2024-11-09 time=03:41:57 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=notice srcip=10.20.4.71 srcport=51502 dstip=194.36.190.2 dstport=443 proto=6 action=accept service=HTTPS policyid=12 sessionid=884299",
+        "date=2024-11-09 time=03:58:30 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=critical srcip=10.20.4.90 srcport=51988 dstip=194.36.190.2 dstport=4444 proto=6 action=deny service=tcp/4444 policyid=12 utmaction=block crscore=99 crlevel=critical attack=\"Malicious.C2.Beacon\""
+      ]
+    }
   },
   {
-    id: "file-06",
-    title: "Архів свідка #12",
-    body: "Pellentesque in ipsum id orci porta dapibus. Свідок стверджує, що бачив, як код рухався сам по собі — за секунду до відключення."
+    id: "redacted-file",
+    tag: "ДОК. №006",
+    label: "[REDACTED]",
+    icon: "■",
+    type: "redacted",
+    redactedNote: "ВМІСТ ВИЛУЧЕНО ЗА РІШЕННЯМ СЛІДЧОГО"
   }
 ];
