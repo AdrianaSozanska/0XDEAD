@@ -56,6 +56,20 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   `deceased`, or `redacted` (redacted entries render as a blacked-out file
   with no `notes` shown, for characters the police know exist but have no
   data on) — the card's status badge and stamp follow this automatically.
+- **Dossier network diagram**: the section renders as a node/connection-
+  line diagram (a police investigation board, not a plain grid) driven by
+  `DOSSIER_NETWORK` in the same file — `nodes` gives each `DOSSIER_FILES`
+  entry (matched by `id`) a percent `x`/`y` position, `edges` draws a line
+  between two node ids (`confirmed: false` renders it dashed/dimmer —
+  currently used for every line touching Аліса, since her link to the
+  group is only known from Марк's testimony, not confirmed by police), and
+  `ghosts` + `ghostLinks` draw the small non-interactive "інша група" stub
+  nodes off Головний (he runs more than just this cell). This reuses the
+  same fixed-100×100-viewBox + percent-positioned-HTML pattern as the
+  terminal map (see `fitMapView()` in `assets/js/main.js`) — the SVG lines
+  and the folder cards scale together regardless of the stage's pixel
+  size. On narrow viewports the diagram scrolls horizontally instead of
+  crushing the layout (`.dossier-net` in `assets/css/style.css`).
 - **Book cover**: the hero now shows the real cover art
   (`assets/img/initialbookcover.jpeg`) — it's a deliberately partial
   reveal (a puzzle-piece treatment baked into the artwork itself, not a

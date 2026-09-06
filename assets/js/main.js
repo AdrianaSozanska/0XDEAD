@@ -222,10 +222,12 @@
   renderArchive();
   updateArchiveProgress();
 
-  /* ---------------- dossier: folder cards + file-opening modal ---------------- */
+  /* ---------------- dossier: network diagram + file-opening modal ---------------- */
 
   const dossierGrid = document.getElementById("dossierGrid");
+  const dossierNetSvg = document.getElementById("dossierNetSvg");
   const dossierFiles = typeof DOSSIER_FILES !== "undefined" ? DOSSIER_FILES : [];
+  const dossierNetwork = typeof DOSSIER_NETWORK !== "undefined" ? DOSSIER_NETWORK : { nodes: [], ghosts: [], ghostLinks: [], edges: [] };
   const dossierModal = document.getElementById("dossierModal");
   const dossierBackdrop = document.getElementById("dossierBackdrop");
   const dossierPanel = document.getElementById("dossierPanel");
@@ -233,8 +235,6 @@
   const dossierClose = document.getElementById("dossierClose");
   const dossierPrev = document.getElementById("dossierPrev");
   const dossierNext = document.getElementById("dossierNext");
-
-  const DOSSIER_ROTATIONS = [-1.6, 1.1, -0.7, 1.7, -1.1, 0.8];
 
   let dossierOpenIndex = null;
   let dossierOriginRect = null;
@@ -264,18 +264,65 @@
     `;
   }
 
-  function renderDossierGrid() {
-    if (!dossierGrid) return;
+  function renderDossierNetwork() {
+    if (!dossierGrid || !dossierNetSvg) return;
     dossierGrid.innerHTML = "";
+    dossierNetSvg.innerHTML = "";
 
+    const nodesById = {};
+    dossierNetwork.nodes.forEach((n) => { nodesById[n.id] = n; });
+    const ghostsById = {};
+    dossierNetwork.ghosts.forEach((g) => { ghostsById[g.id] = g; });
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    function drawLine(x1, y1, x2, y2, cls) {
+      const line = document.createElementNS(svgNS, "line");
+      line.setAttribute("x1", x1);
+      line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2);
+      line.setAttribute("y2", y2);
+      line.setAttribute("class", cls);
+      dossierNetSvg.appendChild(line);
+    }
+
+    /* faint dashed stubs from Головний to the other groups he also runs */
+    dossierNetwork.ghostLinks.forEach((ghostId) => {
+      const from = nodesById.holovnyi;
+      const to = ghostsById[ghostId];
+      if (from && to) drawLine(from.x, from.y, to.x, to.y, "dossier-link dossier-link--ghost");
+    });
+
+    /* relationship lines between real dossier files */
+    dossierNetwork.edges.forEach((edge) => {
+      const from = nodesById[edge.from];
+      const to = nodesById[edge.to];
+      if (!from || !to) return;
+      const cls = "dossier-link" + (edge.confirmed ? "" : " dossier-link--unconfirmed");
+      drawLine(from.x, from.y, to.x, to.y, cls);
+    });
+
+    /* decorative, non-interactive stub nodes for Головний's other groups */
+    dossierNetwork.ghosts.forEach((g) => {
+      const stub = document.createElement("div");
+      stub.className = "dossier-ghost";
+      stub.style.left = g.x + "%";
+      stub.style.top = g.y + "%";
+      stub.innerHTML = `<span>?</span><small>інша група</small>`;
+      dossierGrid.appendChild(stub);
+    });
+
+    /* one folder card per dossier file, positioned by DOSSIER_NETWORK */
     dossierFiles.forEach((person, idx) => {
+      const pos = nodesById[person.id];
+      if (!pos) return;
       const isDeceased = person.statusClass === "deceased";
       const isRedacted = person.statusClass === "redacted";
 
       const card = document.createElement("button");
       card.type = "button";
       card.className = "dossier-card" + (isDeceased ? " dossier-card--deceased" : "") + (isRedacted ? " dossier-card--redacted" : "");
-      card.style.setProperty("--rot", DOSSIER_ROTATIONS[idx % DOSSIER_ROTATIONS.length] + "deg");
+      card.style.left = pos.x + "%";
+      card.style.top = pos.y + "%";
 
       card.innerHTML = `
         <span class="dossier-card__id">СПРАВА №${person.caseNo}</span>
@@ -377,7 +424,7 @@
   }
 
   if (dossierGrid) {
-    renderDossierGrid();
+    renderDossierNetwork();
     dossierClose?.addEventListener("click", closeDossier);
     dossierBackdrop?.addEventListener("click", closeDossier);
     dossierPrev?.addEventListener("click", () => showDossierAt(dossierOpenIndex - 1));
