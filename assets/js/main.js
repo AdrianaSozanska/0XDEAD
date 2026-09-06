@@ -271,8 +271,6 @@
 
     const nodesById = {};
     dossierNetwork.nodes.forEach((n) => { nodesById[n.id] = n; });
-    const ghostsById = {};
-    dossierNetwork.ghosts.forEach((g) => { ghostsById[g.id] = g; });
 
     const svgNS = "http://www.w3.org/2000/svg";
     function drawLine(x1, y1, x2, y2, cls) {
@@ -285,11 +283,10 @@
       dossierNetSvg.appendChild(line);
     }
 
-    /* faint dashed stubs from Головний to the other groups he also runs */
-    dossierNetwork.ghostLinks.forEach((ghostId) => {
-      const from = nodesById.holovnyi;
-      const to = ghostsById[ghostId];
-      if (from && to) drawLine(from.x, from.y, to.x, to.y, "dossier-link dossier-link--ghost");
+    /* faint dashed stubs from each ghost's owner to the other group it stands in for */
+    dossierNetwork.ghosts.forEach((g) => {
+      const from = nodesById[g.from];
+      if (from) drawLine(from.x, from.y, g.x, g.y, "dossier-link dossier-link--ghost");
     });
 
     /* relationship lines between real dossier files */
@@ -301,7 +298,7 @@
       drawLine(from.x, from.y, to.x, to.y, cls);
     });
 
-    /* decorative, non-interactive stub nodes for Головний's other groups */
+    /* decorative, non-interactive stub nodes for other groups a person also runs */
     dossierNetwork.ghosts.forEach((g) => {
       const stub = document.createElement("div");
       stub.className = "dossier-ghost";

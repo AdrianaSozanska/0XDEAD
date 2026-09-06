@@ -6,15 +6,6 @@
    — see the comment above it for how nodes, ghosts, and edges work. */
 const DOSSIER_FILES = [
   {
-    id: "holovnyi",
-    caseNo: "07",
-    name: "Головний",
-    roleTag: "Курує кілька угруповань",
-    statusLabel: "ІСНУВАННЯ ПІДТВЕРДЖЕНО. ОСОБА НЕВІДОМА",
-    statusClass: "redacted",
-    notes: []
-  },
-  {
     id: "vadym",
     caseNo: "01",
     name: "Вадим",
@@ -30,7 +21,7 @@ const DOSSIER_FILES = [
     id: "anton",
     caseNo: "02",
     name: "Антон",
-    roleTag: "Кодер групи",
+    roleTag: "Лідер групи",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
     notes: [
@@ -42,7 +33,7 @@ const DOSSIER_FILES = [
     id: "mark",
     caseNo: "03",
     name: "Марк",
-    roleTag: "Колишній член групи",
+    roleTag: "Фінансові операції групи",
     statusLabel: "СТАТУС: ЛІКВІДОВАНО",
     statusClass: "deceased",
     notes: [
@@ -75,7 +66,7 @@ const DOSSIER_FILES = [
     id: "kurator",
     caseNo: "06",
     name: "Куратор",
-    roleTag: "Роль невідома",
+    roleTag: "Керує кіберзлочинними підрозділами",
     statusLabel: "ІСНУВАННЯ ПІДТВЕРДЖЕНО. ОСОБА НЕВІДОМА",
     statusClass: "redacted",
     notes: []
@@ -90,9 +81,10 @@ const DOSSIER_FILES = [
    Every id must match a DOSSIER_FILES entry above.
 
    `ghosts` are small non-interactive stub nodes with no dossier file of
-   their own — they represent the other groups Головний also runs, shown
-   only to make that fact visible on the board. `ghostLinks` draws a faint
-   dashed line from Головний to each one.
+   their own — each has a `from` (a real node id) it draws a faint dashed
+   line to, representing another group that person also has a hand in:
+   Куратор runs this cell alongside others (two stubs), and Марк handles
+   money for more than just this one (one stub).
 
    Each edge in `edges` connects two real dossier nodes. `confirmed: false`
    draws a dashed, dimmer line instead of a solid one — used for every line
@@ -100,21 +92,19 @@ const DOSSIER_FILES = [
    from Марк's testimony, not confirmed evidence. */
 const DOSSIER_NETWORK = {
   nodes: [
-    { id: "holovnyi", x: 50, y: 10 },
-    { id: "kurator", x: 50, y: 34 },
-    { id: "anton", x: 40, y: 58 },
-    { id: "mark", x: 68, y: 63 },
-    { id: "vadym", x: 25, y: 87 },
-    { id: "mykola", x: 47, y: 87 },
-    { id: "alisa", x: 75, y: 90 }
+    { id: "kurator", x: 50, y: 12 },
+    { id: "anton", x: 38, y: 46 },
+    { id: "mark", x: 66, y: 48 },
+    { id: "vadym", x: 46, y: 82 },
+    { id: "mykola", x: 24, y: 82 },
+    { id: "alisa", x: 74, y: 86 }
   ],
   ghosts: [
-    { id: "ghost-1", x: 20, y: 10 },
-    { id: "ghost-2", x: 80, y: 10 }
+    { id: "ghost-kurator-1", x: 20, y: 12, from: "kurator" },
+    { id: "ghost-kurator-2", x: 80, y: 12, from: "kurator" },
+    { id: "ghost-mark-1", x: 90, y: 34, from: "mark" }
   ],
-  ghostLinks: ["ghost-1", "ghost-2"],
   edges: [
-    { from: "holovnyi", to: "kurator", confirmed: true },
     { from: "kurator", to: "anton", confirmed: true },
     { from: "kurator", to: "vadym", confirmed: true },
     { from: "kurator", to: "mark", confirmed: true },

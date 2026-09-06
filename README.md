@@ -63,10 +63,11 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   between two node ids (`confirmed: false` renders it dashed/dimmer —
   currently used for every line touching Аліса, since her link to the
   group is only known from Марк's testimony, not confirmed by police), and
-  `ghosts` + `ghostLinks` draw the small non-interactive "інша група" stub
-  nodes off Головний (he runs more than just this cell). This reuses the
-  same fixed-100×100-viewBox + percent-positioned-HTML pattern as the
-  terminal map (see `fitMapView()` in `assets/js/main.js`) — the SVG lines
+  `ghosts` draws small non-interactive "інша група" stub nodes — each has
+  a `from` (a real node id) it's dashed-linked to, representing another
+  group that person also has a hand in (currently two off Куратор, one off
+  Марк). This reuses the same fixed-100×100-viewBox + percent-positioned-
+  HTML pattern as the terminal map (see `fitMapView()` in `assets/js/main.js`) — the SVG lines
   and the folder cards scale together regardless of the stage's pixel
   size. On narrow viewports the diagram scrolls horizontally instead of
   crushing the layout (`.dossier-net` in `assets/css/style.css`).
