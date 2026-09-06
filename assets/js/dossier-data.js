@@ -8,14 +8,20 @@ const DOSSIER_FILES = [
   {
     id: "vadym",
     caseNo: "01",
-    name: "Вадим",
+    name: "Вадим Ярчук",
     roleTag: "Права рука Антона",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
     photo: "assets/img/ГрупаВадим.jpeg",
     notes: [
-      "Виконує накази Антона без зайвих питань — і стежить, щоб інші теж не ставили.",
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      "Місто народження: м.Конотоп, Сумщина",
+      "Сімейний стан: розлучений",
+      "Освіта: вища, інформатична",
+      "Місце роботи (навчання): не працює",
+      "Підозра: немає",
+      "Розшук: в розшуку не перебуває",
+      "Відомий у мережі за нікнеймом: rad0n",
+      "Коментар: Ймовірно, координував дії групи до та під час інциденту, про який йдеться у справі [REDACTED]"
     ]
   },
   {
@@ -25,7 +31,7 @@ const DOSSIER_FILES = [
     roleTag: "Лідер групи",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
-    photo: "assets/img/ГрупаАнтон.jpeg",
+    photo: "assets/img/ГрупаАнтон_new.jpeg",
     notes: [
       "Пише код, яким угруповання пробиває периметри чужих систем. Немає мережі, яку б він не міг прочитати як відкриту книгу.",
       "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
@@ -46,6 +52,7 @@ const DOSSIER_FILES = [
       "Місце роботи (навчання): ФОП з надання фінансового консультування",
       "Підозра: ст. 209 ч. 3 ККУ — Легалізація (відмивання) майна, одержаного злочинним шляхом, вчинена організованою групою.",
       "Розшук: Розшук призупинено у зв'язку зі встановленням факту смерті.",
+      "Відомий у мережі за нікнеймом: caterpillar99",
       "Коментар: [REDACTED]"
     ]
   },
