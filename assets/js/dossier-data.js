@@ -12,6 +12,7 @@ const DOSSIER_FILES = [
     roleTag: "Права рука Антона",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
+    photo: "assets/img/ГрупаВадим.jpeg",
     notes: [
       "Виконує накази Антона без зайвих питань — і стежить, щоб інші теж не ставили.",
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -19,11 +20,12 @@ const DOSSIER_FILES = [
   },
   {
     id: "anton",
-    caseNo: "02",
+    caseNo: "03",
     name: "Антон",
     roleTag: "Лідер групи",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
+    photo: "assets/img/ГрупаАнтон.jpeg",
     notes: [
       "Пише код, яким угруповання пробиває периметри чужих систем. Немає мережі, яку б він не міг прочитати як відкриту книгу.",
       "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
@@ -31,14 +33,20 @@ const DOSSIER_FILES = [
   },
   {
     id: "mark",
-    caseNo: "03",
-    name: "Марк",
+    caseNo: "02",
+    name: "Марк Гуменюк",
     roleTag: "Фінансові операції групи",
-    statusLabel: "СТАТУС: ЛІКВІДОВАНО",
+    statusLabel: "СТАТУС: ПОМЕР",
     statusClass: "deceased",
+    photo: "assets/img/ГрупаМарк.jpeg",
     notes: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Був частиною групи до інциденту.",
-      "Тіло виявлено. Причина смерті — не встановлена. Файл залишається відкритим."
+      "Місто народження: м. Львів",
+      "Сімейний стан: не одружений",
+      "Освіта: вища, економічна",
+      "Місце роботи (навчання): ФОП з надання фінансового консультування",
+      "Підозра: ст. 209 ч. 3 ККУ — Легалізація (відмивання) майна, одержаного злочинним шляхом, вчинена організованою групою.",
+      "Розшук: Розшук призупинено у зв'язку зі встановленням факту смерті.",
+      "Коментар: [REDACTED]"
     ]
   },
   {

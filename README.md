@@ -56,6 +56,10 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   `deceased`, or `redacted` (redacted entries render as a blacked-out file
   with no `notes` shown, for characters the police know exist but have no
   data on) — the card's status badge and stamp follow this automatically.
+  A `deceased` entry's photo also gets a stamp overlay (currently reads
+  "ПОМЕР" — see `.dossier-modal__photo--deceased::after` in style.css).
+  An entry with `photo` (currently vadym, anton, mark) shows that image in
+  the modal's photo slot instead of the plain gradient placeholder.
 - **Dossier network diagram**: the section renders as a node/connection-
   line diagram (a police investigation board, not a plain grid) driven by
   `DOSSIER_NETWORK` in the same file — `nodes` gives each `DOSSIER_FILES`

@@ -249,13 +249,15 @@
          <p class="dossier-modal__redacted-note">${person.statusLabel}</p>`
       : person.notes.map((line) => `<p class="dossier-modal__note">${line}</p>`).join("");
 
+    const photoHtml = person.photo ? `<img src="${person.photo}" alt="${person.name}">` : "";
+
     return `
       <span class="dossier-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
       <span class="dossier-modal__case">СПРАВА №${person.caseNo}</span>
       <h3 class="dossier-modal__name">${person.name}</h3>
       <p class="dossier-modal__role">${person.roleTag}</p>
       <div class="dossier-modal__body">
-        <div class="dossier-modal__photo${isDeceased ? " dossier-modal__photo--deceased" : ""}" aria-hidden="true"></div>
+        <div class="dossier-modal__photo${isDeceased ? " dossier-modal__photo--deceased" : ""}" aria-hidden="true">${photoHtml}</div>
         <div class="dossier-modal__details">
           ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
           ${notesHtml}
