@@ -965,9 +965,12 @@
 
     const popup = document.createElement("div");
     popup.className = "map-popup";
+    const imageHTML = location.photo
+      ? `<img src="${location.photo}" alt="${location.name}">`
+      : `<span>Фото буде додано</span>`;
     popup.innerHTML = `
       <button type="button" class="map-popup__close" aria-label="Закрити">✕</button>
-      <div class="map-popup__image" aria-hidden="true"><span>Фото буде додано</span></div>
+      <div class="map-popup__image" aria-hidden="true">${imageHTML}</div>
       <p class="map-popup__name">${location.name}</p>
       ${location.address ? `<p class="map-popup__address">${location.address}</p>` : ""}
       <span class="map-popup__arrow" aria-hidden="true"></span>
