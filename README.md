@@ -144,8 +144,8 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   placeholder until a `photo` path is set on that street entry in
   map-data.js — currently vinnytsia-1, ternopil-1, and ternopil-2 have
   one), the street name, and
-  an address line — for all nine current pins (Київ's six, Вінниця's one,
-  Тернопіль's two) that line is repurposed as an in-story label (e.g.
+  an address line — for all eleven current pins (Київ's eight, Вінниця's
+  one, Тернопіль's two) that line is repurposed as an in-story label (e.g.
   "Житло Аліси", "Відділок поліції", "Розділ 0x32") rather than a literal
   postal address.
 

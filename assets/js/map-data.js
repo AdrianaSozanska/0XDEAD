@@ -66,9 +66,11 @@ const MAP_DATA = [
       { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Житло Аліси", district: "podilskyi", x: 36, y: 21, note: "" },
       { id: "kyiv-2", name: "вулиця Князів Острозьких, 30", address: "Відділок поліції", district: "pecherskyi", x: 57, y: 42, note: "" },
       { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Житло Антона", district: "dniprovskyi", x: 61, y: 32, note: "" },
-      { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Житло Марка", district: "podilskyi", x: 32, y: 20, note: "" },
+      { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Житло Марка", district: "obolonskyi", x: 43, y: 15, note: "" },
       { id: "kyiv-5", name: "вулиця Антоновича, 44", address: "Житло Вадима", district: "holosiivskyi", x: 47.5, y: 45, note: "" },
-      { id: "kyiv-6", name: "вулиця Андріївська, 9", address: "Розділ 0x35", district: "podilskyi", x: 46.5, y: 33.5, note: "" }
+      { id: "kyiv-6", name: "вулиця Андріївська, 9", address: "Розділ 0x35", district: "podilskyi", x: 46.5, y: 33.5, note: "" },
+      { id: "kyiv-7", name: "Міст Патона", address: "0xDEAD", district: "darnytskyi", x: 60, y: 46.3, note: "" },
+      { id: "kyiv-8", name: "Зустріч АН", address: "Підвал на Березняках", district: "dniprovskyi", x: 70, y: 40, note: "" }
     ]
   },
   {
