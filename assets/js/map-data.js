@@ -28,7 +28,8 @@
    city's zoomed-in view. All pins below are real addresses positioned as
    accurately as their city's own view allows; precise placement can be
    refined further once exact geocoding is available. A pin with `photo`
-   (currently vinnytsia-1, ternopil-1, ternopil-2) shows that image in its
+   (currently all eight Kyiv pins, vinnytsia-1, ternopil-1, ternopil-2 —
+   every pin except Харків, which has none yet) shows that image in its
    popup instead of the "Фото буде додано" placeholder — see
    showLocationPopup() in
    assets/js/main.js. */
@@ -63,14 +64,14 @@ const MAP_DATA = [
     y: 23.6,
     realDistricts: true,
     streets: [
-      { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Житло Аліси", district: "podilskyi", x: 36, y: 21, note: "" },
-      { id: "kyiv-2", name: "вулиця Князів Острозьких, 30", address: "Відділок поліції", district: "pecherskyi", x: 57, y: 42, note: "" },
-      { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Житло Антона", district: "dniprovskyi", x: 61, y: 32, note: "" },
-      { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Житло Марка", district: "obolonskyi", x: 43, y: 15, note: "" },
-      { id: "kyiv-5", name: "вулиця Антоновича, 44", address: "Житло Вадима", district: "holosiivskyi", x: 47.5, y: 45, note: "" },
-      { id: "kyiv-6", name: "вулиця Андріївська, 9", address: "Розділ 0x35", district: "podilskyi", x: 46.5, y: 33.5, note: "" },
-      { id: "kyiv-7", name: "Міст Патона", address: "0xDEAD", district: "darnytskyi", x: 60, y: 46.3, note: "" },
-      { id: "kyiv-8", name: "Зустріч АН", address: "Підвал на Березняках", district: "dniprovskyi", x: 70, y: 40, note: "" }
+      { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Житло Аліси", photo: "assets/img/КиївАліса1Ред.jpeg", district: "podilskyi", x: 36, y: 21, note: "" },
+      { id: "kyiv-2", name: "вулиця Князів Острозьких, 30", address: "Відділок поліції", photo: "assets/img/КиївПоліціяРед.jpeg", district: "pecherskyi", x: 57, y: 42, note: "" },
+      { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Житло Антона", photo: "assets/img/КиївАнтонРед.jpeg", district: "dniprovskyi", x: 61, y: 32, note: "" },
+      { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Житло Марка", photo: "assets/img/КиївМаркРед.jpeg", district: "obolonskyi", x: 43, y: 15, note: "" },
+      { id: "kyiv-5", name: "вулиця Антоновича, 44", address: "Житло Вадима", photo: "assets/img/КиївВадимРед.jpeg", district: "holosiivskyi", x: 47.5, y: 45, note: "" },
+      { id: "kyiv-6", name: "вулиця Андріївська, 9", address: "Розділ 0x35", photo: "assets/img/КиївАліса2Ред.jpeg", district: "podilskyi", x: 46.5, y: 33.5, note: "" },
+      { id: "kyiv-7", name: "Міст Патона", address: "0xDEAD", photo: "assets/img/Київміст.jpeg", district: "darnytskyi", x: 60, y: 46.3, note: "" },
+      { id: "kyiv-8", name: "Підвал на Березняках", address: "Зустріч АН", photo: "assets/img/АНЗустріч.jpeg", district: "dniprovskyi", x: 70, y: 40, note: "" }
     ]
   },
   {
