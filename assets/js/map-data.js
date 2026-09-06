@@ -28,8 +28,9 @@
    city's zoomed-in view. All pins below are real addresses positioned as
    accurately as their city's own view allows; precise placement can be
    refined further once exact geocoding is available. A pin with `photo`
-   (currently only vinnytsia-1) shows that image in its popup instead of
-   the "Фото буде додано" placeholder — see showLocationPopup() in
+   (currently vinnytsia-1, ternopil-1, ternopil-2) shows that image in its
+   popup instead of the "Фото буде додано" placeholder — see
+   showLocationPopup() in
    assets/js/main.js. */
 const MAP_DATA = [
   {
@@ -40,8 +41,8 @@ const MAP_DATA = [
     outline: "M5.7,0.0 L13.1,1.8 L12.7,6.4 L15.3,9.2 L20.4,18.6 L22.9,20.1 L27.1,17.3 L28.7,17.3 L30.6,18.6 L33.1,16.5 L32.8,14.8 L33.8,14.0 L37.6,16.3 L37.9,15.5 L36.0,12.2 L36.9,11.5 L41.7,10.2 L42.4,11.7 L43.3,12.0 L48.4,8.9 L50.0,8.4 L51.6,9.2 L56.1,7.9 L60.5,10.4 L68.8,13.5 L76.4,12.0 L85.4,13.5 L95.9,28.0 L96.5,30.3 L100.0,30.5 L99.0,35.9 L95.9,39.7 L94.3,43.3 L95.2,45.0 L94.9,47.1 L92.7,47.3 L92.7,51.1 L91.4,54.7 L83.8,52.9 L82.5,54.5 L79.6,63.4 L75.5,68.2 L73.6,69.7 L68.5,72.0 L65.0,72.8 L60.2,72.8 L61.1,78.9 L62.1,77.9 L63.1,77.9 L66.9,81.2 L73.9,81.4 L80.3,82.4 L81.5,83.2 L82.2,84.7 L80.9,89.6 L79.6,89.3 L79.0,90.3 L76.4,90.3 L75.5,91.3 L72.9,90.6 L69.4,94.7 L76.4,96.4 L77.1,97.5 L79.0,97.7 L78.3,100.0 L63.4,97.5 L56.1,98.2 L54.1,97.7 L48.1,80.7 L42.0,74.0 L41.7,71.2 L43.3,68.4 L42.7,63.9 L42.0,63.4 L39.8,63.1 L32.2,59.8 L29.3,59.8 L28.3,62.1 L22.0,61.3 L21.3,61.1 L21.3,58.8 L14.6,57.5 L13.4,58.8 L12.4,58.5 L11.8,59.0 L10.5,63.4 L6.1,60.6 L4.8,54.2 L1.0,52.7 L2.2,50.9 L2.5,48.6 L0.3,39.7 L4.5,39.4 L9.6,36.6 L11.8,37.4 L12.4,36.9 L9.6,35.9 L6.4,33.1 L9.2,30.8 L9.6,28.0 L5.7,24.7 L4.1,22.1 L7.6,19.3 L6.7,18.3 L3.8,18.3 L0.3,10.4 L0.0,3.6 L5.1,2.3 Z",
     outlineAspect: 0.799,
     streets: [
-      { id: "ternopil-1", name: "вулиця Над Ставом, 16", address: "Розділ 0x30", x: 37.5, y: 49.0, note: "" },
-      { id: "ternopil-2", name: "Підволочиське шосе, 5", address: "Розділ 0x29", x: 90, y: 49.0, note: "" }
+      { id: "ternopil-1", name: "Тернопільський став", address: "Розділ 0x30", photo: "assets/img/Тернопільстав.png", x: 37.5, y: 49.0, note: "" },
+      { id: "ternopil-2", name: "Підволочиське шосе, 5", address: "Розділ 0x29", photo: "assets/img/Тернопільквартира.png", x: 90, y: 49.0, note: "" }
     ]
   },
   {

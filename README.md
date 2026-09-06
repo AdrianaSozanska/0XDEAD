@@ -142,7 +142,8 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   it gets the same real-outline treatment. Clicking a location pin opens a
   small popup anchored above the pin with an image ("Фото буде додано"
   placeholder until a `photo` path is set on that street entry in
-  map-data.js — currently only vinnytsia-1 has one), the street name, and
+  map-data.js — currently vinnytsia-1, ternopil-1, and ternopil-2 have
+  one), the street name, and
   an address line — for all nine current pins (Київ's six, Вінниця's one,
   Тернопіль's two) that line is repurposed as an in-story label (e.g.
   "Житло Аліси", "Відділок поліції", "Розділ 0x32") rather than a literal
