@@ -171,7 +171,6 @@
         </div>
         <p class="notice__ref">Reference: ${n.reference} · Classification: ${n.classification}</p>
         <p class="notice__ref">Date of issue: ${n.dateOfIssue} · Issuing authority: ${n.issuingAuthority}</p>
-        <h3 class="notice__subject">INTERPOL — CYBERCRIME GROUP ACTIVITY NOTICE</h3>
 
         <div class="notice__section">
           <span class="notice__section-label">1. Group Identification</span>
