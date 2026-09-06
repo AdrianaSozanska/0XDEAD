@@ -49,28 +49,37 @@ const ARCHIVE_FILES = [
     }
   },
   {
-    id: "alisa-mugshot",
+    id: "firewall-log",
     tag: "ДОК. №002",
-    label: "Протокол затримання",
-    icon: "📸",
-    type: "mugshot",
-    mugshot: {
-      photo: "assets/img/АлісаАрешт.jpeg",
-      name: "Аліса [REDACTED]",
-      dob: "[REDACTED]",
-      charge: "ст. 309 ч. 1 ККУ — незаконне зберігання наркотичних засобів без мети збуту (у невеликих розмірах)",
-      bookingNo: "KY-2019-04471",
-      department: "Слідчий ізолятор №13, м. Київ",
-      note: "Перше затримання. Відмовилась від адвоката. Відмовилась від показань."
+    label: "Мережевий журнал (FortiGate)",
+    icon: "🧱",
+    type: "firewall",
+    firewall: {
+      device: "FGT-HOSPITAL-TORONTO",
+      lines: [
+        "date=2021-10-28 time=15:30:00 devname=\"FGT-HOSPITAL-TORONTO\" devid=\"FG100E3919xxxxx\" logid=\"0001000014\" type=\"traffic\" subtype=\"forward\" level=\"warning\" srcip=185.220.101.47 srcport=44192 srccountry=\"Netherlands\" dstip=192.168.14.15 dstport=3389 dstcountry=\"Canada\" action=\"deny\" policyid=12 service=\"RDP\" attack=\"Suspicious.RDP.BruteForce\" msg=\"Multiple failed authentication attempts detected\"",
+        "",
+        "date=2021-10-28 time=15:49:35 devname=\"FGT-HOSPITAL-TORONTO\" devid=\"FG100E3919xxxxx\"",
+        "logid=\"0419016384\" type=\"utm\" subtype=\"ips\" level=\"critical\"",
+        "srcip=185.220.101.47 dstip=192.168.14.15 dstport=445",
+        "attack=\"MS.SMB.Server.SMBv1.Remote.Code.Execution\"",
+        "severity=\"critical\" action=\"blocked\"",
+        "msg=\"Exploit attempt matching known ransomware delivery pattern\"",
+        "",
+        "date=2021-10-28 time=16:15:16 devname=\"FGT-HOSPITAL-TORONTO\" devid=\"FG100E3919xxxxx\"",
+        "logid=\"0000000013\" type=\"event\" subtype=\"system\" level=\"alert\"",
+        "msg=\"Unusual outbound traffic volume detected: 14.2GB in 6 minutes\"",
+        "srcip=192.168.14.15 dstip=94.142.xxx.xxx dstcountry=\"Romania\"",
+        "action=\"flagged\" comment=\"Possible data exfiltration prior to encryption event\"",
+        "",
+        "date=2021-10-28 time=16:19:44 devname=\"FGT-HOSPITAL-TORONTO\" devid=\"FG100E3919xxxxx\"",
+        "logid=\"0419016391\" type=\"utm\" subtype=\"virus\" level=\"critical\"",
+        "filename=\"svchost_update.exe\"",
+        "virus=\"W32/Filecoder.AZ5!tr.ransom\"",
+        "action=\"quarantine_failed\"",
+        "msg=\"File already executed prior to signature update — quarantine unsuccessful\""
+      ]
     }
-  },
-  {
-    id: "redacted-file",
-    tag: "ДОК. №006",
-    label: "[REDACTED]",
-    icon: "■",
-    type: "redacted",
-    redactedNote: "ВМІСТ ВИЛУЧЕНО ЗА РІШЕННЯМ СЛІДЧОГО"
   },
   {
     id: "chat-log",
@@ -96,8 +105,32 @@ const ARCHIVE_FILES = [
     }
   },
   {
-    id: "news-article",
+    id: "alisa-mugshot",
     tag: "ДОК. №004",
+    label: "Протокол затримання",
+    icon: "📸",
+    type: "mugshot",
+    mugshot: {
+      photo: "assets/img/АлісаАрешт.jpeg",
+      name: "Аліса [REDACTED]",
+      dob: "[REDACTED]",
+      charge: "ст. 309 ч. 1 ККУ — незаконне зберігання наркотичних засобів без мети збуту (у невеликих розмірах)",
+      bookingNo: "KY-2019-04471",
+      department: "Слідчий ізолятор №13, м. Київ",
+      note: "Перше затримання. Відмовилась від адвоката. Відмовилась від показань."
+    }
+  },
+  {
+    id: "redacted-file",
+    tag: "ДОК. №005",
+    label: "[REDACTED]",
+    icon: "■",
+    type: "redacted",
+    redactedNote: "ВМІСТ ВИЛУЧЕНО ЗА РІШЕННЯМ СЛІДЧОГО"
+  },
+  {
+    id: "news-article",
+    tag: "ДОК. №006",
     label: "Публікація у ЗМІ",
     icon: "📰",
     type: "news",
@@ -111,25 +144,6 @@ const ARCHIVE_FILES = [
         "Тіло 27-річного М. Гуменюка виявив в неділю вранці мешканць поблизьких будинків, що прогулювався з собакою. За попередніми даними поліції, ознак насильницької смерті на місці не виявлено, проте слідство не виключає жодної версії.",
         "За словами знайомих, чоловік працював фінансовим консультантом і \"тримався осторонь чужих справ\". Слідчі вже опитали кількох осіб з його оточення.",
         "Причина смерті встановлюється. У поліції повідомили, що результати експертизи очікуються найближчим часом, а розслідування триває."
-      ]
-    }
-  },
-  {
-    id: "firewall-log",
-    tag: "ДОК. №005",
-    label: "Мережевий журнал (FortiGate)",
-    icon: "🧱",
-    type: "firewall",
-    firewall: {
-      device: "FGT-EDGE-03",
-      lines: [
-        "date=2024-11-09 time=03:14:02 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=notice srcip=10.20.4.71 srcport=51422 dstip=185.220.101.7 dstport=443 proto=6 action=accept service=HTTPS policyid=12 sessionid=884210",
-        "date=2024-11-09 time=03:14:19 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=warning srcip=10.20.4.71 srcport=51430 dstip=185.220.101.7 dstport=8443 proto=6 action=deny service=tcp/8443 policyid=12 utmaction=block crscore=87 crlevel=critical",
-        "date=2024-11-09 time=03:15:44 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=notice srcip=10.20.4.90 srcport=49102 dstip=45.83.191.14 dstport=22 proto=6 action=accept service=SSH policyid=07 sessionid=884233",
-        "date=2024-11-09 time=03:22:01 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=warning srcip=10.20.4.12 srcport=60011 dstip=45.83.191.14 dstport=3389 proto=6 action=deny service=RDP policyid=07 utmaction=block crscore=94 crlevel=critical",
-        "date=2024-11-09 time=03:22:03 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=warning srcip=10.20.4.12 srcport=60012 dstip=45.83.191.14 dstport=3389 proto=6 action=deny service=RDP policyid=07 utmaction=block crscore=94 crlevel=critical",
-        "date=2024-11-09 time=03:41:57 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=notice srcip=10.20.4.71 srcport=51502 dstip=194.36.190.2 dstport=443 proto=6 action=accept service=HTTPS policyid=12 sessionid=884299",
-        "date=2024-11-09 time=03:58:30 devname=FGT-EDGE-03 logid=0000000013 type=traffic subtype=forward level=critical srcip=10.20.4.90 srcport=51988 dstip=194.36.190.2 dstport=4444 proto=6 action=deny service=tcp/4444 policyid=12 utmaction=block crscore=99 crlevel=critical attack=\"Malicious.C2.Beacon\""
       ]
     }
   }
