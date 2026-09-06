@@ -167,19 +167,49 @@
       <div class="archive-doc archive-doc--notice">
         <div class="notice__bar">
           <span class="notice__flag">🌐 INTERPOL</span>
-          <span class="notice__type">RED NOTICE</span>
+          <span class="notice__type">CYBERCRIME NOTICE</span>
         </div>
-        <p class="notice__ref">Reference: ${n.reference}</p>
-        <h3 class="notice__subject">${n.subject}</h3>
-        <div class="notice__aliases">
-          <span class="notice__aliases-label">Відомі псевдоніми:</span>
-          <div class="notice__alias-list">${n.aliases.map((a) => `<span class="notice__alias">${a}</span>`).join("")}</div>
+        <p class="notice__ref">Reference: ${n.reference} · Classification: ${n.classification}</p>
+        <p class="notice__ref">Date of issue: ${n.dateOfIssue} · Issuing authority: ${n.issuingAuthority}</p>
+        <h3 class="notice__subject">INTERPOL — CYBERCRIME GROUP ACTIVITY NOTICE</h3>
+
+        <div class="notice__section">
+          <span class="notice__section-label">1. Group Identification</span>
+          <p>Назва угруповання (за оперативними даними): ${n.group.name}</p>
+          <p>Тип активності: ${n.group.activityType}</p>
+          <p>Географія діяльності: ${n.group.geography}</p>
+          <p>Статус: ${n.group.status}</p>
+          <p>${n.group.note}</p>
         </div>
+
+        <div class="notice__section">
+          <span class="notice__section-label">2. Known / Suspected Members</span>
+          <span class="notice__aliases-label">Псевдоніми, зафіксовані оперативним шляхом:</span>
+          <div class="notice__alias-list">${n.members.map((m) => `<span class="notice__alias">${m.alias} — ${m.role}</span>`).join("")}</div>
+        </div>
+
+        <div class="notice__section">
+          <span class="notice__section-label">3. Modus Operandi</span>
+          ${n.modusOperandi.map((p) => `<p>${p}</p>`).join("")}
+        </div>
+
         <div class="notice__charges">
-          <span class="notice__charges-label">Обвинувачення:</span>
+          <span class="notice__charges-label">4. Associated Charges / Predicate Offenses</span>
           <ul>${n.charges.map((c) => `<li>${c}</li>`).join("")}</ul>
         </div>
-        <p class="notice__warning">${n.warning}</p>
+
+        <div class="notice__section">
+          <span class="notice__section-label">5. Threat Assessment</span>
+          <p>Рівень небезпеки: ${n.threat.level}</p>
+          <p>Рекомендації: ${n.threat.recommendation}</p>
+        </div>
+
+        <div class="notice__section">
+          <span class="notice__section-label">6. Distribution</span>
+          <p>${n.distribution}</p>
+        </div>
+
+        <p class="notice__warning">${n.disclaimer}</p>
       </div>
     `;
   }
@@ -187,10 +217,13 @@
   function mugshotHTML(m) {
     return `
       <div class="archive-doc archive-doc--mugshot">
-        <div class="mugshot__photo" aria-hidden="true"><span>Фото буде додано</span></div>
+        <div class="mugshot__photo">
+          <img src="${m.photo}" alt="Фото з протоколу затримання" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span style="display:none">Фото буде додано</span>
+        </div>
         <div class="mugshot__plate">
           <p><strong>Ім'я:</strong> ${m.name}</p>
-          <p><strong>Дата народження:</strong> ${m.dob}</p>
+          <p><strong>Дата народження</strong> ${m.dob}</p>
           <p><strong>№ протоколу:</strong> ${m.bookingNo}</p>
           <p><strong>Підрозділ:</strong> ${m.department}</p>
           <p><strong>Звинувачення:</strong> ${m.charge}</p>
