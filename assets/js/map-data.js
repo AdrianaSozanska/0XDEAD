@@ -8,18 +8,29 @@
    A city with `realDistricts: true` (currently only Київ) drills into its
    real administrative districts (see KYIV_DISTRICTS below) instead of the
    generic placeholder sector grid.
+   A city with `outline` + `outlineAspect` (Вінниця, Тернопіль) drills into
+   its real municipal boundary (traced from real boundary data, same
+   simplify/percent-transform pipeline as UKRAINE_OUTLINE) with the generic
+   placeholder sector grid clipped to that real shape instead of filling a
+   plain rectangle. Neither city has real internal administrative districts
+   to trace: Вінниця abolished its three raions in 2016, and Тернопіль has
+   never had any — so unlike Kyiv's real district polygons, this is real
+   outline + generic interior, not real interior boundaries.
    Each location pin's x/y are percentage positions (0-100) within that
-   city's zoomed-in view. Kyiv's three pins are real addresses positioned in
-   their correct district; the other cities' pins are still placeholders. */
+   city's zoomed-in view. All pins below are real addresses positioned as
+   accurately as their city's own view allows; precise placement can be
+   refined further once photos/exact geocoding are available. */
 const MAP_DATA = [
   {
     id: "ternopil",
     name: "Тернопіль",
     x: 19.5,
     y: 34.9,
+    outline: "M100.0,60.9 L90.7,56.4 L91.4,49.3 L92.4,49.9 L92.7,48.6 L91.8,47.9 L92.8,43.1 L90.3,40.5 L93.4,33.4 L87.0,18.1 L80.2,16.9 L77.9,18.6 L71.2,13.4 L64.2,19.2 L62.7,14.8 L59.8,16.0 L61.0,19.9 L60.5,20.7 L58.6,18.7 L58.0,19.0 L58.4,21.2 L57.5,20.9 L56.7,22.7 L54.9,20.6 L51.2,23.3 L46.9,9.9 L46.5,4.0 L45.0,0.0 L10.0,7.3 L7.9,6.4 L8.0,4.2 L2.3,0.9 L1.1,6.2 L1.9,9.7 L1.7,11.0 L0.0,13.1 L8.2,21.3 L14.3,23.4 L24.1,30.6 L23.4,32.6 L23.4,39.5 L24.7,46.9 L27.1,47.1 L29.3,44.5 L33.8,45.8 L39.8,43.5 L42.2,54.5 L41.8,54.8 L43.1,62.8 L44.9,65.0 L45.8,59.0 L51.7,61.1 L51.5,62.9 L52.3,63.2 L55.2,63.2 L56.7,61.7 L60.4,64.0 L62.8,63.4 L63.7,65.7 L63.6,67.2 L64.6,67.5 L64.4,70.4 L62.4,73.3 L62.6,76.6 L63.4,76.4 L66.6,82.4 L70.2,100.0 L73.9,98.5 L78.6,99.8 L78.9,97.5 L76.5,96.3 L77.2,94.5 L77.7,94.6 L78.6,92.1 L79.5,92.7 L80.2,91.3 L81.5,92.4 L81.9,91.4 L83.8,91.7 L84.4,91.1 L84.8,88.7 L84.5,87.6 L80.9,87.5 L81.5,85.0 L80.5,84.6 L79.5,86.0 L75.0,84.5 L74.3,84.6 L72.2,88.6 L72.7,86.3 L72.5,77.8 L71.3,77.9 L71.1,73.5 L72.6,72.5 L74.3,73.7 L78.3,72.0 L78.9,70.1 L78.2,69.0 L78.5,66.7 L80.2,67.5 L80.8,66.8 L82.2,68.9 L83.8,65.6 L85.7,56.0 L86.6,55.0 L99.9,61.6 Z",
+    outlineAspect: 1.47,
     streets: [
-      { id: "ternopil-1", name: "Вулиця (уточнюється)", address: "Тернопіль, Україна", x: 40, y: 35, note: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-      { id: "ternopil-2", name: "Вулиця (уточнюється)", address: "Тернопіль, Україна", x: 60, y: 65, note: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris." }
+      { id: "ternopil-1", name: "вулиця Над Ставом, 16", address: "Тернопіль, Тернопільська область, Україна", x: 66.2, y: 49.0, note: "" },
+      { id: "ternopil-2", name: "Підволочиське шосе, 5", address: "Тернопіль, Тернопільська область, Україна, 46004", x: 71.2, y: 97.1, note: "" }
     ]
   },
   {
@@ -27,9 +38,10 @@ const MAP_DATA = [
     name: "Вінниця",
     x: 35.5,
     y: 38.9,
+    outline: "M76.6,7.9 L76.2,5.7 L73.2,4.7 L73.0,5.9 L49.7,2.0 L48.3,0.3 L46.6,1.5 L37.8,0.0 L35.5,0.8 L33.7,2.9 L30.6,10.1 L24.1,27.5 L20.5,32.5 L16.7,43.4 L15.5,41.7 L15.3,42.6 L16.1,44.7 L14.0,47.8 L14.4,50.2 L14.1,52.1 L0.0,63.1 L7.5,79.7 L13.8,84.8 L14.6,83.9 L23.1,92.0 L28.6,92.5 L29.6,98.9 L37.3,94.9 L40.3,97.6 L42.4,95.6 L43.3,93.5 L43.0,92.4 L38.7,86.1 L39.7,84.8 L50.8,91.8 L51.9,93.1 L52.5,96.9 L62.0,100.0 L62.6,96.2 L64.6,96.3 L68.6,91.3 L69.3,92.8 L70.1,92.2 L69.0,89.3 L71.4,88.2 L70.3,85.4 L69.0,85.5 L69.7,85.1 L68.9,83.3 L66.1,80.8 L66.7,79.8 L68.7,81.4 L71.2,80.7 L70.5,76.8 L71.2,71.2 L71.7,71.1 L70.6,69.0 L71.9,63.2 L73.5,63.4 L74.3,60.3 L75.9,61.8 L77.5,60.7 L91.6,70.0 L93.7,70.1 L95.7,64.1 L99.9,45.7 L99.7,42.3 L98.4,39.2 L94.2,32.4 L91.1,29.5 L90.6,26.2 L83.8,15.0 L80.8,11.0 Z",
+    outlineAspect: 1.484,
     streets: [
-      { id: "vinnytsia-1", name: "Вулиця (уточнюється)", address: "Вінниця, Україна", x: 35, y: 38, note: "Duis aute irure dolor in reprehenderit in voluptate velit esse." },
-      { id: "vinnytsia-2", name: "Вулиця (уточнюється)", address: "Вінниця, Україна", x: 68, y: 58, note: "Excepteur sint occaecat cupidatat non proident, sunt in culpa." }
+      { id: "vinnytsia-1", name: "вулиця Монастирська, 41", address: "Вінниця, Вінницька область, Україна, 21000", x: 52.7, y: 54.6, note: "" }
     ]
   },
   {
@@ -41,7 +53,10 @@ const MAP_DATA = [
     streets: [
       { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Київ, Україна, 02000", district: "podilskyi", x: 36, y: 21, note: "" },
       { id: "kyiv-2", name: "вулиця Князів Острозьких, 30", address: "Київ, Україна, 01010", district: "pecherskyi", x: 57, y: 42, note: "" },
-      { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Київ, Україна, 02000", district: "dniprovskyi", x: 61, y: 32, note: "" }
+      { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Київ, Україна, 02000", district: "dniprovskyi", x: 61, y: 32, note: "" },
+      { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Київ, Україна, 04212", district: "podilskyi", x: 32, y: 20, note: "" },
+      { id: "kyiv-5", name: "вулиця Антоновича, 44", address: "Київ, Україна, 01033", district: "holosiivskyi", x: 47.5, y: 45, note: "" },
+      { id: "kyiv-6", name: "вулиця Андріївська, 9", address: "Київ, Україна, 04070", district: "podilskyi", x: 46.5, y: 33.5, note: "" }
     ]
   },
   {

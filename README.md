@@ -123,12 +123,18 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   dimensions — reuse this pattern for any future real-geography shape.
 
   Clicking a city pin zooms in. Київ drills into its **real administrative
-  districts** (районы) — see `KYIV_DISTRICTS` in `assets/js/map-data.js`,
-  also traced from real boundary data. The other cities still show a
-  decorative placeholder sector grid until real district data is provided
-  for them too. Clicking a location pin opens a small popup anchored above
-  the pin with an image placeholder ("Фото буде додано" — swap in the real
-  photo when provided), name, and address.
+  districts** (райони) — see `KYIV_DISTRICTS` in `assets/js/map-data.js`,
+  also traced from real boundary data. Вінниця and Тернопіль drill into
+  their **real municipal boundary** (also traced from real boundary data)
+  with the placeholder sector grid clipped to that real shape — neither
+  city has real internal administrative districts to trace (Вінниця
+  abolished its three raions in 2016, Тернопіль never had any), so unlike
+  Kyiv this is a real outline with a generic interior, not real interior
+  boundaries. Харків still shows the plain placeholder sector grid
+  (`unavailable`, see below) until it gets the same real-outline treatment.
+  Clicking a location pin opens a small popup anchored above the pin with
+  an image placeholder ("Фото буде додано" — swap in the real photo when
+  provided), name, and address.
 
   Edit `assets/js/map-data.js` to change cities or locations:
   - Each city has `x`/`y` — percentage position (0-100) on the country map.
@@ -138,12 +144,17 @@ assets/img/                   Placeholder cover art + favicon (SVG)
     `errorMessage` and filling in its `streets` array once ready.
   - A city with `realDistricts: true` (currently only Київ) uses
     `KYIV_DISTRICTS` for its backdrop instead of the placeholder grid.
+  - A city with `outline` (an SVG path string) + `outlineAspect` (currently
+    Вінниця and Тернопіль) draws that real boundary and clips the
+    placeholder sector grid to it — see `pathToClipPolygon()` in
+    `assets/js/main.js`, which turns the same polyline points used for the
+    SVG path into a CSS `clip-path: polygon(...)`.
   - Each city's `streets` array has its own `x`/`y` — percentage position
     (0-100) within that city's zoomed view — plus `name` and `address`
-    shown in the popup. Kyiv's three pins are real addresses positioned in
-    their correct district (Подільський, Печерський, Дніпровський); the
-    other cities are still placeholders. Precise in-district placement
-    (and the real photos for the popups) can be refined once provided.
+    shown in the popup. All pins across all four cities are now real
+    addresses positioned as accurately as each city's own view allows.
+    Precise in-district placement (and the real photos for the popups) can
+    be refined further once provided.
 
 ## Publish countdown gate
 

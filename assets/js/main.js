@@ -890,7 +890,8 @@
   const mapClose = document.getElementById("mapClose");
 
   let mapLastFocused = null;
-  let mapActiveView = null; // 'country' | 'kyiv' | 'city' | 'error'
+  let mapActiveView = null; // 'country' | 'kyiv' | 'cityOutline' | 'city' | 'error'
+  let currentCityOutlineAspect = 1; // set by openCityMap() for the 'cityOutline' view
 
   /* Ukraine outline traced from real boundary data, simplified for a clean vector
      look. Coordinates are percent positions (0-100 x, 0-100 y) matching the city
@@ -1012,6 +1013,18 @@
     });
   }
 
+  /* Converts a polyline SVG path's "M x,y L x,y ... Z" points into a CSS
+     clip-path polygon() string, so the generic sector grid can be clipped to
+     a real city outline instead of filling a plain rectangle. */
+  function pathToClipPolygon(d) {
+    const nums = d.match(/-?[\d.]+/g) || [];
+    const points = [];
+    for (let i = 0; i < nums.length; i += 2) {
+      points.push(`${nums[i]}% ${nums[i + 1]}%`);
+    }
+    return `polygon(${points.join(", ")})`;
+  }
+
   function buildSectorGridHTML() {
     const cols = 4;
     const rows = 3;
@@ -1068,6 +1081,21 @@
         </div>
       `;
       fitMapView(KYIV_ASPECT);
+    } else if (city.outline) {
+      mapActiveView = "cityOutline";
+      currentCityOutlineAspect = city.outlineAspect || 1;
+      const clipPath = pathToClipPolygon(city.outline);
+
+      mapStage.innerHTML = `
+        <div class="map-view">
+          <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path class="map-outline" d="${city.outline}"></path>
+          </svg>
+          <div class="map-district-grid" aria-hidden="true" style="clip-path:${clipPath}">${buildSectorGridHTML()}</div>
+          <div class="map-pins">${pins}</div>
+        </div>
+      `;
+      fitMapView(currentCityOutlineAspect);
     } else {
       mapActiveView = "city";
       mapStage.innerHTML = `
@@ -1184,6 +1212,7 @@
 
       if (mapActiveView === "country") fitMapView(COUNTRY_ASPECT);
       else if (mapActiveView === "kyiv") fitMapView(KYIV_ASPECT);
+      else if (mapActiveView === "cityOutline") fitMapView(currentCityOutlineAspect);
       else if (mapActiveView === "city") fillMapView();
     });
   }
