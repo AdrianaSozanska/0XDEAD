@@ -64,7 +64,7 @@ const MAP_DATA = [
     y: 23.6,
     realDistricts: true,
     streets: [
-      { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Житло Аліси", photo: "assets/img/КиївАліса1Ред.jpeg", district: "podilskyi", x: 36, y: 21, note: "" },
+      { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Житло Аліси", photo: "assets/img/КиївАліса1Ред_NEW.jpeg", district: "podilskyi", x: 36, y: 21, note: "" },
       { id: "kyiv-2", name: "вулиця Князів Острозьких, 30", address: "Відділок поліції", photo: "assets/img/КиївПоліціяРед.jpeg", district: "pecherskyi", x: 57, y: 42, note: "" },
       { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Житло Антона", photo: "assets/img/КиївАнтонРед.jpeg", district: "dniprovskyi", x: 61, y: 32, note: "" },
       { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Житло Марка", photo: "assets/img/КиївМаркРед.jpeg", district: "obolonskyi", x: 43, y: 15, note: "" },
