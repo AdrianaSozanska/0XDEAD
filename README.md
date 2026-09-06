@@ -129,18 +129,23 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   clipped to that real shape — neither city has real internal
   administrative districts to trace (Вінниця abolished its three raions in
   2016, Тернопіль never had any), so unlike Kyiv this is a real outline
-  with a generic interior, not real interior boundaries. Вінниця's outline
-  was simplified from real boundary data the same way as `UKRAINE_OUTLINE`;
-  Тернопіль's was traced directly from the reference contour image at
-  `assets/img/Тернопіль.jpeg` (a filled shape on a white background —
-  thresholded, boundary-traced, and simplified the same way). Харків still
+  with a generic interior, not real interior boundaries. Both outlines were
+  traced directly from reference contour images: `assets/img/Тернопіль.jpeg`
+  (a filled shape on a checkerboard/white background — thresholded,
+  boundary-traced, simplified) and `assets/img/Вінниця.jpeg` (a real map
+  screenshot with a red boundary line on a transparent-flattened-to-
+  checkerboard background — the checkerboard was detected and flood-filled
+  from the image edges to isolate the interior, then boundary-traced and
+  simplified the same way). Вінниця's pin (вулиця Монастирська, 41) sits at
+  the exact black dot marker from that same reference image. Харків still
   shows the plain placeholder sector grid (`unavailable`, see below) until
   it gets the same real-outline treatment. Clicking a location pin opens a
   small popup anchored above the pin with an image placeholder ("Фото буде
   додано" — swap in the real photo when provided), the street name, and an
-  address line — for Київ's six pins that line is repurposed as an
-  in-story label (e.g. "Житло Аліси", "Відділок поліції") rather than a
-  literal postal address.
+  address line — for all nine current pins (Київ's six, Вінниця's one,
+  Тернопіль's two) that line is repurposed as an in-story label (e.g.
+  "Житло Аліси", "Відділок поліції", "Розділ 0x32") rather than a literal
+  postal address.
 
   Edit `assets/js/map-data.js` to change cities or locations:
   - Each city has `x`/`y` — percentage position (0-100) on the country map.

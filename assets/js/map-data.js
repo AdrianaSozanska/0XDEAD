@@ -14,10 +14,16 @@
    city has real internal administrative districts to trace: Вінниця
    abolished its three raions in 2016, and Тернопіль has never had any — so
    unlike Kyiv's real district polygons, this is real outline + generic
-   interior, not real interior boundaries. Вінниця's outline was simplified
-   from real boundary data with the same pipeline as UKRAINE_OUTLINE;
-   Тернопіль's outline was traced directly from the reference contour image
-   at assets/img/Тернопіль.jpeg.
+   interior, not real interior boundaries. Both outlines were traced
+   directly from reference contour images: assets/img/Тернопіль.jpeg
+   (filled shape on a checkerboard/white background — thresholded, boundary-
+   traced, simplified) and assets/img/Вінниця.jpeg (a real map screenshot
+   with a red boundary line on a transparent-flattened-to-checkerboard
+   background — the checkerboard was detected and flood-filled from the
+   image edges to isolate the interior, then boundary-traced and simplified
+   the same way). Вінниця's pin (вулиця Монастирська, 41) was positioned at
+   the exact black dot marker in that same reference image, located by
+   eroding away the surrounding text label until only the solid dot survived.
    Each location pin's x/y are percentage positions (0-100) within that
    city's zoomed-in view. All pins below are real addresses positioned as
    accurately as their city's own view allows; precise placement can be
@@ -31,8 +37,8 @@ const MAP_DATA = [
     outline: "M5.7,0.0 L13.1,1.8 L12.7,6.4 L15.3,9.2 L20.4,18.6 L22.9,20.1 L27.1,17.3 L28.7,17.3 L30.6,18.6 L33.1,16.5 L32.8,14.8 L33.8,14.0 L37.6,16.3 L37.9,15.5 L36.0,12.2 L36.9,11.5 L41.7,10.2 L42.4,11.7 L43.3,12.0 L48.4,8.9 L50.0,8.4 L51.6,9.2 L56.1,7.9 L60.5,10.4 L68.8,13.5 L76.4,12.0 L85.4,13.5 L95.9,28.0 L96.5,30.3 L100.0,30.5 L99.0,35.9 L95.9,39.7 L94.3,43.3 L95.2,45.0 L94.9,47.1 L92.7,47.3 L92.7,51.1 L91.4,54.7 L83.8,52.9 L82.5,54.5 L79.6,63.4 L75.5,68.2 L73.6,69.7 L68.5,72.0 L65.0,72.8 L60.2,72.8 L61.1,78.9 L62.1,77.9 L63.1,77.9 L66.9,81.2 L73.9,81.4 L80.3,82.4 L81.5,83.2 L82.2,84.7 L80.9,89.6 L79.6,89.3 L79.0,90.3 L76.4,90.3 L75.5,91.3 L72.9,90.6 L69.4,94.7 L76.4,96.4 L77.1,97.5 L79.0,97.7 L78.3,100.0 L63.4,97.5 L56.1,98.2 L54.1,97.7 L48.1,80.7 L42.0,74.0 L41.7,71.2 L43.3,68.4 L42.7,63.9 L42.0,63.4 L39.8,63.1 L32.2,59.8 L29.3,59.8 L28.3,62.1 L22.0,61.3 L21.3,61.1 L21.3,58.8 L14.6,57.5 L13.4,58.8 L12.4,58.5 L11.8,59.0 L10.5,63.4 L6.1,60.6 L4.8,54.2 L1.0,52.7 L2.2,50.9 L2.5,48.6 L0.3,39.7 L4.5,39.4 L9.6,36.6 L11.8,37.4 L12.4,36.9 L9.6,35.9 L6.4,33.1 L9.2,30.8 L9.6,28.0 L5.7,24.7 L4.1,22.1 L7.6,19.3 L6.7,18.3 L3.8,18.3 L0.3,10.4 L0.0,3.6 L5.1,2.3 Z",
     outlineAspect: 0.799,
     streets: [
-      { id: "ternopil-1", name: "вулиця Над Ставом, 16", address: "Тернопіль, Тернопільська область, Україна", x: 66.2, y: 49.0, note: "" },
-      { id: "ternopil-2", name: "Підволочиське шосе, 5", address: "Тернопіль, Тернопільська область, Україна, 46004", x: 71.2, y: 97.1, note: "" }
+      { id: "ternopil-1", name: "вулиця Над Ставом, 16", address: "Розділ 0x30", x: 37.5, y: 49.0, note: "" },
+      { id: "ternopil-2", name: "Підволочиське шосе, 5", address: "Розділ 0x29", x: 90, y: 49.0, note: "" }
     ]
   },
   {
@@ -40,10 +46,10 @@ const MAP_DATA = [
     name: "Вінниця",
     x: 35.5,
     y: 38.9,
-    outline: "M76.6,7.9 L76.2,5.7 L73.2,4.7 L73.0,5.9 L49.7,2.0 L48.3,0.3 L46.6,1.5 L37.8,0.0 L35.5,0.8 L33.7,2.9 L30.6,10.1 L24.1,27.5 L20.5,32.5 L16.7,43.4 L15.5,41.7 L15.3,42.6 L16.1,44.7 L14.0,47.8 L14.4,50.2 L14.1,52.1 L0.0,63.1 L7.5,79.7 L13.8,84.8 L14.6,83.9 L23.1,92.0 L28.6,92.5 L29.6,98.9 L37.3,94.9 L40.3,97.6 L42.4,95.6 L43.3,93.5 L43.0,92.4 L38.7,86.1 L39.7,84.8 L50.8,91.8 L51.9,93.1 L52.5,96.9 L62.0,100.0 L62.6,96.2 L64.6,96.3 L68.6,91.3 L69.3,92.8 L70.1,92.2 L69.0,89.3 L71.4,88.2 L70.3,85.4 L69.0,85.5 L69.7,85.1 L68.9,83.3 L66.1,80.8 L66.7,79.8 L68.7,81.4 L71.2,80.7 L70.5,76.8 L71.2,71.2 L71.7,71.1 L70.6,69.0 L71.9,63.2 L73.5,63.4 L74.3,60.3 L75.9,61.8 L77.5,60.7 L91.6,70.0 L93.7,70.1 L95.7,64.1 L99.9,45.7 L99.7,42.3 L98.4,39.2 L94.2,32.4 L91.1,29.5 L90.6,26.2 L83.8,15.0 L80.8,11.0 Z",
-    outlineAspect: 1.484,
+    outline: "M52.1,0.0 L53.5,0.8 L55.1,3.3 L56.0,6.6 L57.7,7.2 L60.0,10.5 L63.4,12.0 L66.7,11.5 L67.4,9.7 L67.4,7.7 L68.5,6.6 L69.4,6.6 L72.0,9.0 L77.1,5.9 L79.9,6.6 L79.9,5.4 L80.6,4.3 L82.0,3.8 L84.2,0.5 L84.7,0.8 L85.4,2.6 L84.3,3.8 L81.7,13.3 L83.1,13.3 L85.7,11.5 L86.3,12.5 L84.9,17.1 L93.7,25.3 L96.3,24.0 L96.8,24.8 L97.0,28.1 L96.1,29.2 L92.6,27.1 L91.5,33.5 L90.8,34.3 L87.0,33.0 L84.2,40.2 L85.4,42.2 L89.6,44.2 L93.7,49.1 L96.5,50.4 L99.3,52.7 L100.0,54.2 L96.5,65.7 L92.1,62.9 L90.5,63.2 L88.4,60.4 L84.7,58.3 L82.9,61.6 L82.9,65.2 L82.0,67.0 L78.9,68.5 L78.7,74.2 L78.0,77.0 L78.7,81.1 L77.5,82.9 L73.8,81.3 L70.2,83.4 L69.5,84.9 L67.8,84.4 L65.3,87.0 L63.2,83.4 L62.0,79.8 L61.8,83.6 L60.7,84.7 L60.0,83.9 L59.0,84.7 L58.3,86.7 L56.9,88.0 L54.2,87.2 L52.1,88.5 L48.6,88.7 L45.1,85.4 L43.5,85.9 L43.0,87.7 L47.0,93.9 L47.2,97.7 L46.0,99.2 L44.9,99.2 L43.5,97.7 L41.4,97.2 L36.6,100.0 L35.6,97.4 L36.6,90.5 L34.9,89.0 L35.7,84.1 L35.2,83.4 L34.3,85.9 L31.7,86.7 L29.8,82.9 L31.3,79.8 L31.2,78.5 L30.1,78.3 L29.6,80.1 L28.7,80.8 L27.5,79.8 L26.4,77.5 L23.6,77.2 L20.8,79.0 L18.3,82.4 L15.7,77.7 L14.4,76.7 L13.6,77.5 L12.7,76.5 L11.8,78.3 L13.7,81.1 L12.7,82.6 L11.6,82.4 L8.1,79.3 L8.1,76.5 L6.9,73.9 L6.5,70.3 L7.7,67.0 L6.2,65.0 L4.0,68.5 L2.8,68.8 L0.0,62.1 L2.6,59.3 L13.2,51.2 L13.9,47.3 L15.5,45.3 L15.5,43.7 L14.3,41.9 L14.6,40.7 L17.1,37.9 L18.5,38.9 L19.0,38.4 L19.7,40.7 L21.1,41.2 L22.2,42.7 L22.9,45.5 L24.1,45.8 L24.8,45.0 L27.3,46.8 L27.5,45.3 L26.6,42.2 L27.5,40.7 L28.2,40.7 L29.9,37.3 L32.9,39.9 L34.0,38.4 L36.3,39.6 L38.0,34.3 L37.3,32.5 L37.3,29.7 L36.1,26.3 L36.6,24.6 L35.2,22.5 L35.4,21.5 L36.3,20.2 L37.7,20.5 L38.4,19.4 L39.4,20.7 L40.3,20.7 L42.4,18.7 L44.0,15.9 L47.9,18.7 L48.4,12.5 L47.9,9.0 L48.6,2.8 L49.3,1.5 L50.4,1.8 Z",
+    outlineAspect: 1.453,
     streets: [
-      { id: "vinnytsia-1", name: "вулиця Монастирська, 41", address: "Вінниця, Вінницька область, Україна, 21000", x: 52.7, y: 54.6, note: "" }
+      { id: "vinnytsia-1", name: "вулиця Монастирська, 41", address: "Розділ 0x32", x: 51.1, y: 54.1, note: "" }
     ]
   },
   {
