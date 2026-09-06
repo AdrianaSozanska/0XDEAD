@@ -53,8 +53,8 @@
 
     <ul class="nav__menu" id="navMenu">
       <li><a href="#terminal">Термінал</a></li>
-      <li><a href="#archive">Архів <span class="nav__badge" id="unlockBadge">0/6</span></a></li>
       <li><a href="#dossier">Досьє</a></li>
+      <li><a href="#archive">Архів <span class="nav__badge" id="unlockBadge">0/6</span></a></li>
       <li><a href="#author">Автор</a></li>
       <li><a class="nav__cta" href="#buy">Замовити книгу</a></li>
     </ul>
@@ -113,10 +113,26 @@
     </div>
   </section>
 
+  <!-- DOSSIER -->
+  <section class="section section--dark" id="dossier">
+    <div class="section__inner">
+      <p class="section__eyebrow">// 02 — dossier/syndicate</p>
+      <h2 class="section__title">Досьє угруповання</h2>
+      <p class="section__lede">Особові справи, зібрані поліцією на членів синдикату. Лінії показують зв'язки між ними — суцільні підтверджені, пунктирні під питанням. Натисни на теку, щоб відкрити файл.</p>
+
+      <div class="dossier-net" id="dossierNet">
+        <div class="dossier-net__stage">
+          <svg class="dossier-net__svg" id="dossierNetSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div class="dossier-net__nodes" id="dossierGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ARCHIVE -->
   <section class="section" id="archive">
     <div class="section__inner">
-      <p class="section__eyebrow">// 02 — archive/</p>
+      <p class="section__eyebrow">// 03 — archive/</p>
       <h2 class="section__title">Класифікований архів</h2>
       <p class="section__lede">Бонусні файли світу книги. Розшифруй кожен, натиснувши на картку — твій прогрес зберігається локально, у твоєму браузері.</p>
 
@@ -128,22 +144,6 @@
       </div>
 
       <div class="archive-grid" id="archiveGrid"></div>
-    </div>
-  </section>
-
-  <!-- DOSSIER -->
-  <section class="section section--dark" id="dossier">
-    <div class="section__inner">
-      <p class="section__eyebrow">// 03 — dossier/syndicate</p>
-      <h2 class="section__title">Досьє угруповання</h2>
-      <p class="section__lede">Особові справи, зібрані поліцією на членів синдикату. Лінії показують зв'язки між ними — суцільні підтверджені, пунктирні під питанням. Натисни на теку, щоб відкрити файл.</p>
-
-      <div class="dossier-net" id="dossierNet">
-        <div class="dossier-net__stage">
-          <svg class="dossier-net__svg" id="dossierNetSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
-          <div class="dossier-net__nodes" id="dossierGrid"></div>
-        </div>
-      </div>
     </div>
   </section>
 

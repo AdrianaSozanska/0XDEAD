@@ -1,6 +1,12 @@
 /* Police dossier on the syndicate cell from the book's world.
    Placeholder lorem ipsum notes — swap in real world-building content later.
-   statusClass: "active" | "deceased" | "redacted" (redacted = no data on file)
+   statusClass: "active" | "deceased" | "redacted" — just controls the status
+   badge's color and hides it for "redacted" (no clean short status to show).
+   It's independent from whether `notes` renders normally: set `blackout:
+   true` on an entry to show three black redaction bars instead of its
+   `notes` (for a file with truly nothing on it) — none currently use this;
+   Аліса and Куратор are "redacted" (identity unknown) but still show a full
+   field list, same shape as everyone else, ending in a "Коментар:" line.
 
    DOSSIER_NETWORK (below) drives the section's node/connection-line layout
    — see the comment above it for how nodes, ghosts, and edges work. */
@@ -27,14 +33,20 @@ const DOSSIER_FILES = [
   {
     id: "anton",
     caseNo: "03",
-    name: "Антон",
+    name: "Антон Ткаченко",
     roleTag: "Лідер групи",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
     photo: "assets/img/ГрупаАнтон_new.jpeg",
     notes: [
-      "Пише код, яким угруповання пробиває периметри чужих систем. Немає мережі, яку б він не міг прочитати як відкриту книгу.",
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      "Місто народження: м.Київ",
+      "Сімейний стан: не одружений",
+      "Освіта: вища",
+      "Місце роботи (навчання): не працює",
+      "Підозра: немає",
+      "Розшук: в розшуку не перебуває",
+      "Відомий у мережі за нікнеймом: xaerith",
+      "Коментар: За оперативною інформацією, здійснює координацію групи після інциденту, про який йдеться у справі [REDACTED]. Основні завдання, ймовірно, здебільшого обмежуються створенням шкідливого програмного забезпечення (malicious software)."
     ]
   },
   {
@@ -59,13 +71,19 @@ const DOSSIER_FILES = [
   {
     id: "mykola",
     caseNo: "04",
-    name: "Микола",
+    name: "Микола Шепель",
     roleTag: "Роль уточнюється",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
     notes: [
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse.",
-      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      "Місто народження: м.Житомир",
+      "Сімейний стан: не одружений",
+      "Освіта: незакінчена вища",
+      "Місце роботи (навчання): не працює",
+      "Підозра: немає",
+      "Розшук: в розшуку не перебуває",
+      "Відомий у мережі за нікнеймом: kolOFF",
+      "Коментар: немає"
     ]
   },
   {
@@ -73,18 +91,36 @@ const DOSSIER_FILES = [
     caseNo: "05",
     name: "Аліса",
     roleTag: "Роль невідома",
-    statusLabel: "ОСОБУ ВСТАНОВЛЕНО. ЗВ'ЯЗОК З УГРУПОВАННЯМ НЕ ПІДТВЕРДЖЕНО",
+    statusLabel: "ОСОБУ НЕ ВСТАНОВЛЕНО",
     statusClass: "redacted",
-    notes: []
+    notes: [
+      "Місто народження: не встановлено",
+      "Сімейний стан: не встановлено",
+      "Освіта: не встановлено",
+      "Місце роботи (навчання): не встановлено",
+      "Підозра: не встановлено",
+      "Розшук: не встановлено",
+      "Відома у мережі за нікнеймом: ashln",
+      "Коментар: ОСОБУ НЕ ВСТАНОВЛЕНО. ЗВ'ЯЗОК З УГРУПОВАННЯМ НЕ ПІДТВЕРДЖЕНО."
+    ]
   },
   {
     id: "kurator",
     caseNo: "06",
     name: "Куратор",
     roleTag: "Керує кіберзлочинними підрозділами",
-    statusLabel: "ІСНУВАННЯ ПІДТВЕРДЖЕНО. ОСОБА НЕВІДОМА",
+    statusLabel: "ОСОБА НЕВІДОМА",
     statusClass: "redacted",
-    notes: []
+    notes: [
+      "Місто народження: не встановлено",
+      "Сімейний стан: не встановлено",
+      "Освіта: не встановлено",
+      "Місце роботи (навчання): не встановлено",
+      "Підозра: керівництво кіберзлочинними підрозділами",
+      "Розшук: не оголошено",
+      "Відомий у мережі за нікнеймом: stern",
+      "Коментар: ІСНУВАННЯ ПІДТВЕРДЖЕНО. ОСОБА НЕВІДОМА."
+    ]
   }
 ];
 

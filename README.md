@@ -88,11 +88,11 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   "— скоро" labels, since presell marketplace links don't exist yet. Once
   they do, swap each `<span>` back to a real `<a href="...">` (drop the
   `btn--disabled` class and the "— скоро" text) in `index.html`.
-- **Real author photo**: drop the file in as `assets/img/author.jpg` — no
-  other change needed. `.author__portrait-frame` layers that path over the
-  gradient placeholder (`center top / cover`, cropped to the 3:4 frame), so
-  until the file exists the browser just skips that layer and the gradient
-  shows through instead of a broken-image icon.
+- **Real author photo**: currently `assets/img/Автор_new.jpeg`, layered by
+  `.author__portrait-frame`'s `background` (`center top / cover`, cropped
+  to the 3:4 frame) — drop in a new file and update that `url()` to swap
+  it. Until the referenced file exists the browser just skips that layer
+  and the gradient shows through instead of a broken-image icon.
 - **Terminal commands**: edit `TERMINAL_COMMANDS` in `assets/js/main.js`.
   Listed in `help`: `timeline`, `game`, `map`. `sudo`, `ls -a`, `cat <file>`,
   and `matrix` are undocumented easter eggs (not listed in `help`, on

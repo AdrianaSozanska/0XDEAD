@@ -244,7 +244,7 @@
     const isDeceased = person.statusClass === "deceased";
     const isRedacted = person.statusClass === "redacted";
 
-    const notesHtml = isRedacted
+    const notesHtml = person.blackout
       ? `<div class="redaction"></div><div class="redaction"></div><div class="redaction"></div>
          <p class="dossier-modal__redacted-note">${person.statusLabel}</p>`
       : person.notes.map((line) => `<p class="dossier-modal__note">${line}</p>`).join("");
