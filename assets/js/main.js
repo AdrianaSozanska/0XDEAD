@@ -636,38 +636,14 @@
     help: () => [
       "доступні команди:",
       "  help      — список команд",
-      "  about     — про книгу",
-      "  author    — про авторку",
       "  timeline  — ключові події історії",
       "  game      — розпочати міні-гру-розслідування",
-      "  archive   — перейти до архіву",
-      "  dossier   — перейти до досьє угруповання",
-      "  map       — відкрити карту мережі",
-      "  unlock    — підказка щодо розшифрування файлів",
-      "  clear     — очистити термінал"
-    ],
-    about: () => [
-      "0xDEAD: Код смерті — lorem ipsum кіберпанк-трилер про хакерку,",
-      "яка розплутує мережу вбивств, закодовану глибоко в місті."
-    ],
-    author: () => [
-      "Адріана Созанська — авторка.",
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod",
-      "tempor incididunt ut labore et dolore magna aliqua."
+      "  map       — відкрити карту мережі"
     ],
     timeline: () => {
       openTimelineModal();
       return ["> завантаження timeline.log..."];
     },
-    archive: () => {
-      document.getElementById("archive")?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
-      return ["> перенаправлення до /archive ..."];
-    },
-    dossier: () => {
-      document.getElementById("dossier")?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
-      return ["> перенаправлення до /dossier ..."];
-    },
-    unlock: () => [`розшифровано файлів: ${unlocked.size} / ${files.length}. натисни на картку в архіві, щоб розшифрувати наступний.`],
     map: () => {
       openMapModal();
       return ["> ініціалізація мережевої карти...", "> знайдено 5 активних вузлів"];
@@ -689,8 +665,7 @@
     matrix: () => {
       runMatrixEffect(6000);
       return ["> ініціалізація matrix.exe..."];
-    },
-    clear: () => { if (terminalBody) terminalBody.innerHTML = ""; return []; }
+    }
   };
 
   if (terminalForm && terminalInput) {

@@ -321,11 +321,6 @@ code {
   margin: 0 0 1rem;
   color: var(--text);
 }
-.hero__tagline {
-  color: var(--text-dim);
-  max-width: 46ch;
-  font-size: 1.05rem;
-}
 .hero__blurb {
   color: var(--text-dim);
   max-width: 56ch;

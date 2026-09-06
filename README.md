@@ -75,10 +75,9 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   until the file exists the browser just skips that layer and the gradient
   shows through instead of a broken-image icon.
 - **Terminal commands**: edit `TERMINAL_COMMANDS` in `assets/js/main.js`.
-  `about` and `author` print placeholder lorem-ipsum lines — replace the
-  text when it's ready. `sudo`, `ls -a`, `cat <file>`, and `matrix` are
-  undocumented easter eggs (not listed in `help`, on purpose — part of the
-  fun is finding them).
+  Listed in `help`: `timeline`, `game`, `map`. `sudo`, `ls -a`, `cat <file>`,
+  and `matrix` are undocumented easter eggs (not listed in `help`, on
+  purpose — part of the fun is finding them).
 - **`sudo` easter egg**: typing `sudo` switches the input to a masked
   password prompt (`terminalInput.type = "password"`, prompt text changes
   to "Password:"). The password is `0xDEAD` (`SUDO_PASSWORD` in
