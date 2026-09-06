@@ -9,13 +9,15 @@
    real administrative districts (see KYIV_DISTRICTS below) instead of the
    generic placeholder sector grid.
    A city with `outline` + `outlineAspect` (Вінниця, Тернопіль) drills into
-   its real municipal boundary (traced from real boundary data, same
-   simplify/percent-transform pipeline as UKRAINE_OUTLINE) with the generic
-   placeholder sector grid clipped to that real shape instead of filling a
-   plain rectangle. Neither city has real internal administrative districts
-   to trace: Вінниця abolished its three raions in 2016, and Тернопіль has
-   never had any — so unlike Kyiv's real district polygons, this is real
-   outline + generic interior, not real interior boundaries.
+   its real municipal boundary with the generic placeholder sector grid
+   clipped to that real shape instead of filling a plain rectangle. Neither
+   city has real internal administrative districts to trace: Вінниця
+   abolished its three raions in 2016, and Тернопіль has never had any — so
+   unlike Kyiv's real district polygons, this is real outline + generic
+   interior, not real interior boundaries. Вінниця's outline was simplified
+   from real boundary data with the same pipeline as UKRAINE_OUTLINE;
+   Тернопіль's outline was traced directly from the reference contour image
+   at assets/img/Тернопіль.jpeg.
    Each location pin's x/y are percentage positions (0-100) within that
    city's zoomed-in view. All pins below are real addresses positioned as
    accurately as their city's own view allows; precise placement can be
@@ -26,8 +28,8 @@ const MAP_DATA = [
     name: "Тернопіль",
     x: 19.5,
     y: 34.9,
-    outline: "M100.0,60.9 L90.7,56.4 L91.4,49.3 L92.4,49.9 L92.7,48.6 L91.8,47.9 L92.8,43.1 L90.3,40.5 L93.4,33.4 L87.0,18.1 L80.2,16.9 L77.9,18.6 L71.2,13.4 L64.2,19.2 L62.7,14.8 L59.8,16.0 L61.0,19.9 L60.5,20.7 L58.6,18.7 L58.0,19.0 L58.4,21.2 L57.5,20.9 L56.7,22.7 L54.9,20.6 L51.2,23.3 L46.9,9.9 L46.5,4.0 L45.0,0.0 L10.0,7.3 L7.9,6.4 L8.0,4.2 L2.3,0.9 L1.1,6.2 L1.9,9.7 L1.7,11.0 L0.0,13.1 L8.2,21.3 L14.3,23.4 L24.1,30.6 L23.4,32.6 L23.4,39.5 L24.7,46.9 L27.1,47.1 L29.3,44.5 L33.8,45.8 L39.8,43.5 L42.2,54.5 L41.8,54.8 L43.1,62.8 L44.9,65.0 L45.8,59.0 L51.7,61.1 L51.5,62.9 L52.3,63.2 L55.2,63.2 L56.7,61.7 L60.4,64.0 L62.8,63.4 L63.7,65.7 L63.6,67.2 L64.6,67.5 L64.4,70.4 L62.4,73.3 L62.6,76.6 L63.4,76.4 L66.6,82.4 L70.2,100.0 L73.9,98.5 L78.6,99.8 L78.9,97.5 L76.5,96.3 L77.2,94.5 L77.7,94.6 L78.6,92.1 L79.5,92.7 L80.2,91.3 L81.5,92.4 L81.9,91.4 L83.8,91.7 L84.4,91.1 L84.8,88.7 L84.5,87.6 L80.9,87.5 L81.5,85.0 L80.5,84.6 L79.5,86.0 L75.0,84.5 L74.3,84.6 L72.2,88.6 L72.7,86.3 L72.5,77.8 L71.3,77.9 L71.1,73.5 L72.6,72.5 L74.3,73.7 L78.3,72.0 L78.9,70.1 L78.2,69.0 L78.5,66.7 L80.2,67.5 L80.8,66.8 L82.2,68.9 L83.8,65.6 L85.7,56.0 L86.6,55.0 L99.9,61.6 Z",
-    outlineAspect: 1.47,
+    outline: "M5.7,0.0 L13.1,1.8 L12.7,6.4 L15.3,9.2 L20.4,18.6 L22.9,20.1 L27.1,17.3 L28.7,17.3 L30.6,18.6 L33.1,16.5 L32.8,14.8 L33.8,14.0 L37.6,16.3 L37.9,15.5 L36.0,12.2 L36.9,11.5 L41.7,10.2 L42.4,11.7 L43.3,12.0 L48.4,8.9 L50.0,8.4 L51.6,9.2 L56.1,7.9 L60.5,10.4 L68.8,13.5 L76.4,12.0 L85.4,13.5 L95.9,28.0 L96.5,30.3 L100.0,30.5 L99.0,35.9 L95.9,39.7 L94.3,43.3 L95.2,45.0 L94.9,47.1 L92.7,47.3 L92.7,51.1 L91.4,54.7 L83.8,52.9 L82.5,54.5 L79.6,63.4 L75.5,68.2 L73.6,69.7 L68.5,72.0 L65.0,72.8 L60.2,72.8 L61.1,78.9 L62.1,77.9 L63.1,77.9 L66.9,81.2 L73.9,81.4 L80.3,82.4 L81.5,83.2 L82.2,84.7 L80.9,89.6 L79.6,89.3 L79.0,90.3 L76.4,90.3 L75.5,91.3 L72.9,90.6 L69.4,94.7 L76.4,96.4 L77.1,97.5 L79.0,97.7 L78.3,100.0 L63.4,97.5 L56.1,98.2 L54.1,97.7 L48.1,80.7 L42.0,74.0 L41.7,71.2 L43.3,68.4 L42.7,63.9 L42.0,63.4 L39.8,63.1 L32.2,59.8 L29.3,59.8 L28.3,62.1 L22.0,61.3 L21.3,61.1 L21.3,58.8 L14.6,57.5 L13.4,58.8 L12.4,58.5 L11.8,59.0 L10.5,63.4 L6.1,60.6 L4.8,54.2 L1.0,52.7 L2.2,50.9 L2.5,48.6 L0.3,39.7 L4.5,39.4 L9.6,36.6 L11.8,37.4 L12.4,36.9 L9.6,35.9 L6.4,33.1 L9.2,30.8 L9.6,28.0 L5.7,24.7 L4.1,22.1 L7.6,19.3 L6.7,18.3 L3.8,18.3 L0.3,10.4 L0.0,3.6 L5.1,2.3 Z",
+    outlineAspect: 0.799,
     streets: [
       { id: "ternopil-1", name: "вулиця Над Ставом, 16", address: "Тернопіль, Тернопільська область, Україна", x: 66.2, y: 49.0, note: "" },
       { id: "ternopil-2", name: "Підволочиське шосе, 5", address: "Тернопіль, Тернопільська область, Україна, 46004", x: 71.2, y: 97.1, note: "" }
@@ -51,12 +53,12 @@ const MAP_DATA = [
     y: 23.6,
     realDistricts: true,
     streets: [
-      { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Київ, Україна, 02000", district: "podilskyi", x: 36, y: 21, note: "" },
-      { id: "kyiv-2", name: "вулиця Князів Острозьких, 30", address: "Київ, Україна, 01010", district: "pecherskyi", x: 57, y: 42, note: "" },
-      { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Київ, Україна, 02000", district: "dniprovskyi", x: 61, y: 32, note: "" },
-      { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Київ, Україна, 04212", district: "podilskyi", x: 32, y: 20, note: "" },
-      { id: "kyiv-5", name: "вулиця Антоновича, 44", address: "Київ, Україна, 01033", district: "holosiivskyi", x: 47.5, y: 45, note: "" },
-      { id: "kyiv-6", name: "вулиця Андріївська, 9", address: "Київ, Україна, 04070", district: "podilskyi", x: 46.5, y: 33.5, note: "" }
+      { id: "kyiv-1", name: "вулиця Максима Берлинського, 27", address: "Житло Аліси", district: "podilskyi", x: 36, y: 21, note: "" },
+      { id: "kyiv-2", name: "вулиця Князів Острозьких, 30", address: "Відділок поліції", district: "pecherskyi", x: 57, y: 42, note: "" },
+      { id: "kyiv-3", name: "Дніпровська набережна, 1", address: "Житло Антона", district: "dniprovskyi", x: 61, y: 32, note: "" },
+      { id: "kyiv-4", name: "вулиця Левка Лук'яненка, 15Г", address: "Житло Марка", district: "podilskyi", x: 32, y: 20, note: "" },
+      { id: "kyiv-5", name: "вулиця Антоновича, 44", address: "Житло Вадима", district: "holosiivskyi", x: 47.5, y: 45, note: "" },
+      { id: "kyiv-6", name: "вулиця Андріївська, 9", address: "Розділ 0x35", district: "podilskyi", x: 46.5, y: 33.5, note: "" }
     ]
   },
   {
