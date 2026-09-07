@@ -57,7 +57,11 @@ const ARCHIVE_FILES = [
     firewall: {
       device: "FGT-HOSPITAL-TORONTO",
       lines: [
-        "date=2021-10-28 time=15:30:00 devname=\"FGT-HOSPITAL-TORONTO\" devid=\"FG100E3919xxxxx\" logid=\"0001000014\" type=\"traffic\" subtype=\"forward\" level=\"warning\" srcip=185.220.101.47 srcport=44192 srccountry=\"Netherlands\" dstip=192.168.14.15 dstport=3389 dstcountry=\"Canada\" action=\"deny\" policyid=12 service=\"RDP\" attack=\"Suspicious.RDP.BruteForce\" msg=\"Multiple failed authentication attempts detected\"",
+        "date=2021-10-28 time=15:30:00 devname=\"FGT-HOSPITAL-TORONTO\" devid=\"FG100E3919xxxxx\"",
+        "logid=\"0001000014\" type=\"traffic\" subtype=\"forward\" level=\"warning\"",
+        "srcip=185.220.101.47 srcport=44192 srccountry=\"Netherlands\"",
+        "dstip=192.168.14.15 dstport=3389 dstcountry=\"Canada\" action=\"deny\" policyid=12 service=\"RDP\"",
+        "attack=\"Suspicious.RDP.BruteForce\" msg=\"Multiple failed authentication attempts detected\"",
         "",
         "date=2021-10-28 time=15:49:35 devname=\"FGT-HOSPITAL-TORONTO\" devid=\"FG100E3919xxxxx\"",
         "logid=\"0419016384\" type=\"utm\" subtype=\"ips\" level=\"critical\"",
@@ -95,7 +99,7 @@ const ARCHIVE_FILES = [
         { from: "caterpillar99", time: "23:39", text: "якраз лягаю :)" },
         { from: "caterpillar99", time: "23:41", text: "stern питав про тебе. знову." },
         { from: "ashln", time: "23:42", text: "nope" },
-        { from: "caterpillar99", time: "23:44", text: "тобі потрібна робота. тільки один раз. і якщо не хочеш більше — можеш піти." },
+        { from: "caterpillar99", time: "23:44", text: "тобі потрібна робота. тільки один раз." },
         { from: "caterpillar99", time: "23:47", text: "аліса?" },
         { from: "ashln", time: "23:52", text: "подумаю" },
         { from: "caterpillar99", time: "23:53", text: "не відповідай нікому крім мене найближчі кілька днів, добре?" },
@@ -115,7 +119,7 @@ const ARCHIVE_FILES = [
       name: "Аліса [REDACTED]",
       dob: "[REDACTED]",
       charge: "ст. 309 ч. 1 ККУ — незаконне зберігання наркотичних засобів без мети збуту (у невеликих розмірах)",
-      bookingNo: "KY-2019-04471",
+      bookingNo: "KY-2024-04471",
       department: "Слідчий ізолятор №13, м. Київ",
       note: "Перше затримання. Відмовилась від адвоката. Відмовилась від показань."
     }

@@ -292,9 +292,11 @@
 
   function buildArchiveModalHTML(file) {
     return `
-      <span class="archive-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
-      <span class="archive-modal__tag">${file.tag}</span>
-      <h3 class="archive-modal__label">${file.label}</h3>
+      <div class="archive-modal__header">
+        <span class="archive-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
+        <span class="archive-modal__tag">${file.tag}</span>
+        <h3 class="archive-modal__label">${file.label}</h3>
+      </div>
       <div class="archive-modal__body">${renderArchiveDoc(file)}</div>
     `;
   }
