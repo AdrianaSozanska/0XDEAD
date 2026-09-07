@@ -200,10 +200,11 @@ code {
   top: 0;
   z-index: 100;
   height: var(--nav-height);
-  /* near-opaque: at 0.85 bright content scrolled underneath (e.g. the
-     dossier network's cards) showed through as a blurred, glitchy-
-     looking sliver instead of sitting cleanly behind the bar */
-  background: rgba(5,7,10,0.97);
+  /* fully solid: any transparency here let content scrolled underneath
+     (e.g. the dossier network's bright green cards) show through as a
+     blurred sliver right under the bar — a translucent value, even at
+     97%, was still visible against this near-black background */
+  background: var(--bg);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--panel-border);
 }

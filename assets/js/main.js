@@ -797,8 +797,8 @@
   }
 
   function gameEvidenceFormatHint() {
-    if (gameState.stage === 1) return "Формат: connect XXX-XXXX XXX-XXXX";
-    if (gameState.stage === 2) return "Формат: decrypt final_note XXXX";
+    if (gameState.stage === 1) return "Формат відповіді, щоб отримати наступні дані: connect XXX-XXXX XXX-XXXX";
+    if (gameState.stage === 2) return "Формат відповіді, щоб отримати фінальні дані: decrypt final_note XXXX";
     return null;
   }
 
@@ -822,7 +822,7 @@
     const file = gameFiles[fileId];
     const lines = [`[${file.filename}]`];
 
-    if (file.table) {
+    if (file.table || file.chat) {
       openFileModal(file);
       lines.push("> файл візуалізовано в окремому вікні");
     } else {
@@ -1160,6 +1160,50 @@
     };
   }
 
+  function renderFileChat(file) {
+    if (!fileBody) return;
+    fileBody.innerHTML = "";
+    fileRowTimers.forEach((id) => clearTimeout(id));
+    fileRowTimers = [];
+
+    const chat = file.chat;
+    const header = document.createElement("div");
+    header.className = "chat__header";
+    header.textContent = `💬 ${chat.participants}`;
+    fileBody.appendChild(header);
+
+    const log = document.createElement("div");
+    log.className = "chat__log";
+    fileBody.appendChild(log);
+
+    chat.messages.forEach((m, i) => {
+      const delay = prefersReducedMotion ? 0 : i * 180;
+      const id = setTimeout(() => {
+        const side = m.from === chat.rightAlign ? "right" : "left";
+        const bubble = document.createElement("div");
+        bubble.className = `chat__msg chat__msg--${side} file-modal__row`;
+        bubble.innerHTML = `
+          <span class="chat__author">${m.from}</span>
+          <p>${m.text}</p>
+          ${m.time ? `<span class="chat__time">${m.time}</span>` : ""}
+        `;
+        log.appendChild(bubble);
+      }, delay);
+      fileRowTimers.push(id);
+    });
+
+    if (chat.footnote) {
+      const delay = prefersReducedMotion ? 0 : chat.messages.length * 180;
+      const id = setTimeout(() => {
+        const footnote = document.createElement("p");
+        footnote.className = "file-modal__footnote";
+        footnote.textContent = chat.footnote;
+        fileBody.appendChild(footnote);
+      }, delay);
+      fileRowTimers.push(id);
+    }
+  }
+
   function renderFileTable(file) {
     if (!fileBody) return;
     fileBody.innerHTML = "";
@@ -1227,7 +1271,8 @@
     fileModal.classList.add("is-active");
     document.body.classList.add("no-scroll");
 
-    renderFileTable(file);
+    if (file.chat) renderFileChat(file);
+    else renderFileTable(file);
 
     void filePanel.offsetWidth;
     filePanel.style.transition = "";
