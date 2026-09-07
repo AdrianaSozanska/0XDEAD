@@ -892,14 +892,9 @@
     help: () => [
       "доступні команди:",
       "  help      — список команд",
-      "  timeline  — ключові події історії",
       "  game      — розпочати міні-гру-розслідування",
       "  map       — відкрити карту мережі"
     ],
-    timeline: () => {
-      openTimelineModal();
-      return ["> завантаження timeline.log..."];
-    },
     map: () => {
       openMapModal();
       return ["> ініціалізація мережевої карти...", "> знайдено 5 активних вузлів"];
@@ -1013,128 +1008,9 @@
     });
   }
 
-  /* ---------------- timeline modal ---------------- */
-
-  const timelineEvents = typeof TIMELINE_EVENTS !== "undefined" ? TIMELINE_EVENTS : [];
-  const timelineModal = document.getElementById("timelineModal");
-  const timelineBackdrop = document.getElementById("timelineBackdrop");
-  const timelinePanel = document.getElementById("timelinePanel");
-  const timelineLog = document.getElementById("timelineLog");
-  const timelineClose = document.getElementById("timelineClose");
-
-  let timelineLastFocused = null;
-  let timelineTimers = [];
-
-  function computeTimelineTargetRect() {
-    const width = Math.min(window.innerWidth * 0.9, 640);
-    const height = Math.min(window.innerHeight * 0.8, 560);
-    return {
-      top: (window.innerHeight - height) / 2,
-      left: (window.innerWidth - width) / 2,
-      width,
-      height
-    };
-  }
-
-  function streamTimelineLog() {
-    if (!timelineLog) return;
-    timelineLog.innerHTML = "";
-    timelineTimers.forEach((id) => clearTimeout(id));
-    timelineTimers = [];
-
-    timelineEvents.forEach((event, i) => {
-      const delay = prefersReducedMotion ? 0 : i * 450;
-      const id = setTimeout(() => {
-        const line = document.createElement("p");
-        line.className = "timeline-modal__line";
-        line.innerHTML = `<span class="timeline-modal__date">[${event.date}]</span><span class="timeline-modal__text">${event.text}</span>`;
-        timelineLog.appendChild(line);
-        timelineLog.scrollTop = timelineLog.scrollHeight;
-
-        if (i === timelineEvents.length - 1) {
-          const cursor = document.createElement("span");
-          cursor.className = "timeline-modal__cursor";
-          cursor.setAttribute("aria-hidden", "true");
-          timelineLog.appendChild(cursor);
-        }
-      }, delay);
-      timelineTimers.push(id);
-    });
-  }
-
-  function openTimelineModal() {
-    if (!timelineModal || !timelinePanel) return;
-
-    const originEl = document.getElementById("terminal-window") || terminalBody;
-    const originRect = originEl ? originEl.getBoundingClientRect() : computeTimelineTargetRect();
-    timelineLastFocused = document.activeElement;
-
-    const target = computeTimelineTargetRect();
-    timelinePanel.style.top = target.top + "px";
-    timelinePanel.style.left = target.left + "px";
-    timelinePanel.style.width = target.width + "px";
-    timelinePanel.style.height = target.height + "px";
-
-    timelinePanel.style.transition = "none";
-    timelinePanel.style.transform = flipTransformFrom(originRect, target);
-    timelineModal.classList.add("is-active");
-    document.body.classList.add("no-scroll");
-
-    streamTimelineLog();
-
-    void timelinePanel.offsetWidth;
-    timelinePanel.style.transition = "";
-
-    requestAnimationFrame(() => {
-      timelineModal.classList.add("is-visible");
-      timelinePanel.style.transform = "translate(0, 0) scale(1, 1)";
-    });
-
-    document.addEventListener("keydown", onTimelineKeydown);
-    timelinePanel.focus();
-  }
-
-  function closeTimelineModal() {
-    if (!timelineModal || !timelineModal.classList.contains("is-active")) return;
-
-    timelineTimers.forEach((id) => clearTimeout(id));
-    timelineTimers = [];
-
-    const target = computeTimelineTargetRect();
-    const originEl = document.getElementById("terminal-window") || terminalBody;
-    const rect = originEl ? originEl.getBoundingClientRect() : target;
-    timelineModal.classList.remove("is-visible");
-    timelinePanel.style.transform = flipTransformFrom(rect, target);
-
-    setTimeout(() => {
-      timelineModal.classList.remove("is-active");
-      timelinePanel.style.transform = "";
-      document.body.classList.remove("no-scroll");
-    }, prefersReducedMotion ? 0 : 500);
-
-    document.removeEventListener("keydown", onTimelineKeydown);
-    if (timelineLastFocused && timelineLastFocused.focus) timelineLastFocused.focus();
-  }
-
-  function onTimelineKeydown(e) {
-    if (e.key === "Escape") closeTimelineModal();
-  }
-
-  if (timelineModal) {
-    timelineClose?.addEventListener("click", closeTimelineModal);
-    timelineBackdrop?.addEventListener("click", closeTimelineModal);
-    window.addEventListener("resize", () => {
-      if (!timelineModal.classList.contains("is-active")) return;
-      const target = computeTimelineTargetRect();
-      timelinePanel.style.top = target.top + "px";
-      timelinePanel.style.left = target.left + "px";
-      timelinePanel.style.width = target.width + "px";
-      timelinePanel.style.height = target.height + "px";
-    });
-  }
-
   /* ---------------- game evidence file modal (transfer_log / ledger_fragment) ---------------- */
-  /* Same FLIP-from-terminal chrome as the timeline modal, but renders a
+  /* Same FLIP-from-terminal-window chrome as the archive/dossier modals
+     (transform-from-origin via flipTransformFrom), but renders a
      recovered file's `table` data as an actual table instead of a log
      stream — flagged rows (cancelled/marked transactions) get a red
      highlight so the suspicious TRX-4471 entries jump out. */

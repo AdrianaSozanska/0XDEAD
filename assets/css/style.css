@@ -1149,7 +1149,7 @@ code {
 /* ---------- archive: evidence-viewer modal ---------- */
 /* Same chrome as .dossier-modal (backdrop/panel/close/nav/FLIP transition),
    duplicated under its own archive-modal__* names per this codebase's
-   per-modal convention (see .dossier-modal, .map-modal, .timeline-modal). */
+   per-modal convention (see .dossier-modal, .map-modal, .file-modal). */
 
 .archive-modal {
   position: fixed;
@@ -1511,125 +1511,13 @@ code {
   white-space: pre;
 }
 
-/* ---------- timeline ---------- */
-
-.timeline-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-.timeline-modal.is-active { display: flex; }
-
-.timeline-modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(2,4,5,0.82);
-  backdrop-filter: blur(3px);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.timeline-modal.is-visible .timeline-modal__backdrop { opacity: 1; }
-
-.timeline-modal__panel {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(160deg, #0d1416, #05080a);
-  border: 1px solid var(--green-soft);
-  border-radius: 6px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 50px rgba(57,255,20,0.14);
-  overflow: hidden;
-  transform-origin: top left;
-  will-change: transform;
-  transition: transform 0.5s cubic-bezier(0.22, 0.9, 0.24, 1);
-}
-.timeline-modal__panel:focus { outline: none; }
-
-.timeline-modal__close {
-  position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 1px solid var(--panel-border);
-  background: rgba(5,7,10,0.6);
-  color: var(--text-dim);
-  font-family: var(--font-display);
-  font-size: 1rem;
-  cursor: pointer;
-  z-index: 3;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-.timeline-modal__close:hover, .timeline-modal__close:focus-visible {
-  border-color: var(--green-soft);
-  color: var(--green-soft);
-}
-
-.timeline-modal__header {
-  padding: 1.5rem 3.25rem 0.9rem 1.5rem;
-  flex-shrink: 0;
-}
-.timeline-modal__eyebrow {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  color: var(--cyan);
-  margin-bottom: 0.4rem;
-}
-.timeline-modal__title {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  margin: 0;
-  color: var(--text);
-}
-
-.timeline-modal__log {
-  flex: 1;
-  min-height: 0;
-  margin: 0 1.5rem 1.5rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--panel-border);
-  border-radius: 4px;
-  background: #030405;
-  overflow-y: auto;
-  font-family: var(--font-display);
-  font-size: 0.88rem;
-  line-height: 1.6;
-}
-.timeline-modal__line {
-  margin: 0 0 0.5rem;
-  opacity: 0;
-  transform: translateY(4px);
-  animation: timelineLineIn 0.3s ease forwards;
-}
 @keyframes timelineLineIn {
   to { opacity: 1; transform: translateY(0); }
 }
-.timeline-modal__date {
-  color: var(--cyan);
-  margin-right: 0.6rem;
-}
-.timeline-modal__text { color: var(--green-soft); }
-.timeline-modal__cursor {
-  display: inline-block;
-  width: 0.55em;
-  height: 1em;
-  background: var(--green);
-  vertical-align: text-bottom;
-  animation: termCursorBlink 1s step-end infinite;
-}
-
-@media (max-width: 640px) {
-  .timeline-modal__header { padding: 1.1rem 3rem 0.6rem 1.1rem; }
-  .timeline-modal__log { margin-left: 1rem; margin-right: 1rem; }
-}
 
 /* game evidence file viewer (transfer_log / ledger_fragment) — same
-   chrome as .timeline-modal, with a table instead of a log stream */
+   fixed-modal chrome as the archive/dossier modals, with a table
+   instead of a log stream */
 .file-modal {
   position: fixed;
   inset: 0;

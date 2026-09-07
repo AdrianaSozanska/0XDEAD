@@ -37,7 +37,6 @@ assets/js/archive-data.js     Evidence entries for the "Класифікован
                                cold-storage section
 assets/js/dossier-data.js     Police dossier entries on the syndicate cell
 assets/js/map-data.js         Cities + street pins for the terminal "map" command
-assets/js/timeline-data.js    Backstory events for the terminal "timeline" command
 assets/js/game-data.js        Files/hints/endings for the terminal "game" mini-game
 assets/img/                   Placeholder cover art + favicon (SVG)
 ```
@@ -111,7 +110,7 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   it. Until the referenced file exists the browser just skips that layer
   and the gradient shows through instead of a broken-image icon.
 - **Terminal commands**: edit `TERMINAL_COMMANDS` in `assets/js/main.js`.
-  Listed in `help`: `timeline`, `game`, `map`. `sudo`, `ls -a`, `cat <file>`,
+  Listed in `help`: `game`, `map`. `sudo`, `ls -a`, `cat <file>`,
   and `matrix` are undocumented easter eggs (not listed in `help`, on
   purpose — part of the fun is finding them).
 - **`sudo` easter egg**: typing `sudo` switches the input to a masked
@@ -141,12 +140,6 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   state machine and dispatch. A file only appears in `evidence`/`open`
   once its id is added to `gameState.unlockedFiles`; nothing about locked
   files is shown ahead of time.
-- **Terminal `timeline` command**: opens a modal that streams
-  `TIMELINE_EVENTS` (from `assets/js/timeline-data.js`) into a scrolling,
-  `tail -f`-style log — each `{date, text}` entry appears a beat after the
-  last, auto-scrolling, with a blinking cursor after the final line.
-  Content is lorem ipsum placeholder; swap in the real backstory events
-  whenever they're ready, same shape.
 - **Terminal `map` command**: typing `map` in the terminal opens a
   fullscreen map modal with an outline of Ukraine (traced from real
   boundary data, simplified for a clean vector look — see
