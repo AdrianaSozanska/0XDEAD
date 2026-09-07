@@ -800,7 +800,7 @@
     const lines = ["[EVIDENCE] Розшифровані файли:"];
     gameState.unlockedFiles.forEach((id) => {
       const file = gameFiles[id];
-      if (file) lines.push(`  ${id} — ${file.filename}`);
+      if (file) lines.push(`  — ${file.filename}`);
     });
     lines.push("Введи 'open <file>', щоб прочитати вміст файлу.");
     return lines;
@@ -812,7 +812,14 @@
       return ["Файл не знайдено."];
     }
     const file = gameFiles[fileId];
-    const lines = [`[${file.filename}]`, file.content_ua];
+    const lines = [`[${file.filename}]`];
+
+    if (file.table) {
+      openFileModal(file);
+      lines.push("> файл візуалізовано в окремому вікні");
+    } else {
+      lines.push(file.content_ua);
+    }
 
     if (fileId === "final_note" && gameState.stage === 3 && !gameState.completed) {
       gameState.completed = true;
@@ -1114,6 +1121,154 @@
       timelinePanel.style.left = target.left + "px";
       timelinePanel.style.width = target.width + "px";
       timelinePanel.style.height = target.height + "px";
+    });
+  }
+
+  /* ---------------- game evidence file modal (transfer_log / ledger_fragment) ---------------- */
+  /* Same FLIP-from-terminal chrome as the timeline modal, but renders a
+     recovered file's `table` data as an actual table instead of a log
+     stream — flagged rows (cancelled/marked transactions) get a red
+     highlight so the suspicious TRX-4471 entries jump out. */
+
+  const fileModal = document.getElementById("fileModal");
+  const fileBackdrop = document.getElementById("fileBackdrop");
+  const filePanel = document.getElementById("filePanel");
+  const fileEyebrow = document.getElementById("fileEyebrow");
+  const fileTitle = document.getElementById("fileTitle");
+  const fileBody = document.getElementById("fileBody");
+  const fileClose = document.getElementById("fileClose");
+
+  let fileLastFocused = null;
+  let fileRowTimers = [];
+
+  function computeFileTargetRect() {
+    const width = Math.min(window.innerWidth * 0.92, 640);
+    const height = Math.min(window.innerHeight * 0.8, 520);
+    return {
+      top: (window.innerHeight - height) / 2,
+      left: (window.innerWidth - width) / 2,
+      width,
+      height
+    };
+  }
+
+  function renderFileTable(file) {
+    if (!fileBody) return;
+    fileBody.innerHTML = "";
+    fileRowTimers.forEach((id) => clearTimeout(id));
+    fileRowTimers = [];
+
+    const table = file.table;
+    if (table.note) {
+      const note = document.createElement("p");
+      note.className = "file-modal__note";
+      note.textContent = table.note;
+      fileBody.appendChild(note);
+    }
+
+    const tableEl = document.createElement("table");
+    tableEl.className = "file-modal__table";
+    const thead = document.createElement("thead");
+    thead.innerHTML = `<tr>${table.columns.map((c) => `<th>${c}</th>`).join("")}</tr>`;
+    const tbody = document.createElement("tbody");
+    tableEl.appendChild(thead);
+    tableEl.appendChild(tbody);
+    fileBody.appendChild(tableEl);
+
+    table.rows.forEach((row, i) => {
+      const delay = prefersReducedMotion ? 0 : i * 220;
+      const id = setTimeout(() => {
+        const tr = document.createElement("tr");
+        tr.className = "file-modal__row" + (row.flagged ? " is-flagged" : "");
+        tr.innerHTML = row.cells.map((cell) => `<td>${cell}</td>`).join("");
+        tbody.appendChild(tr);
+      }, delay);
+      fileRowTimers.push(id);
+    });
+
+    if (table.footnote) {
+      const delay = prefersReducedMotion ? 0 : table.rows.length * 220;
+      const id = setTimeout(() => {
+        const footnote = document.createElement("p");
+        footnote.className = "file-modal__footnote";
+        footnote.textContent = table.footnote;
+        fileBody.appendChild(footnote);
+      }, delay);
+      fileRowTimers.push(id);
+    }
+  }
+
+  function openFileModal(file) {
+    if (!fileModal || !filePanel) return;
+
+    const originEl = document.getElementById("terminal-window") || terminalBody;
+    const originRect = originEl ? originEl.getBoundingClientRect() : computeFileTargetRect();
+    fileLastFocused = document.activeElement;
+
+    if (fileEyebrow) fileEyebrow.textContent = `// ${file.filename} — відновлено`;
+    if (fileTitle) fileTitle.textContent = file.filename;
+
+    const target = computeFileTargetRect();
+    filePanel.style.top = target.top + "px";
+    filePanel.style.left = target.left + "px";
+    filePanel.style.width = target.width + "px";
+    filePanel.style.height = target.height + "px";
+
+    filePanel.style.transition = "none";
+    filePanel.style.transform = flipTransformFrom(originRect, target);
+    fileModal.classList.add("is-active");
+    document.body.classList.add("no-scroll");
+
+    renderFileTable(file);
+
+    void filePanel.offsetWidth;
+    filePanel.style.transition = "";
+
+    requestAnimationFrame(() => {
+      fileModal.classList.add("is-visible");
+      filePanel.style.transform = "translate(0, 0) scale(1, 1)";
+    });
+
+    document.addEventListener("keydown", onFileKeydown);
+    filePanel.focus();
+  }
+
+  function closeFileModal() {
+    if (!fileModal || !fileModal.classList.contains("is-active")) return;
+
+    fileRowTimers.forEach((id) => clearTimeout(id));
+    fileRowTimers = [];
+
+    const target = computeFileTargetRect();
+    const originEl = document.getElementById("terminal-window") || terminalBody;
+    const rect = originEl ? originEl.getBoundingClientRect() : target;
+    fileModal.classList.remove("is-visible");
+    filePanel.style.transform = flipTransformFrom(rect, target);
+
+    setTimeout(() => {
+      fileModal.classList.remove("is-active");
+      filePanel.style.transform = "";
+      document.body.classList.remove("no-scroll");
+    }, prefersReducedMotion ? 0 : 500);
+
+    document.removeEventListener("keydown", onFileKeydown);
+    if (fileLastFocused && fileLastFocused.focus) fileLastFocused.focus();
+  }
+
+  function onFileKeydown(e) {
+    if (e.key === "Escape") closeFileModal();
+  }
+
+  if (fileModal) {
+    fileClose?.addEventListener("click", closeFileModal);
+    fileBackdrop?.addEventListener("click", closeFileModal);
+    window.addEventListener("resize", () => {
+      if (!fileModal.classList.contains("is-active")) return;
+      const target = computeFileTargetRect();
+      filePanel.style.top = target.top + "px";
+      filePanel.style.left = target.left + "px";
+      filePanel.style.width = target.width + "px";
+      filePanel.style.height = target.height + "px";
     });
   }
 

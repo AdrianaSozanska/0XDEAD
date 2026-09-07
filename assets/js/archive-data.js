@@ -103,8 +103,8 @@ const ARCHIVE_FILES = [
         { from: "caterpillar99", time: "23:47", text: "аліса?" },
         { from: "ashln", time: "23:52", text: "подумаю" },
         { from: "caterpillar99", time: "23:53", text: "не відповідай нікому крім мене найближчі кілька днів, добре?" },
-        { from: "ashln", time: "23:54", text: "марк, ти мене лякаєш" },
-        { from: "ashln", time: "00:14", text: "ти тут?" }
+        { from: "ashln", time: "23:54", text: "що цього разу?" },
+        { from: "ashln", time: "00:14", text: "марк… ти тут?" }
       ]
     }
   },

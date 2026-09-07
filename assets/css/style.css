@@ -340,7 +340,7 @@ code {
 }
 .hero__blurb {
   color: var(--text-dim);
-  max-width: 56ch;
+  max-width: 68ch;
   font-size: 0.95rem;
   line-height: 1.6;
   margin-top: 1rem;
@@ -1622,6 +1622,141 @@ code {
 @media (max-width: 640px) {
   .timeline-modal__header { padding: 1.1rem 3rem 0.6rem 1.1rem; }
   .timeline-modal__log { margin-left: 1rem; margin-right: 1rem; }
+}
+
+/* game evidence file viewer (transfer_log / ledger_fragment) — same
+   chrome as .timeline-modal, with a table instead of a log stream */
+.file-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.file-modal.is-active { display: flex; }
+
+.file-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2,4,5,0.82);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.file-modal.is-visible .file-modal__backdrop { opacity: 1; }
+
+.file-modal__panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, #0d1416, #05080a);
+  border: 1px solid var(--green-soft);
+  border-radius: 6px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.65), 0 0 50px rgba(57,255,20,0.14);
+  overflow: hidden;
+  transform-origin: top left;
+  will-change: transform;
+  transition: transform 0.5s cubic-bezier(0.22, 0.9, 0.24, 1);
+}
+.file-modal__panel:focus { outline: none; }
+
+.file-modal__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--panel-border);
+  background: rgba(5,7,10,0.6);
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 3;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.file-modal__close:hover, .file-modal__close:focus-visible {
+  border-color: var(--green-soft);
+  color: var(--green-soft);
+}
+
+.file-modal__header {
+  padding: 1.5rem 3.25rem 0.9rem 1.5rem;
+  flex-shrink: 0;
+}
+.file-modal__eyebrow {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--cyan);
+  margin-bottom: 0.4rem;
+}
+.file-modal__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--text);
+}
+
+.file-modal__body {
+  flex: 1;
+  min-height: 0;
+  margin: 0 1.5rem 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  background: #030405;
+  overflow: auto;
+}
+.file-modal__note {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+.file-modal__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.file-modal__table th {
+  text-align: left;
+  padding: 0.5em 0.9em;
+  color: var(--cyan);
+  border-bottom: 1px solid var(--panel-border);
+}
+.file-modal__table td {
+  padding: 0.5em 0.9em;
+  color: var(--green-soft);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.file-modal__row {
+  opacity: 0;
+  transform: translateY(4px);
+  animation: timelineLineIn 0.3s ease forwards;
+}
+.file-modal__row.is-flagged td {
+  color: var(--red);
+  background: rgba(255,43,77,0.08);
+}
+.file-modal__footnote {
+  margin: 0.9rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--panel-border);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-dim);
+}
+
+@media (max-width: 640px) {
+  .file-modal__header { padding: 1.1rem 3rem 0.6rem 1.1rem; }
+  .file-modal__body { margin-left: 1rem; margin-right: 1rem; }
+  .file-modal__table { font-size: 0.72rem; }
 }
 
 /* ---------- map ---------- */

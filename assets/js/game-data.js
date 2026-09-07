@@ -24,7 +24,16 @@ const GAME_FILES = {
 2024-11-09   TRX-4471      12 500 USD   СКАСОВАНО
 2024-11-13   TRX-9902      0 USD        помилка: рахунок закрито
 2024-11-15   —             —            ОСТАННЯ АКТИВНІСТЬ: н/д
-    `.trim()
+    `.trim(),
+    table: {
+      columns: ["ДАТА", "КОД_РАХУНКУ", "СУМА", "СТАТУС"],
+      rows: [
+        { cells: ["2024-11-02", "TRX-4471", "47 000 USD", "підтверджено"], flagged: false },
+        { cells: ["2024-11-09", "TRX-4471", "12 500 USD", "СКАСОВАНО"], flagged: true },
+        { cells: ["2024-11-13", "TRX-9902", "0 USD", "помилка: рахунок закрито"], flagged: true },
+        { cells: ["2024-11-15", "—", "—", "ОСТАННЯ АКТИВНІСТЬ: н/д"], flagged: false }
+      ]
+    }
   },
   ledger_fragment: {
     filename: "ledger_fragment.xlsx",
@@ -38,7 +47,18 @@ const GAME_FILES = {
 2024-11-14  TRX-9902      —            рахунок закрито вручну
 
 Примітка в комірці біля TRX-4471: "перевірити ще раз. він знає."
-    `.trim()
+    `.trim(),
+    table: {
+      note: "[Відновлено частково, 4 з 11 рядків]",
+      columns: ["ДАТА", "КОД_КЛІЄНТА", "СУМА", "СТАТУС"],
+      rows: [
+        { cells: ["2024-10-28", "TRX-4471", "47 000 USD", "очищено"], flagged: false },
+        { cells: ["2024-11-01", "TRX-2214", "8 300 USD", "в очікуванні"], flagged: false },
+        { cells: ["2024-11-09", "TRX-4471", "12 500 USD", "ПОЗНАЧЕНО"], flagged: true },
+        { cells: ["2024-11-14", "TRX-9902", "—", "рахунок закрито вручну"], flagged: true }
+      ],
+      footnote: "Примітка в комірці біля TRX-4471: «перевірити ще раз. він знає.»"
+    }
   },
   mark_ashln_chat: {
     filename: "mark_ashln_chat.txt",
@@ -78,7 +98,7 @@ const GAME_FILES = {
   }
 };
 
-const GAME_INITIAL_UNLOCKED = ["intro", "transfer_log", "ledger_fragment"];
+const GAME_INITIAL_UNLOCKED = ["transfer_log", "ledger_fragment"];
 
 const GAME_STAGE1_SOLUTION = {
   requiredCommand: "connect trx-4471 trx-4471",
