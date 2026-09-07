@@ -796,6 +796,12 @@
     return lines;
   }
 
+  function gameEvidenceFormatHint() {
+    if (gameState.stage === 1) return "Формат: connect XXX-XXXX XXX-XXXX";
+    if (gameState.stage === 2) return "Формат: decrypt final_note XXXX";
+    return null;
+  }
+
   function gameEvidence() {
     const lines = ["[EVIDENCE] Розшифровані файли:"];
     gameState.unlockedFiles.forEach((id) => {
@@ -803,6 +809,8 @@
       if (file) lines.push(`  — ${file.filename}`);
     });
     lines.push("Введи 'open <file>', щоб прочитати вміст файлу.");
+    const formatHint = gameEvidenceFormatHint();
+    if (formatHint) lines.push(formatHint);
     return lines;
   }
 

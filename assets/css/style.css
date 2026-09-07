@@ -22,7 +22,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -200,7 +200,10 @@ code {
   top: 0;
   z-index: 100;
   height: var(--nav-height);
-  background: rgba(5,7,10,0.85);
+  /* near-opaque: at 0.85 bright content scrolled underneath (e.g. the
+     dossier network's cards) showed through as a blurred, glitchy-
+     looking sliver instead of sitting cleanly behind the bar */
+  background: rgba(5,7,10,0.97);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--panel-border);
 }
