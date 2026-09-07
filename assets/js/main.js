@@ -1005,7 +1005,8 @@
       if (handler) {
         handler().forEach((line) => printLine(line, "t-dim"));
       } else {
-        printLine(`команду не знайдено: "${raw}". введи 'help'.`, "t-red");
+        const helpCmd = gameState.active ? "game-help" : "help";
+        printLine(`команду не знайдено: "${raw}". введи '${helpCmd}'.`, "t-red");
       }
 
       updateTerminalCursor();
@@ -1167,10 +1168,21 @@
     fileRowTimers = [];
 
     const chat = file.chat;
-    const header = document.createElement("div");
-    header.className = "chat__header";
-    header.textContent = `💬 ${chat.participants}`;
-    fileBody.appendChild(header);
+
+    if (chat.meta) {
+      const meta = document.createElement("div");
+      meta.className = "file-modal__meta";
+      meta.innerHTML = `
+        <p class="file-modal__meta-title">[${chat.meta.title}]</p>
+        <div class="file-modal__meta-fields">${chat.meta.fields.map((f) => `<p>${f}</p>`).join("")}</div>
+      `;
+      fileBody.appendChild(meta);
+    } else {
+      const header = document.createElement("div");
+      header.className = "chat__header";
+      header.textContent = `💬 ${chat.participants}`;
+      fileBody.appendChild(header);
+    }
 
     const log = document.createElement("div");
     log.className = "chat__log";

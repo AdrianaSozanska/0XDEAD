@@ -101,20 +101,40 @@ const GAME_FILES = {
   logs_fragment: {
     filename: "logs_fragment",
     content_ua: `
-[невідомий1]: він почав ставити забагато питань про рахунки.
-[невідомий2]: то нехай перестане.
-[невідомий1]: а якщо не перестане?
-[невідомий2]: тоді питання вирішиться само.
+[LOG FRAGMENT — INTERCEPTED COMMUNICATION]
+Source: Encrypted messenger (channel unidentified)
+Decryption status: Partial
+Participants: UNKNOWN_1, UNKNOWN_2
+Timestamp: 2021-11-15 02:47 UTC+2
+
+UNKNOWN_1: рахунок TRX-4471 позначили.
+UNKNOWN_2: наскільки серйозно?
+UNKNOWN_1: перевіряють всі нові транзакції. хтось помітив патерн.
+UNKNOWN_2: хто вів рахунок?
+UNKNOWN_1: caterpillar99.
+
+[END FRAGMENT — REMAINDER CORRUPTED]
     `.trim(),
     chat: {
-      participants: "невідомий1, невідомий2",
-      rightAlign: "невідомий2",
+      meta: {
+        title: "LOG FRAGMENT — INTERCEPTED COMMUNICATION",
+        fields: [
+          "Source: Encrypted messenger (channel unidentified)",
+          "Decryption status: Partial",
+          "Participants: UNKNOWN_1, UNKNOWN_2",
+          "Timestamp: 2021-11-15 02:47 UTC+2"
+        ]
+      },
+      participants: "UNKNOWN_1, UNKNOWN_2",
+      rightAlign: "UNKNOWN_2",
       messages: [
-        { from: "невідомий1", text: "він почав ставити забагато питань про рахунки." },
-        { from: "невідомий2", text: "то нехай перестане." },
-        { from: "невідомий1", text: "а якщо не перестане?" },
-        { from: "невідомий2", text: "тоді питання вирішиться само." }
-      ]
+        { from: "UNKNOWN_1", text: "рахунок TRX-4471 позначили." },
+        { from: "UNKNOWN_2", text: "наскільки серйозно?" },
+        { from: "UNKNOWN_1", text: "перевіряють всі нові транзакції. хтось помітив патерн." },
+        { from: "UNKNOWN_2", text: "хто вів рахунок?" },
+        { from: "UNKNOWN_1", text: "caterpillar99." }
+      ],
+      footnote: "[END FRAGMENT — REMAINDER CORRUPTED]"
     }
   },
   final_note: {
