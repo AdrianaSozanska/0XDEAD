@@ -1705,6 +1705,7 @@ code {
 }
 
 .file-modal__body {
+  position: relative;
   flex: 1;
   min-height: 0;
   margin: 0 1.5rem 1.5rem;
@@ -1779,6 +1780,66 @@ code {
   color: var(--text-dim);
 }
 .file-modal__meta-fields p:last-child { margin-bottom: 0; }
+
+/* final_note — "connection problem" corrupted-file viewer: faint matrix
+   rain behind the recovered text, a scrambling block of noise standing
+   in for the corrupted remainder, and error toasts popping up at random
+   while the file stays open. All of it is skipped under reduced motion,
+   which gets a single static "[ДАНІ ПОШКОДЖЕНО]" line instead. */
+.file-modal__glitch-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.file-modal__glitch-content {
+  position: relative;
+  z-index: 1;
+}
+.file-modal__glitch-text {
+  margin: 0 0 1rem;
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+.file-modal__glitch-scramble {
+  margin: 0.9rem 0 0;
+  padding: 0.75rem 0.9rem;
+  border: 1px dashed rgba(255,43,77,0.4);
+  border-radius: 4px;
+  background: rgba(255,43,77,0.05);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--red);
+  opacity: 0.75;
+  white-space: pre;
+  overflow: hidden;
+}
+.file-modal__glitch-toast {
+  position: absolute;
+  z-index: 2;
+  padding: 0.3em 0.7em;
+  border: 1px solid var(--red);
+  border-radius: 3px;
+  background: rgba(10,3,5,0.9);
+  color: var(--red);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: glitchToastPop 1.7s ease forwards;
+}
+@keyframes glitchToastPop {
+  0% { opacity: 0; transform: translateY(3px) scale(0.96); }
+  12% { opacity: 1; transform: translateY(0) scale(1); }
+  82% { opacity: 1; }
+  100% { opacity: 0; }
+}
 
 @media (max-width: 640px) {
   .file-modal__header { padding: 1.1rem 3rem 0.6rem 1.1rem; }

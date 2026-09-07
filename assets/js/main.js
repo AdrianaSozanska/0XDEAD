@@ -647,7 +647,7 @@
      once sudo is authenticated. Filenames are intentionally odd-looking. */
   const SUDO_FILES = {
     "MmFsaWNl.README.txt": "Це наш. Я його змодифікував. Дані відновити не вийде. Я забрав бекапи.",
-    "MnNlcmhpaQ==.README.txt": "Більше ніколи не брати його справ"
+    "MnNlcmhpaQ==.README.txt": "Левченко Артем. Більше не брати його справ"
   };
 
   let terminalMode = "command"; // "command" | "sudo-password"
@@ -822,7 +822,7 @@
     const file = gameFiles[fileId];
     const lines = [`[${file.filename}]`];
 
-    if (file.table || file.chat) {
+    if (file.table || file.chat || file.glitch) {
       openFileModal(file);
       lines.push("> файл візуалізовано в окремому вікні");
     } else {
@@ -1149,6 +1149,18 @@
 
   let fileLastFocused = null;
   let fileRowTimers = [];
+  let fileGlitchRaf = null;
+  let fileGlitchScrambleInterval = null;
+  let fileGlitchToastInterval = null;
+
+  function stopFileGlitchEffects() {
+    if (fileGlitchRaf) cancelAnimationFrame(fileGlitchRaf);
+    fileGlitchRaf = null;
+    if (fileGlitchScrambleInterval) clearInterval(fileGlitchScrambleInterval);
+    fileGlitchScrambleInterval = null;
+    if (fileGlitchToastInterval) clearInterval(fileGlitchToastInterval);
+    fileGlitchToastInterval = null;
+  }
 
   function computeFileTargetRect() {
     const width = Math.min(window.innerWidth * 0.92, 640);
@@ -1159,6 +1171,114 @@
       width,
       height
     };
+  }
+
+  const GLITCH_SCRAMBLE_CHARS = "01アイウエオカキクケコサシ#$%&?!ЩЯЖ_/\\|".split("");
+
+  function renderFileGlitch(file) {
+    if (!fileBody) return;
+    fileBody.innerHTML = "";
+    fileRowTimers.forEach((id) => clearTimeout(id));
+    fileRowTimers = [];
+    stopFileGlitchEffects();
+
+    const glitch = file.glitch;
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "file-modal__glitch-canvas";
+    canvas.setAttribute("aria-hidden", "true");
+    fileBody.appendChild(canvas);
+
+    const content = document.createElement("div");
+    content.className = "file-modal__glitch-content";
+    fileBody.appendChild(content);
+
+    const label = document.createElement("p");
+    label.className = "file-modal__meta-title";
+    label.textContent = `[${glitch.label}]`;
+    content.appendChild(label);
+
+    glitch.paragraphs.forEach((text, i) => {
+      const delay = prefersReducedMotion ? 0 : 400 + i * 900;
+      const id = setTimeout(() => {
+        const p = document.createElement("p");
+        p.className = "file-modal__glitch-text file-modal__row";
+        p.textContent = text;
+        content.appendChild(p);
+      }, delay);
+      fileRowTimers.push(id);
+    });
+
+    const noteDelay = prefersReducedMotion ? 0 : 400 + glitch.paragraphs.length * 900;
+    const noteId = setTimeout(() => {
+      const note = document.createElement("p");
+      note.className = "notice__warning file-modal__row";
+      note.textContent = glitch.systemNote;
+      content.appendChild(note);
+
+      const scramble = document.createElement("pre");
+      scramble.className = "file-modal__glitch-scramble file-modal__row";
+      scramble.setAttribute("aria-hidden", "true");
+      content.appendChild(scramble);
+
+      function randomLine(len) {
+        let out = "";
+        for (let i = 0; i < len; i++) out += GLITCH_SCRAMBLE_CHARS[Math.floor(Math.random() * GLITCH_SCRAMBLE_CHARS.length)];
+        return out;
+      }
+      function paintScramble() {
+        scramble.textContent = [0, 1, 2].map(() => randomLine(28 + Math.floor(Math.random() * 10))).join("\n");
+      }
+
+      if (prefersReducedMotion) {
+        scramble.textContent = "[ДАНІ ПОШКОДЖЕНО]";
+      } else {
+        paintScramble();
+        fileGlitchScrambleInterval = setInterval(paintScramble, 130);
+      }
+    }, noteDelay);
+    fileRowTimers.push(noteId);
+
+    if (prefersReducedMotion) return;
+
+    // faint matrix rain behind the text — same technique as runMatrixEffect,
+    // just scoped to this modal's body instead of the terminal window
+    const ctx = canvas.getContext("2d");
+    const fontSize = 14;
+    let columns = [];
+    function resizeCanvas() {
+      canvas.width = fileBody.clientWidth;
+      canvas.height = fileBody.clientHeight;
+      const count = Math.floor(canvas.width / fontSize);
+      columns = new Array(count).fill(0).map(() => Math.random() * -30);
+    }
+    function drawRain() {
+      ctx.fillStyle = "rgba(3,4,5,0.15)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + "px monospace";
+      columns.forEach((y, i) => {
+        const glyph = GLITCH_SCRAMBLE_CHARS[Math.floor(Math.random() * GLITCH_SCRAMBLE_CHARS.length)];
+        ctx.fillStyle = Math.random() > 0.96 ? "#ff2b4d" : "#123a1e";
+        ctx.fillText(glyph, i * fontSize, y * fontSize);
+        columns[i] = y * fontSize > canvas.height && Math.random() > 0.975 ? 0 : y + 1;
+      });
+      fileGlitchRaf = requestAnimationFrame(drawRain);
+    }
+    resizeCanvas();
+    fileGlitchRaf = requestAnimationFrame(drawRain);
+
+    // random "connection problem" error toasts popping up around the panel
+    function spawnErrorToast() {
+      if (!glitch.errors || !glitch.errors.length || !fileBody.isConnected) return;
+      const toast = document.createElement("span");
+      toast.className = "file-modal__glitch-toast";
+      toast.textContent = glitch.errors[Math.floor(Math.random() * glitch.errors.length)];
+      toast.style.top = 8 + Math.random() * 78 + "%";
+      toast.style.left = 6 + Math.random() * 55 + "%";
+      fileBody.appendChild(toast);
+      setTimeout(() => toast.remove(), 1700);
+    }
+    fileGlitchToastInterval = setInterval(spawnErrorToast, 1400);
   }
 
   function renderFileChat(file) {
@@ -1283,7 +1403,8 @@
     fileModal.classList.add("is-active");
     document.body.classList.add("no-scroll");
 
-    if (file.chat) renderFileChat(file);
+    if (file.glitch) renderFileGlitch(file);
+    else if (file.chat) renderFileChat(file);
     else renderFileTable(file);
 
     void filePanel.offsetWidth;
@@ -1303,6 +1424,7 @@
 
     fileRowTimers.forEach((id) => clearTimeout(id));
     fileRowTimers = [];
+    stopFileGlitchEffects();
 
     const target = computeFileTargetRect();
     const originEl = document.getElementById("terminal-window") || terminalBody;
