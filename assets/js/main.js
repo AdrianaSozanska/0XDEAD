@@ -95,7 +95,11 @@
   const gateHours = document.getElementById("gateHours");
   const gateMinutes = document.getElementById("gateMinutes");
   const gateSeconds = document.getElementById("gateSeconds");
-  const gateEnter = document.getElementById("gateEnter");
+  const gateUnlockForm = document.getElementById("gateUnlockForm");
+  const gateCodeInput = document.getElementById("gateCodeInput");
+  const gateCodeError = document.getElementById("gateCodeError");
+  const gateUnlockRow = document.querySelector(".gate__unlock-row");
+  const GATE_ACCESS_CODE = "0xDEADmark";
 
   let gateInterval = null;
 
@@ -143,7 +147,25 @@
     document.body.classList.add("no-scroll");
     updateGateCountdown();
     gateInterval = setInterval(updateGateCountdown, 1000);
-    gateEnter?.addEventListener("click", () => hideGate(false));
+    gateUnlockForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const value = gateCodeInput ? gateCodeInput.value.trim() : "";
+      if (value === GATE_ACCESS_CODE) {
+        hideGate(false);
+        return;
+      }
+      if (gateCodeError) gateCodeError.hidden = false;
+      if (gateCodeInput) gateCodeInput.value = "";
+      if (gateUnlockRow) {
+        gateUnlockRow.classList.remove("is-shaking");
+        void gateUnlockRow.offsetWidth;
+        gateUnlockRow.classList.add("is-shaking");
+      }
+      gateCodeInput?.focus();
+    });
+    gateCodeInput?.addEventListener("input", () => {
+      if (gateCodeError) gateCodeError.hidden = true;
+    });
   }
 
   /* ---------------- classified archive: evidence cold storage ---------------- */

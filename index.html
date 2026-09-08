@@ -38,8 +38,16 @@
       <div class="gate__countdown-unit"><span id="gateSeconds">00</span><small>сек</small></div>
     </div>
 
-    <button type="button" class="btn btn--primary gate__enter" id="gateEnter">0x<span>DEAD</span></button>
-    <p class="gate__hint">Переглянути сайт заздалегідь</p>
+    <form class="gate__unlock" id="gateUnlockForm" autocomplete="off" novalidate>
+      <label class="gate__unlock-label" for="gateCodeInput">// код доступу</label>
+      <div class="gate__unlock-row">
+        <span class="gate__unlock-prompt" aria-hidden="true">&gt;</span>
+        <input type="text" class="gate__unlock-input" id="gateCodeInput" placeholder="введи код" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="gateCodeError">
+        <button type="submit" class="btn btn--primary gate__unlock-submit">Увійти</button>
+      </div>
+      <p class="gate__unlock-error" id="gateCodeError" role="alert" hidden>Невірний код доступу.</p>
+    </form>
+    <p class="gate__hint">Знаєш код доступу? Отримай ранній вхід.</p>
   </div>
 </div>
 
