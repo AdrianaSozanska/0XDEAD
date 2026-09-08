@@ -771,6 +771,7 @@
 
   const gameState = {
     active: false,
+    started: false,
     stage: 1,
     unlockedFiles: [],
     connectionMade: false,
@@ -780,10 +781,15 @@
   let gameStageHintIndex = 0;
 
   function startGame() {
-    if (gameState.active && !gameState.completed) {
+    if (gameState.active) {
       return ["Розслідування вже триває. Введи 'game-help' для списку команд."];
     }
+    if (gameState.started && !gameState.completed) {
+      gameState.active = true;
+      return ["Повернення до розслідування.", "Введи 'game-help', щоб побачити список команд гри."];
+    }
     gameState.active = true;
+    gameState.started = true;
     gameState.stage = 1;
     gameState.unlockedFiles = gameInitialUnlocked.slice();
     gameState.connectionMade = false;
@@ -794,6 +800,14 @@
     const lines = intro ? [intro.content_ua] : ["Гру не вдалося завантажити."];
     lines.push("Введи 'game-help', щоб побачити список команд гри.");
     return lines;
+  }
+
+  function gameExit() {
+    gameState.active = false;
+    return [
+      "Вихід із режиму розслідування. Прогрес збережено.",
+      "Введи 'game', щоб повернутися. Введи 'help' для списку звичайних команд."
+    ];
   }
 
   function gameEvidenceFormatHint() {
@@ -884,7 +898,8 @@
       "  connect <code1> <code2> — зіставити два коди",
       "  decrypt <file> <code>   — розшифрувати файл кодом",
       "  hint                    — підказка для поточного етапу",
-      "  game-help               — цей список команд"
+      "  game-help               — цей список команд",
+      "  exit                    — вийти з режиму розслідування"
     ];
   }
 
@@ -959,6 +974,34 @@
       printLine(promptText + " " + raw, "");
       const cmd = raw.toLowerCase();
 
+      /* While the investigate mini-game is active, it takes over the
+         terminal completely — only its own commands (plus `exit`) work;
+         everything else (help, map, sudo, cat, matrix, ...) is locked out
+         until the player types `exit`, so the game actually traps you. */
+      if (gameState.active) {
+        let gameLines = null;
+        if (cmd === "evidence") gameLines = gameEvidence();
+        else if (cmd === "game-help") gameLines = gameHelp();
+        else if (cmd === "hint") gameLines = gameHint();
+        else if (cmd === "exit") gameLines = gameExit();
+        else if (cmd.startsWith("open ")) gameLines = gameOpen(cmd.slice(5).trim());
+        else if (cmd.startsWith("connect ")) {
+          const [c1, c2] = cmd.slice(8).trim().split(/\s+/);
+          gameLines = gameConnect(c1, c2);
+        } else if (cmd.startsWith("decrypt ")) {
+          const [fileId, code] = cmd.slice(8).trim().split(/\s+/);
+          gameLines = gameDecrypt(fileId, code);
+        }
+
+        if (gameLines) {
+          gameLines.forEach((line) => printLine(line, "t-dim"));
+        } else {
+          printLine(`команду не знайдено: "${raw}". введи 'game-help'.`, "t-red");
+        }
+        updateTerminalCursor();
+        return;
+      }
+
       if (cmd.startsWith("cat ")) {
         const filename = raw.slice(4).trim();
         if (!sudoAuthenticated) {
@@ -972,36 +1015,11 @@
         return;
       }
 
-      /* While the investigate mini-game is active, its own commands take
-         priority — anything else (help, clear, sudo, ...) still falls
-         through to the normal dispatch below, so the game never traps you. */
-      if (gameState.active) {
-        let gameLines = null;
-        if (cmd === "evidence") gameLines = gameEvidence();
-        else if (cmd === "game-help") gameLines = gameHelp();
-        else if (cmd === "hint") gameLines = gameHint();
-        else if (cmd.startsWith("open ")) gameLines = gameOpen(cmd.slice(5).trim());
-        else if (cmd.startsWith("connect ")) {
-          const [c1, c2] = cmd.slice(8).trim().split(/\s+/);
-          gameLines = gameConnect(c1, c2);
-        } else if (cmd.startsWith("decrypt ")) {
-          const [fileId, code] = cmd.slice(8).trim().split(/\s+/);
-          gameLines = gameDecrypt(fileId, code);
-        }
-
-        if (gameLines) {
-          gameLines.forEach((line) => printLine(line, "t-dim"));
-          updateTerminalCursor();
-          return;
-        }
-      }
-
       const handler = TERMINAL_COMMANDS[cmd];
       if (handler) {
         handler().forEach((line) => printLine(line, "t-dim"));
       } else {
-        const helpCmd = gameState.active ? "game-help" : "help";
-        printLine(`команду не знайдено: "${raw}". введи '${helpCmd}'.`, "t-red");
+        printLine(`команду не знайдено: "${raw}". введи 'help'.`, "t-red");
       }
 
       updateTerminalCursor();
@@ -1085,7 +1103,18 @@
       fileRowTimers.push(id);
     });
 
-    const noteDelay = prefersReducedMotion ? 0 : 400 + glitch.paragraphs.length * 900;
+    if (glitch.signature) {
+      const sigDelay = prefersReducedMotion ? 0 : 400 + glitch.paragraphs.length * 900;
+      const sigId = setTimeout(() => {
+        const sig = document.createElement("p");
+        sig.className = "file-modal__glitch-signature file-modal__row";
+        sig.textContent = glitch.signature;
+        content.appendChild(sig);
+      }, sigDelay);
+      fileRowTimers.push(sigId);
+    }
+
+    const noteDelay = prefersReducedMotion ? 0 : 400 + (glitch.paragraphs.length + (glitch.signature ? 1 : 0)) * 900;
     const noteId = setTimeout(() => {
       const note = document.createElement("p");
       note.className = "notice__warning file-modal__row";

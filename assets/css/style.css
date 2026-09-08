@@ -1693,6 +1693,16 @@ code {
   line-height: 1.6;
   white-space: pre-line;
 }
+.file-modal__glitch-signature {
+  margin: -0.4rem 0 1rem;
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--green-soft);
+  text-shadow: 0 0 12px rgba(0,255,162,0.55);
+}
 .file-modal__glitch-scramble {
   margin: 0.9rem 0 0;
   padding: 0.75rem 0.9rem;
