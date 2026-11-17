@@ -1465,21 +1465,24 @@ code {
 .dossier-accuse-btn {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
   flex: none;
   margin-left: auto;
   white-space: nowrap;
-  padding: 0.45em 0.8em;
-  background: rgba(255,43,77,0.06);
+  padding: 0.5em 0.9em;
+  background: rgba(255,43,77,0.12);
   border: 1px solid var(--red);
   border-radius: var(--radius);
   color: var(--red);
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s ease;
+  box-shadow: 0 0 12px rgba(255,43,77,0.25);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 .dossier-accuse-btn__icon {
   flex: none;
@@ -1487,9 +1490,12 @@ code {
   height: 10px;
   border-radius: 2px;
   background: var(--red);
+  box-shadow: 0 0 6px rgba(255,43,77,0.8);
 }
 .dossier-accuse-btn:hover, .dossier-accuse-btn:focus-visible {
-  background: rgba(255,43,77,0.14);
+  background: rgba(255,43,77,0.22);
+  box-shadow: 0 0 20px rgba(255,43,77,0.45);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 640px) {
