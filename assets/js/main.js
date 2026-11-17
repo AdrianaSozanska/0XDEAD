@@ -468,6 +468,14 @@
 
     const photoHtml = person.photo ? `<img src="${person.photo}" alt="${person.name}">` : "";
 
+    /* Every file lets you "accuse" its subject of the murder except
+       Марк's (СПРАВА №02) — he's the victim, not a suspect. */
+    const accuseHtml = person.id === "mark" ? "" : `
+      <button type="button" class="dossier-accuse-btn" data-accuse-name="${person.name}">
+        🚨 Повідомити про підозру у вбивстві
+      </button>
+    `;
+
     return `
       <span class="dossier-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
       <span class="dossier-modal__case">СПРАВА №${person.caseNo}</span>
@@ -478,6 +486,7 @@
         <div class="dossier-modal__details">
           ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
           ${notesHtml}
+          ${accuseHtml}
         </div>
       </div>
     `;
@@ -634,6 +643,10 @@
   }
 
   function onDossierKeydown(e) {
+    if (accuseModal && accuseModal.classList.contains("is-active")) {
+      if (e.key === "Escape") closeAccuseModal();
+      return;
+    }
     if (e.key === "Escape") closeDossier();
     if (e.key === "ArrowLeft") showDossierAt(dossierOpenIndex - 1);
     if (e.key === "ArrowRight") showDossierAt(dossierOpenIndex + 1);
@@ -652,6 +665,60 @@
       dossierPanel.style.left = target.left + "px";
       dossierPanel.style.width = target.width + "px";
       dossierPanel.style.height = target.height + "px";
+    });
+  }
+
+  /* ---------------- "accuse the suspect" popup (dossier files, except Марк) ---------------- */
+
+  const accuseModal = document.getElementById("accuseModal");
+  const accuseBackdrop = document.getElementById("accuseBackdrop");
+  const accusePanel = document.getElementById("accusePanel");
+  const accuseClose = document.getElementById("accuseClose");
+  const accuseStepConfirm = document.getElementById("accuseStepConfirm");
+  const accuseStepResult = document.getElementById("accuseStepResult");
+  const accuseSuspectName = document.getElementById("accuseSuspectName");
+  const accuseYes = document.getElementById("accuseYes");
+  const accuseNo = document.getElementById("accuseNo");
+  const accuseBuyLink = document.getElementById("accuseBuyLink");
+
+  let accuseLastFocused = null;
+
+  function openAccuseModal(name) {
+    if (!accuseModal || !accusePanel) return;
+    if (accuseSuspectName) accuseSuspectName.textContent = name;
+    if (accuseStepConfirm) accuseStepConfirm.hidden = false;
+    if (accuseStepResult) accuseStepResult.hidden = true;
+    accuseLastFocused = document.activeElement;
+
+    accuseModal.classList.add("is-active");
+    requestAnimationFrame(() => accuseModal.classList.add("is-visible"));
+    accusePanel.focus();
+  }
+
+  function closeAccuseModal() {
+    if (!accuseModal || !accuseModal.classList.contains("is-active")) return;
+    accuseModal.classList.remove("is-visible");
+    setTimeout(() => {
+      accuseModal.classList.remove("is-active");
+    }, prefersReducedMotion ? 0 : 250);
+    if (accuseLastFocused && accuseLastFocused.focus) accuseLastFocused.focus();
+  }
+
+  if (accuseModal) {
+    dossierModalContent?.addEventListener("click", (e) => {
+      const btn = e.target.closest(".dossier-accuse-btn");
+      if (btn) openAccuseModal(btn.dataset.accuseName || "цей підозрюваний");
+    });
+    accuseYes?.addEventListener("click", () => {
+      if (accuseStepConfirm) accuseStepConfirm.hidden = true;
+      if (accuseStepResult) accuseStepResult.hidden = false;
+    });
+    accuseNo?.addEventListener("click", closeAccuseModal);
+    accuseClose?.addEventListener("click", closeAccuseModal);
+    accuseBackdrop?.addEventListener("click", closeAccuseModal);
+    accuseBuyLink?.addEventListener("click", () => {
+      closeAccuseModal();
+      closeDossier();
     });
   }
 
