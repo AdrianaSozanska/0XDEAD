@@ -345,7 +345,8 @@ code {
 .hero__blurb {
   color: var(--text-dim);
   max-width: 420px;
-  font-size: 0.92rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.1rem;
   line-height: 1.6;
   margin: 0 0 1rem;
   text-align: left;
@@ -354,7 +355,8 @@ code {
 .hero__hint {
   color: var(--text-dim);
   max-width: 420px;
-  font-size: 0.85rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1rem;
   line-height: 1.6;
   margin: 0 0 1.5rem;
   opacity: 0.8;
