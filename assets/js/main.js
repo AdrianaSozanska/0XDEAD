@@ -1,6 +1,12 @@
 (() => {
   "use strict";
 
+  /* Always land on the hero section, even if the URL carries a leftover
+     hash (shared link, browser history, back/forward nav). */
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  window.scrollTo(0, 0);
+
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------------- nav toggle ---------------- */
