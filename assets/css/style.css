@@ -349,6 +349,83 @@ code {
   line-height: 1.6;
   margin-top: 1rem;
 }
+
+/* hint block: a faux "system scan" readout teasing the site's three
+   interactive modules, each line a live link to its section */
+.hero__hint {
+  max-width: 62ch;
+  margin-top: 1.5rem;
+  padding: 1rem 1.2rem;
+  background: rgba(3,4,5,0.6);
+  border: 1px solid var(--panel-border);
+  border-left: 2px solid var(--green-soft);
+  border-radius: var(--radius);
+}
+.hero__hint-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--cyan);
+  letter-spacing: 0.02em;
+}
+.hero__hint-list {
+  list-style: none;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.hero__hint-list a {
+  display: block;
+  padding: 0.35rem 0.4rem;
+  margin: 0 -0.4rem;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+.hero__hint-list a:hover, .hero__hint-list a:focus-visible {
+  background: rgba(57,255,20,0.08);
+}
+.hero__hint-tag {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--green-soft);
+}
+.hero__hint-tag::before {
+  content: "› ";
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.hero__hint-list a:hover .hero__hint-tag::before,
+.hero__hint-list a:focus-visible .hero__hint-tag::before {
+  opacity: 1;
+}
+.hero__hint-desc {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.hero__hint-status {
+  margin: 0;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--panel-border);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--green-soft);
+}
+.hero__hint-cursor {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.9em;
+  margin-left: 0.3em;
+  background: var(--green);
+  vertical-align: text-bottom;
+  animation: termCursorBlink 1s step-end infinite;
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
