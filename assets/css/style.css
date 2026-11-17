@@ -303,7 +303,6 @@ code {
 }
 @media (min-width: 900px) {
   .hero {
-    grid-template-columns: 1.1fr 0.9fr;
     padding: 3rem 3rem 4rem;
   }
 }
