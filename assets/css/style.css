@@ -97,6 +97,13 @@ code {
 .section {
   padding: clamp(3rem, 8vw, 6rem) 1.5rem;
 }
+#terminal, #dossier, #archive, #author {
+  /* Jumping to these sections (nav links) lands near the eyebrow
+     label instead of at the section's outer edge, which otherwise
+     leaves a tall empty gap below the sticky header. A negative
+     scroll-margin scrolls past that top padding. */
+  scroll-margin-top: calc(-1 * clamp(3rem, 8vw, 6rem));
+}
 .section--dark { background: var(--bg-alt); }
 .section__inner {
   max-width: var(--max-width);
