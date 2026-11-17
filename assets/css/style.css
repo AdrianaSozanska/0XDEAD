@@ -352,6 +352,15 @@ code {
   text-align: left;
 }
 
+.hero__divider {
+  width: 48px;
+  height: 2px;
+  margin: 0 0 1.25rem;
+  border: none;
+  background: var(--green-soft);
+  opacity: 0.6;
+}
+
 .hero__hint {
   color: var(--text-dim);
   max-width: 420px;
@@ -366,10 +375,48 @@ code {
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-start;
-  gap: 1rem;
+  gap: 1.5rem;
   margin-top: 0;
 }
+
+.hero__cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9em 1.8em;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: var(--green-soft);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--green-soft);
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+  box-shadow: 0 0 16px rgba(0,255,162,0.2);
+  transition: box-shadow 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.hero__cta:hover, .hero__cta:focus-visible {
+  background: rgba(0,255,162,0.08);
+  box-shadow: 0 0 26px rgba(0,255,162,0.4);
+  transform: translateY(-2px);
+}
+.hero__cta-prompt { color: var(--green); }
+
+.hero__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.15s ease;
+}
+.hero__link:hover, .hero__link:focus-visible { color: var(--text); }
 
 .hero__scroll {
   position: absolute;
