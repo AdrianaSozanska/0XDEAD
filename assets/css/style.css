@@ -2475,12 +2475,6 @@ code {
   font-size: 0.75em;
   opacity: 0.85;
 }
-.buy-note {
-  margin: 0.9rem 0 2rem;
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  color: var(--text-dim);
-}
 
 /* ---------- footer ---------- */
 
