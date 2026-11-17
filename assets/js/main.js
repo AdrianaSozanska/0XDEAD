@@ -202,11 +202,46 @@
 
         <div class="notice__section">
           <span class="notice__section-label">1. Group Identification</span>
-          <p>Назва угруповання (за оперативними даними): ${n.group.name}</p>
-          <p>Тип активності: ${n.group.activityType}</p>
-          <p>Географія діяльності: ${n.group.geography}</p>
-          <p>Статус: ${n.group.status}</p>
-          <p>${n.group.note}</p>
+          <div class="notice__id-grid">
+            <div class="notice__id-tile notice__id-tile--alert">
+              <span class="notice__id-corner notice__id-corner--tl"></span>
+              <span class="notice__id-corner notice__id-corner--tr"></span>
+              <span class="notice__id-corner notice__id-corner--bl"></span>
+              <span class="notice__id-corner notice__id-corner--br"></span>
+              <svg class="notice__id-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3 L22 20 H2 Z"></path>
+                <line x1="12" y1="9.5" x2="12" y2="14"></line>
+                <circle cx="12" cy="16.8" r="0.6" fill="currentColor" stroke="none"></circle>
+              </svg>
+              <span class="notice__id-label">Назва угруповання (за оперативними даними)</span>
+              <span class="notice__id-value notice__id-value--big">Група ${n.group.name}</span>
+            </div>
+            <div class="notice__id-tile">
+              <span class="notice__id-corner notice__id-corner--tl"></span>
+              <span class="notice__id-corner notice__id-corner--br"></span>
+              <svg class="notice__id-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3 L19 5.5 V11 C19 15.5 16 19 12 20.5 C8 19 5 15.5 5 11 V5.5 Z"></path>
+                <rect x="9.5" y="11" width="5" height="4" rx="0.6"></rect>
+                <path d="M10.5 11 V9.5 a1.5 1.5 0 0 1 3 0 V11"></path>
+              </svg>
+              <span class="notice__id-label">Тип активності</span>
+              <span class="notice__id-value">${n.group.activityType}</span>
+              ${n.group.sectors ? `<div class="notice__sector-list">${n.group.sectors.map((s) => `<span class="notice__sector">${s}</span>`).join("")}</div>` : ""}
+            </div>
+            <div class="notice__id-tile">
+              <span class="notice__id-corner notice__id-corner--tl"></span>
+              <span class="notice__id-corner notice__id-corner--br"></span>
+              ${n.group.countriesCount ? `<span class="notice__count-badge">${n.group.countriesCount}</span>` : ""}
+              <svg class="notice__id-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 21s-7-5.7-7-11a7 7 0 0 1 14 0c0 5.3-7 11-7 11z"></path>
+                <circle cx="12" cy="10" r="2.5"></circle>
+              </svg>
+              <span class="notice__id-label">Географія діяльності</span>
+              <span class="notice__id-value">${n.group.geography}</span>
+              <p class="notice__id-note">${n.group.note}</p>
+            </div>
+          </div>
+          <div class="notice__status-banner">СТАТУС: ${n.group.status.toUpperCase()}</div>
         </div>
 
         <div class="notice__section">
