@@ -463,38 +463,99 @@
   let dossierOriginRect = null;
   let dossierLastFocused = null;
 
+  /* Deterministic "digital signature" flavor text (hash + timestamp) for
+     the dossier header — purely decorative, derived from the person's id
+     so it stays stable across renders without needing new data fields. */
+  function pseudoHash(seed) {
+    let h1 = 0xdeadbeef ^ seed.length;
+    let h2 = 0x41c6ce57 ^ seed.length;
+    for (let i = 0; i < seed.length; i++) {
+      const ch = seed.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h1 >>> 0).toString(16).padStart(8, "0") + (h2 >>> 0).toString(16).padStart(8, "0") +
+      (Math.imul(h1, h2) >>> 0).toString(16).padStart(8, "0");
+  }
+
+  function pseudoTimestamp(seed, caseNo) {
+    const base = Date.UTC(2024, 4, 10, 18, 0, 0);
+    const offsetMs = (parseInt(caseNo, 10) || 0) * 86400000 + (pseudoHash(seed).charCodeAt(0) % 60) * 60000;
+    const d = new Date(base + offsetMs);
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${pad(d.getUTCDate())}.${pad(d.getUTCMonth() + 1)}.${d.getUTCFullYear()} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+  }
+
+  /* "Роль невідома" / "Роль уточнюється" → "Роль: невідома" / "Роль: уточнюється";
+     any other roleTag (already a full description) is shown as-is. */
+  function formatRoleTag(tag) {
+    const m = tag.match(/^Роль\s+(.+)$/i);
+    return m ? `Роль: ${m[1]}` : tag;
+  }
+
   function buildDossierModalHTML(person) {
     const isDeceased = person.statusClass === "deceased";
     const isRedacted = person.statusClass === "redacted";
 
+    const commentLine = !person.blackout && person.notes
+      ? person.notes.find((line) => line.startsWith("Коментар:"))
+      : null;
+    const regularNotes = commentLine ? person.notes.filter((line) => line !== commentLine) : person.notes;
+
     const notesHtml = person.blackout
       ? `<div class="redaction"></div><div class="redaction"></div><div class="redaction"></div>
          <p class="dossier-modal__redacted-note">${person.statusLabel}</p>`
-      : person.notes.map((line) => `<p class="dossier-modal__note">${line}</p>`).join("");
+      : regularNotes.map((line) => `<p class="dossier-modal__note">${line}</p>`).join("");
 
-    const photoHtml = person.photo ? `<img src="${person.photo}" alt="${person.name}">` : "";
+    const photoHtml = person.photo
+      ? `<img src="${person.photo}" alt="${person.name}">`
+      : `<div class="dossier-modal__photo-missing"><span>ФОТО ВІДСУТНЄ</span><span>DATA MISSING</span></div>`;
+
+    const commentHtml = commentLine
+      ? `<div class="dossier-modal__comment">${commentLine.replace(/^Коментар:\s*/, "<strong>Коментар:</strong> ")}</div>`
+      : "";
 
     /* Every file lets you "accuse" its subject of the murder except
        Марк's (СПРАВА №02) — he's the victim, not a suspect. */
     const accuseHtml = person.id === "mark" ? "" : `
       <button type="button" class="dossier-accuse-btn" data-accuse-name="${person.name}">
-        🚨 Повідомити про підозру у вбивстві
+        <span class="dossier-accuse-btn__icon" aria-hidden="true"></span>
+        <span>Повідомити про підозру у вбивстві</span>
       </button>
     `;
 
     return `
-      <span class="dossier-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
-      <span class="dossier-modal__case">СПРАВА №${person.caseNo}</span>
+      <div class="dossier-modal__header">
+        <span class="dossier-modal__stamp">0xDEAD // ЦІЛКОМ ТАЄМНО</span>
+        <div class="dossier-modal__signature" aria-hidden="true">
+          <span class="dossier-modal__signature-top">
+            <span class="dossier-modal__signature-check">&#10003;</span>
+            Цифровий підпис: <strong>ПІДТВЕРДЖЕНО</strong>
+          </span>
+          <span class="dossier-modal__signature-meta">${pseudoTimestamp(person.id, person.caseNo)}</span>
+          <span class="dossier-modal__signature-hash">${pseudoHash(person.id)}</span>
+        </div>
+      </div>
+      <span class="dossier-modal__case">СПРАВА №${person.caseNo}:</span>
       <h3 class="dossier-modal__name">${person.name}</h3>
-      <p class="dossier-modal__role">${person.roleTag}</p>
+      <span class="dossier-modal__role">${formatRoleTag(person.roleTag)}</span>
       <div class="dossier-modal__body">
-        <div class="dossier-modal__photo${isDeceased ? " dossier-modal__photo--deceased" : ""}" aria-hidden="true">${photoHtml}</div>
+        <div class="dossier-modal__photo${isDeceased ? " dossier-modal__photo--deceased" : ""}" aria-hidden="true">
+          ${photoHtml}
+          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--tl"></span>
+          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--tr"></span>
+          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--bl"></span>
+          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--br"></span>
+        </div>
         <div class="dossier-modal__details">
           ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
           ${notesHtml}
-          ${accuseHtml}
         </div>
       </div>
+      ${commentHtml}
+      ${accuseHtml}
     `;
   }
 
