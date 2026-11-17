@@ -146,8 +146,8 @@ const DOSSIER_NETWORK = {
     { id: "kurator", x: 50, y: 12 },
     { id: "anton", x: 38, y: 46 },
     { id: "mark", x: 66, y: 48 },
-    { id: "vadym", x: 46, y: 82 },
-    { id: "mykola", x: 24, y: 82 },
+    { id: "vadym", x: 48, y: 82 },
+    { id: "mykola", x: 19, y: 82 },
     { id: "alisa", x: 74, y: 86 }
   ],
   ghosts: [
