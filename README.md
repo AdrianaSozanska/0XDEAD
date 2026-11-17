@@ -21,19 +21,18 @@ No build step is required. Either:
 This is a static site — deploy by uploading the repo contents as-is to any
 static host:
 
-- **GitHub Pages**: enable Pages on this repo (serve from the branch root)
+- **GitHub Pages**: already enabled on this repo, auto-deploying on every
+  push — live at https://adrianasozanska.github.io/0XDEAD/
 - **Netlify / Vercel**: point a new static site at this repo, no build
   command needed, publish directory = repo root
 - Any other static host / CDN / plain web server
 
-### SEO: swap the placeholder domain
+### SEO
 
-`https://0xdead-book.example` is a placeholder — once the site has a real
-URL, replace every occurrence of it with the real one in:
 `index.html` (the `canonical`/`og:*`/`twitter:*` tags), `robots.txt`, and
-`sitemap.xml`. Until then those tags just point at a dead example domain,
-which doesn't break anything but won't help search engines or social-share
-previews either.
+`sitemap.xml` all point at the live GitHub Pages URL above. If the site
+ever moves to a different URL (its own domain, a different host), update
+all three to match.
 
 ## Project structure
 

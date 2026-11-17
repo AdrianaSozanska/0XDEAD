@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://0xdead-book.example/sitemap.xml
+Sitemap: https://adrianasozanska.github.io/0XDEAD/sitemap.xml
