@@ -135,6 +135,9 @@ code {
 .lede--mono {
   font-family: 'IBM Plex Mono', monospace;
 }
+.lede--wide {
+  max-width: 100%;
+}
 
 /* ---------- buttons ---------- */
 
@@ -816,6 +819,9 @@ code {
   max-width: 62ch;
   margin-left: auto;
   margin-right: auto;
+}
+.terminal-section .section__lede.lede--wide {
+  max-width: 100%;
 }
 .terminal--featured {
   max-width: 760px;
