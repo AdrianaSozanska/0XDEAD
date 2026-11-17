@@ -194,14 +194,25 @@
     return `
       <div class="archive-doc archive-doc--notice">
         <div class="notice__bar">
-          <span class="notice__flag">🌐 INTERPOL</span>
-          <span class="notice__type">CYBERCRIME NOTICE</span>
+          <span class="notice__flag">
+            <svg class="notice__flag-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+              <circle cx="12" cy="12" r="9.5"></circle>
+              <ellipse cx="12" cy="12" rx="4" ry="9.5"></ellipse>
+              <line x1="2.5" y1="12" x2="21.5" y2="12"></line>
+              <path d="M4 7 h16 M4 17 h16"></path>
+            </svg>
+            INTERPOL
+          </span>
+          <span class="notice__type"><span class="notice__type-corner notice__type-corner--tl"></span>CYBERCRIME NOTICE<span class="notice__type-corner notice__type-corner--br"></span></span>
         </div>
         <p class="notice__ref">Reference: ${n.reference} · Classification: ${n.classification}</p>
         <p class="notice__ref">Date of issue: ${n.dateOfIssue} · Issuing authority: ${n.issuingAuthority}</p>
 
         <div class="notice__section">
-          <span class="notice__section-label">1. Group Identification</span>
+          <div class="notice__section-head">
+            <span class="notice__section-label">1. Group Identification</span>
+            <div class="notice__status-banner">СТАТУС: ${n.group.status.toUpperCase()}</div>
+          </div>
           <div class="notice__id-grid">
             <div class="notice__id-tile notice__id-tile--alert">
               <span class="notice__id-corner notice__id-corner--tl"></span>
@@ -241,7 +252,6 @@
               <p class="notice__id-note">${n.group.note}</p>
             </div>
           </div>
-          <div class="notice__status-banner">СТАТУС: ${n.group.status.toUpperCase()}</div>
         </div>
 
         <div class="notice__section">

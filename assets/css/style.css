@@ -1748,27 +1748,65 @@ code {
 /* RED NOTICE */
 .archive-doc--notice { font-family: 'IBM Plex Mono', monospace; }
 .notice__bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(230,57,70,0.12);
+  gap: 0.75rem;
+  overflow: hidden;
+  background: linear-gradient(160deg, #3a0f16, #170608);
   border: 1px solid var(--red);
   border-radius: 4px;
-  padding: 0.6rem 0.9rem;
+  padding: 0.8rem 1.1rem;
   margin-bottom: 1rem;
 }
+.notice__bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,0.05) 0 10px,
+    transparent 10px 20px
+  );
+  pointer-events: none;
+}
 .notice__flag {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.notice__flag-emblem {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: rgba(255,255,255,0.85);
 }
 .notice__type {
+  position: relative;
+  padding: 0.3em 0.9em;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.1rem;
   letter-spacing: 0.06em;
-  color: var(--red);
+  color: #ff8fa3;
+  white-space: nowrap;
 }
+.notice__type-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: #ff8fa3;
+  opacity: 0.85;
+}
+.notice__type-corner--tl { top: 0; left: 0; border-top: 1px dashed; border-left: 1px dashed; }
+.notice__type-corner--br { bottom: 0; right: 0; border-bottom: 1px dashed; border-right: 1px dashed; }
 .notice__ref {
   font-family: var(--font-display);
   font-size: 0.78rem;
@@ -1789,6 +1827,15 @@ code {
   color: var(--cyan);
   margin-bottom: 0.5rem;
 }
+.notice__section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+.notice__section-head .notice__section-label { margin-bottom: 0; }
 .notice__section { margin-bottom: 1.1rem; }
 .notice__section p {
   margin: 0 0 0.5rem;
@@ -1895,16 +1942,18 @@ code {
 }
 .notice__status-banner {
   display: inline-block;
-  padding: 0.5em 1em;
+  flex: none;
+  white-space: nowrap;
+  padding: 0.35em 0.7em;
   border: 1px solid var(--red);
   border-radius: 4px;
   background: rgba(255,43,77,0.08);
   color: var(--red);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  box-shadow: 0 0 12px rgba(255,43,77,0.2);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  box-shadow: 0 0 10px rgba(255,43,77,0.2);
 }
 .notice__alias-list {
   display: flex;
