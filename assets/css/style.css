@@ -922,9 +922,15 @@ code {
 
 .archive-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
   margin-top: 2.5rem;
+}
+@media (max-width: 860px) {
+  .archive-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .archive-grid { grid-template-columns: 1fr; }
 }
 
 /* Each tile reads as a locker drawer front, not a locked puzzle piece:
