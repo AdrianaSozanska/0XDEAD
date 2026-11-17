@@ -697,6 +697,13 @@ code {
   font-family: var(--font-display);
   font-size: 0.9rem;
 }
+@media (max-width: 780px) {
+  /* iOS Safari zooms the whole page in on focus when an input's font-size
+     is under 16px — that zoom is what reads as the page "jumping" when
+     the keyboard opens. Bumping just the input (and the prompt beside it,
+     so they still line up) to 16px avoids triggering it. */
+  .terminal__input, .terminal__prompt { font-size: 16px; }
+}
 .terminal__input:focus { outline: none; }
 .terminal__input.is-caret-hidden { caret-color: transparent; }
 .terminal__cursor {
