@@ -26,6 +26,15 @@ static host:
   command needed, publish directory = repo root
 - Any other static host / CDN / plain web server
 
+### SEO: swap the placeholder domain
+
+`https://0xdead-book.example` is a placeholder — once the site has a real
+URL, replace every occurrence of it with the real one in:
+`index.html` (the `canonical`/`og:*`/`twitter:*` tags), `robots.txt`, and
+`sitemap.xml`. Until then those tags just point at a dead example domain,
+which doesn't break anything but won't help search engines or social-share
+previews either.
+
 ## Project structure
 
 ```
