@@ -735,6 +735,7 @@ code {
   font-size: 0.9rem;
 }
 .terminal__input:focus { outline: none; }
+.terminal__input.is-caret-hidden { caret-color: transparent; }
 .terminal__cursor {
   display: inline-block;
   width: 0.55em;
@@ -952,13 +953,19 @@ code {
   text-align: center;
 }
 .dossier-card:hover, .dossier-card:focus-visible {
-  transform: translate(-50%, -50%) translateY(-5px);
+  /* no position shift here (no transform, no margin) — moving the box
+     at all on :hover, by any mechanism, made Chromium mis-stack this
+     element against the sticky header: a card sitting partly under the
+     nav bar stayed hidden behind it even with a much higher z-index,
+     every time hover nudged its position. Border/shadow-only feedback
+     plus z-index sidesteps that entirely, so the full card is always
+     visible once hovered/focused, wherever it sits on scroll. */
   border-color: var(--green-soft);
   box-shadow:
     4px 6px 0 -1px rgba(0,0,0,0.6),
     8px 14px 24px rgba(0,0,0,0.5),
     0 0 22px rgba(57,255,20,0.16);
-  z-index: 2;
+  z-index: 150;
 }
 
 .dossier-card__id {

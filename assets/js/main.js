@@ -716,8 +716,15 @@
 
   function updateTerminalCursor() {
     if (!terminalCursor || !terminalInput) return;
-    const shouldHide = document.activeElement === terminalInput || terminalInput.value.length > 0;
+    /* Only hide once the visitor actually starts typing — focusing the
+       field (clicking into it) should look exactly like before they
+       interacted, still showing this blinking cursor, not switch to a
+       bare native caret the moment it's clicked. The native caret is
+       kept invisible for that same stretch so there's only ever one
+       cursor on screen; it reappears once there's real text to edit. */
+    const shouldHide = terminalInput.value.length > 0;
     terminalCursor.classList.toggle("is-hidden", shouldHide);
+    terminalInput.classList.toggle("is-caret-hidden", !shouldHide);
   }
 
   /* Classic falling-code takeover: overlays a canvas on top of the terminal's
@@ -962,6 +969,19 @@
     terminalInput.addEventListener("focus", updateTerminalCursor);
     terminalInput.addEventListener("blur", updateTerminalCursor);
     terminalInput.addEventListener("input", updateTerminalCursor);
+
+    /* Clicking anywhere in the terminal window — the title bar, the
+       scrollback output, empty space — focuses the command line, so
+       typing works right away instead of requiring a precise click on
+       the thin input row. A plain click still lets a text selection
+       (for copying scrollback) through untouched. */
+    const terminalWindowEl = document.getElementById("terminal-window");
+    terminalWindowEl?.addEventListener("click", (e) => {
+      if (e.target === terminalInput) return;
+      const selection = window.getSelection();
+      if (selection && selection.toString().length > 0) return;
+      terminalInput.focus();
+    });
 
     terminalForm.addEventListener("submit", (e) => {
       e.preventDefault();

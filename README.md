@@ -91,11 +91,9 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   and the folder cards scale together regardless of the stage's pixel
   size. On narrow viewports the diagram scrolls horizontally instead of
   crushing the layout (`.dossier-net` in `assets/css/style.css`).
-- **Book cover**: the hero now shows the real cover art
-  (`assets/img/initialbookcover.jpeg`) — it's a deliberately partial
-  reveal (a puzzle-piece treatment baked into the artwork itself, not a
-  CSS effect), meant to be swapped for the fully-revealed cover closer to
-  release. Just replace the file and update the `<img>`'s `width`/`height`
+- **Book cover**: the hero shows the real cover art
+  (`assets/img/cover_final.jpeg`). To swap it for a newer revision,
+  replace the file and update the `<img>`'s `width`/`height`
   attributes in the hero section of `index.html` to match its real pixel
   dimensions (avoids layout shift).
 - **Marketplace links** (`// 05 — access_request.sh` / "Де купити"): the
