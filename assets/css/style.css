@@ -1330,9 +1330,12 @@ code {
   gap: 1.5rem;
   flex-wrap: wrap;
 }
+.dossier-modal__photo-col {
+  flex-shrink: 0;
+  width: 140px;
+}
 .dossier-modal__photo {
   position: relative;
-  flex-shrink: 0;
   width: 140px;
   height: 176px;
   border: 1px solid var(--panel-border);
@@ -1413,16 +1416,17 @@ code {
 .dossier-modal__note:last-child { border-bottom: none; }
 
 .dossier-modal__comment {
-  margin-top: 1.5rem;
-  padding: 0.9rem 1.1rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.65rem;
+  width: 140px;
   border: 1px solid var(--panel-border);
   border-radius: 4px;
   background: rgba(255,255,255,0.02);
   color: var(--text-dim);
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: 0.74rem;
+  line-height: 1.45;
 }
-.dossier-modal__comment strong { color: var(--text); }
+.dossier-modal__comment strong { color: var(--text); display: block; margin-bottom: 0.2rem; }
 
 .dossier-modal__photo--deceased::after {
   content: "ПОМЕР";
@@ -1493,7 +1497,9 @@ code {
   .dossier-modal__nav--prev { left: 0.3rem; }
   .dossier-modal__nav--next { right: 0.3rem; }
   .dossier-modal__body { flex-direction: column; }
+  .dossier-modal__photo-col { width: auto; }
   .dossier-modal__photo { width: 96px; height: 120px; }
+  .dossier-modal__comment { width: 100%; font-size: 0.88rem; padding: 0.8rem 0.9rem; }
   .dossier-modal__header { margin-bottom: 1.1rem; }
   .dossier-modal__signature {
     position: static;

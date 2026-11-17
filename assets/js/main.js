@@ -542,12 +542,15 @@
       <h3 class="dossier-modal__name">${person.name}</h3>
       <span class="dossier-modal__role">${formatRoleTag(person.roleTag)}</span>
       <div class="dossier-modal__body">
-        <div class="dossier-modal__photo${isDeceased ? " dossier-modal__photo--deceased" : ""}" aria-hidden="true">
-          ${photoHtml}
-          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--tl"></span>
-          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--tr"></span>
-          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--bl"></span>
-          <span class="dossier-modal__photo-corner dossier-modal__photo-corner--br"></span>
+        <div class="dossier-modal__photo-col">
+          <div class="dossier-modal__photo${isDeceased ? " dossier-modal__photo--deceased" : ""}" aria-hidden="true">
+            ${photoHtml}
+            <span class="dossier-modal__photo-corner dossier-modal__photo-corner--tl"></span>
+            <span class="dossier-modal__photo-corner dossier-modal__photo-corner--tr"></span>
+            <span class="dossier-modal__photo-corner dossier-modal__photo-corner--bl"></span>
+            <span class="dossier-modal__photo-corner dossier-modal__photo-corner--br"></span>
+          </div>
+          ${commentHtml}
         </div>
         <div class="dossier-modal__details">
           <div class="dossier-modal__details-top">
@@ -557,7 +560,6 @@
           ${notesHtml}
         </div>
       </div>
-      ${commentHtml}
     `;
   }
 
