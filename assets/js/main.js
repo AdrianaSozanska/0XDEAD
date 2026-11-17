@@ -190,6 +190,94 @@
   let archiveOriginRect = null;
   let archiveLastFocused = null;
 
+  /* Inner <path>/<line>/etc markup (no wrapping <svg>) for the Modus
+     Operandi diagram's small icons — see modusIcon() below. */
+  const MODUS_ICON_PATHS = {
+    phishing: `<rect x="3" y="5" width="18" height="14" rx="1.5"></rect><path d="M3 6 l9 7 9-7"></path>`,
+    credentials: `<rect x="3" y="5" width="18" height="14" rx="1.5"></rect><circle cx="8.5" cy="11" r="1.8"></circle><path d="M6 15.5c0-1.3 1.1-2.3 2.5-2.3s2.5 1 2.5 2.3"></path><line x1="13" y1="9.5" x2="18" y2="9.5"></line><line x1="13" y1="13" x2="18" y2="13"></line>`,
+    vuln: `<circle cx="12" cy="13" r="4"></circle><line x1="12" y1="6" x2="12" y2="9"></line><line x1="7" y1="10" x2="4.5" y2="8"></line><line x1="17" y1="10" x2="19.5" y2="8"></line><line x1="6" y1="14" x2="3.5" y2="14"></line><line x1="18" y1="14" x2="20.5" y2="14"></line><line x1="7" y1="18" x2="4.5" y2="20"></line><line x1="17" y1="18" x2="19.5" y2="20"></line>`,
+    network: `<circle cx="12" cy="6" r="2"></circle><line x1="12" y1="8" x2="12" y2="11"></line><line x1="12" y1="11" x2="6" y2="15"></line><line x1="12" y1="11" x2="18" y2="15"></line><rect x="3.5" y="15" width="5" height="4" rx="0.6"></rect><rect x="15.5" y="15" width="5" height="4" rx="0.6"></rect>`,
+    lateral: `<line x1="2" y1="9" x2="9.5" y2="10.5"></line><line x1="2" y1="15" x2="9.5" y2="13.5"></line><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="7" r="1.8"></circle><circle cx="19" cy="17" r="1.8"></circle><line x1="13.3" y1="11" x2="17.3" y2="8"></line><line x1="13.3" y1="13" x2="17.3" y2="16"></line>`,
+    exfil: `<path d="M12 16 V5"></path><polyline points="7.5 9.5 12 5 16.5 9.5"></polyline><line x1="5" y1="19" x2="19" y2="19"></line>`,
+    lock: `<rect x="6" y="11" width="12" height="9" rx="1.5"></rect><path d="M8.5 11 V7.5a3.5 3.5 0 0 1 7 0V11"></path>`,
+    database: `<ellipse cx="12" cy="6" rx="7" ry="2.5"></ellipse><path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6"></path><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"></path>`,
+    chart: `<line x1="4" y1="20" x2="20" y2="20"></line><rect x="6" y="13" width="3" height="7"></rect><rect x="11" y="9" width="3" height="11"></rect><rect x="16" y="5" width="3" height="15"></rect>`,
+    idcard: `<rect x="3" y="5" width="18" height="14" rx="1.5"></rect><circle cx="8.5" cy="11" r="1.8"></circle><path d="M6 15.5c0-1.3 1.1-2.3 2.5-2.3s2.5 1 2.5 2.3"></path><line x1="13" y1="9.5" x2="18" y2="9.5"></line><line x1="13" y1="13" x2="18" y2="13"></line>`,
+    heartbeat: `<polyline points="2 12 7 12 9 6 13 18 15 12 22 12"></polyline>`,
+    warning: `<path d="M12 3 L22 20 H2 Z"></path><line x1="12" y1="9.5" x2="12" y2="14"></line><circle cx="12" cy="16.8" r="0.6" fill="currentColor" stroke="none"></circle>`,
+    user: `<circle cx="12" cy="8" r="3.2"></circle><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"></path>`,
+    users: `<circle cx="9" cy="8" r="2.6"></circle><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"></path><circle cx="17" cy="9" r="2.2"></circle><path d="M14.5 19c0.3-2.3 1.9-4 3.8-4 2.3 0 4.2 1.9 4.4 4.3"></path>`
+  };
+  function modusIcon(name, extraClass) {
+    const inner = MODUS_ICON_PATHS[name] || "";
+    return `<svg class="modus-icon${extraClass ? " " + extraClass : ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+  }
+
+  function modusOperandiHTML(m) {
+    return `
+      <p class="modus-intro">${m.intro}</p>
+
+      <div class="modus-raas">
+        <p class="modus-raas__caption">${m.raas.caption}</p>
+        <div class="modus-raas__row">
+          <div class="modus-raas__box">
+            ${modusIcon("user")}
+            <span>${m.raas.developers}</span>
+          </div>
+          <span class="modus-raas__arrow modus-raas__arrow--green">&#8596;</span>
+          <div class="modus-raas__box">
+            ${modusIcon("users")}
+            <span>${m.raas.affiliates}</span>
+          </div>
+          <div class="modus-raas__arrow-col">
+            <span class="modus-raas__arrow modus-raas__arrow--red">&#8592;</span>
+            <span class="modus-raas__arrow-caption">${m.raas.ransomCaption}</span>
+          </div>
+          <div class="modus-raas__box modus-raas__box--victim">
+            ${modusIcon("user")}
+            <span>${m.raas.victim}</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="modus-chain__caption">${m.chainCaption}</p>
+      <div class="modus-chain">
+        ${m.chain.map((step, i) => `
+          ${i > 0 ? `<span class="modus-chain__arrow">&#8250;</span>` : ""}
+          <div class="modus-chain__step">
+            <div class="modus-chain__tile">
+              ${step.icons.map((icon) => modusIcon(icon)).join("")}
+            </div>
+            <p class="modus-chain__title">${i + 1}. ${step.title}</p>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="modus-bottom">
+        <div class="modus-bottom__box">
+          <p class="modus-bottom__title">${m.dataExtortion.title}</p>
+          <ul class="modus-bottom__list">
+            ${m.dataExtortion.items.map((item) => `<li>${modusIcon(item.icon)}<span>${item.text}</span></li>`).join("")}
+          </ul>
+          <p class="modus-bottom__note">${m.dataExtortion.note}</p>
+        </div>
+        <div class="modus-bottom__box modus-bottom__box--alert">
+          <p class="modus-bottom__title">${m.healthcareAlert.title}</p>
+          <div class="modus-bottom__heartbeat">
+            ${modusIcon("heartbeat")}
+            ${modusIcon("warning")}
+            ${modusIcon("warning")}
+          </div>
+          <ul class="modus-bottom__list modus-bottom__list--alert">
+            ${m.healthcareAlert.points.map((p) => `<li>${modusIcon("warning")}<span>${p}</span></li>`).join("")}
+          </ul>
+        </div>
+      </div>
+
+      <p class="modus-laundering">${m.laundering}</p>
+    `;
+  }
+
   function noticeHTML(n) {
     return `
       <div class="archive-doc archive-doc--notice">
@@ -262,7 +350,7 @@
 
         <div class="notice__section">
           <span class="notice__section-label">3. Modus Operandi</span>
-          ${n.modusOperandi.map((p) => `<p>${p}</p>`).join("")}
+          ${modusOperandiHTML(n.modusOperandi)}
         </div>
 
         <div class="notice__charges">
