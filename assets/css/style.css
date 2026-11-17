@@ -344,17 +344,27 @@ code {
 }
 .hero__blurb {
   color: var(--text-dim);
-  max-width: 360px;
+  max-width: 420px;
   font-size: 0.92rem;
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 1rem;
+  text-align: left;
+}
+
+.hero__hint {
+  color: var(--text-dim);
+  max-width: 420px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+  opacity: 0.8;
   text-align: left;
 }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 1rem;
   margin-top: 0;
 }
