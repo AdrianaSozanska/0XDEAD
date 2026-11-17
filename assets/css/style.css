@@ -1379,6 +1379,15 @@ code {
 .dossier-modal__photo-corner--br { bottom: 4px; right: 4px; border-bottom: 2px solid; border-right: 2px solid; }
 .dossier-modal__details { flex: 1; min-width: 220px; }
 
+.dossier-modal__details-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
 .dossier-status {
   display: inline-block;
   font-family: var(--font-display);
@@ -1386,7 +1395,7 @@ code {
   letter-spacing: 0.03em;
   padding: 0.3em 0.7em;
   border-radius: 3px;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   border: 1px solid currentColor;
 }
 .dossier-status--active { color: var(--green-soft); }
@@ -1452,16 +1461,17 @@ code {
 .dossier-accuse-btn {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  width: 100%;
-  margin-top: 1.3rem;
-  padding: 0.8em 1.1em;
+  gap: 0.45rem;
+  flex: none;
+  margin-left: auto;
+  white-space: nowrap;
+  padding: 0.45em 0.8em;
   background: rgba(255,43,77,0.06);
   border: 1px solid var(--red);
   border-radius: var(--radius);
   color: var(--red);
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   letter-spacing: 0.02em;
   text-align: left;
   cursor: pointer;

@@ -522,7 +522,7 @@
     const accuseHtml = person.id === "mark" ? "" : `
       <button type="button" class="dossier-accuse-btn" data-accuse-name="${person.name}">
         <span class="dossier-accuse-btn__icon" aria-hidden="true"></span>
-        <span>Повідомити про підозру у вбивстві</span>
+        <span>Підозра у вбивстві</span>
       </button>
     `;
 
@@ -550,12 +550,14 @@
           <span class="dossier-modal__photo-corner dossier-modal__photo-corner--br"></span>
         </div>
         <div class="dossier-modal__details">
-          ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
+          <div class="dossier-modal__details-top">
+            ${isRedacted ? "" : `<span class="dossier-status dossier-status--${person.statusClass}">${person.statusLabel}</span>`}
+            ${accuseHtml}
+          </div>
           ${notesHtml}
         </div>
       </div>
       ${commentHtml}
-      ${accuseHtml}
     `;
   }
 
