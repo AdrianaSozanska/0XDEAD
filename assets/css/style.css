@@ -1733,6 +1733,7 @@ code {
 .archive-doc { color: var(--text); }
 
 /* RED NOTICE */
+.archive-doc--notice { font-family: 'IBM Plex Mono', monospace; }
 .notice__bar {
   display: flex;
   align-items: center;
