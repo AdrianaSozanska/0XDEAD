@@ -139,8 +139,8 @@ const DOSSIER_FILES = [
 
    Each edge in `edges` connects two real dossier nodes. `confirmed: false`
    draws a dashed, dimmer line instead of a solid one — used for every line
-   touching Аліса, since the police only have her connection to the group
-   from Марк's testimony, not confirmed evidence. */
+   touching Аліса, since the police don't have confirmed evidence of her
+   connection to the group. */
 const DOSSIER_NETWORK = {
   nodes: [
     { id: "kurator", x: 50, y: 12 },

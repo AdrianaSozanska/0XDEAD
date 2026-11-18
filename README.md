@@ -90,7 +90,7 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   entry (matched by `id`) a percent `x`/`y` position, `edges` draws a line
   between two node ids (`confirmed: false` renders it dashed/dimmer —
   currently used for every line touching Аліса, since her link to the
-  group is only known from Марк's testimony, not confirmed by police), and
+  group isn't confirmed by police), and
   `ghosts` draws small non-interactive "інша група" stub nodes — each has
   a `from` (a real node id) it's dashed-linked to, representing another
   group that person also has a hand in (currently two off Куратор, one off
