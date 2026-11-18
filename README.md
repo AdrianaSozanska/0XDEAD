@@ -124,8 +124,9 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   purpose — part of the fun is finding them).
 - **`sudo` easter egg**: typing `sudo` switches the input to a masked
   password prompt (`terminalInput.type = "password"`, prompt text changes
-  to "Password:"). The password is `0xDEAD` (`SUDO_PASSWORD` in
-  `main.js`). Three wrong attempts locks it out with a joke refusal
+  to "Password:"). The password lives in `SUDO_PASSWORD` in `main.js`
+  (not spelled out here on purpose — it's meant to be discovered, and
+  this README is public). Three wrong attempts locks it out with a joke refusal
   ("Permission denied. Nice try."); the right one sets `sudoAuthenticated`,
   switches the live prompt to `root@0xdead:~#` for the rest of the visit,
   and suggests `ls -a`. Once authenticated, `ls -a` also lists two oddly
