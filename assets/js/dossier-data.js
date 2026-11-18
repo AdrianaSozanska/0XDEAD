@@ -18,7 +18,7 @@ const DOSSIER_FILES = [
     roleTag: "Права рука Антона",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
-    photo: "assets/img/ГрупаВадим.jpeg",
+    photo: "assets/img/ГрупаВадим.webp",
     notes: [
       "Місто народження: м.Конотоп, Сумщина",
       "Сімейний стан: розлучений",
@@ -37,7 +37,7 @@ const DOSSIER_FILES = [
     roleTag: "Лідер групи",
     statusLabel: "СТАТУС: АКТИВНИЙ",
     statusClass: "active",
-    photo: "assets/img/ГрупаАнтон_new.jpeg",
+    photo: "assets/img/ГрупаАнтон_new.webp",
     notes: [
       "Місто народження: м.Київ",
       "Сімейний стан: не одружений",
@@ -56,7 +56,7 @@ const DOSSIER_FILES = [
     roleTag: "Фінансові операції групи",
     statusLabel: "СТАТУС: ПОМЕР",
     statusClass: "deceased",
-    photo: "assets/img/ГрупаМарк.jpeg",
+    photo: "assets/img/ГрупаМарк.webp",
     notes: [
       "Місто народження: м. Львів",
       "Сімейний стан: не одружений",

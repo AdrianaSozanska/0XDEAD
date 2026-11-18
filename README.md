@@ -174,8 +174,10 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   screenshot with a red boundary line on a transparent-flattened-to-
   checkerboard background — the checkerboard was detected and flood-filled
   from the image edges to isolate the interior, then boundary-traced and
-  simplified the same way). Вінниця's pin (вулиця Монастирська, 41) sits at
-  the exact black dot marker from that same reference image. Харків still
+  simplified the same way; those two source images aren't kept in the
+  repo, only the already-traced outline/pin data). Вінниця's pin (вулиця
+  Монастирська, 41) sits at the exact black dot marker from that same
+  reference image. Харків still
   shows the plain placeholder sector grid (`unavailable`, see below) until
   it gets the same real-outline treatment. Clicking a location pin opens a
   small popup anchored above the pin with an image ("Фото буде додано"

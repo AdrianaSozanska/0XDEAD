@@ -146,7 +146,7 @@ const ARCHIVE_FILES = [
     icon: "📸",
     type: "mugshot",
     mugshot: {
-      photo: "assets/img/АлісаАрешт.jpeg",
+      photo: "assets/img/АлісаАрешт.webp",
       name: "Аліса [REDACTED]",
       dob: "[REDACTED]",
       charge: "ст. 309 ч. 1 ККУ — незаконне зберігання наркотичних засобів без мети збуту (у невеликих розмірах)",
