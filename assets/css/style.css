@@ -2780,6 +2780,12 @@ code {
   justify-content: center;
   margin-top: 1.5rem;
 }
+.buy-publisher {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.buy-publisher a { color: var(--green-soft); }
 .btn--disabled {
   opacity: 0.45;
   cursor: not-allowed;

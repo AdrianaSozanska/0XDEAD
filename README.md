@@ -104,12 +104,15 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   replace the file and update the `<img>`'s `width`/`height`
   attributes in the hero section of `index.html` to match its real pixel
   dimensions (avoids layout shift).
-- **Marketplace links** (`// 05 — access_request.sh` / "Де купити"): the
-  three buttons are currently non-interactive placeholders
+- **Marketplace links** (`// 05 — access_request.sh` / "Де купити"): Amazon
+  and EPUB/PDF are still non-interactive placeholders
   (`<span class="btn btn--ghost btn--disabled">`, not real links) with
-  "— скоро" labels, since presell marketplace links don't exist yet. Once
-  they do, swap each `<span>` back to a real `<a href="...">` (drop the
-  `btn--disabled` class and the "— скоро" text) in `index.html`.
+  "— скоро" labels, since those don't exist yet. Ranok is live — the
+  author's real page there. Once a new marketplace link exists, swap its
+  `<span>` for a real `<a href="...">` (drop the `btn--disabled`/`is-locked`
+  classes and the "— скоро" text) in `index.html`, same as Ranok. The
+  publisher (READBERRY) is credited just below the buttons, linking to its
+  Instagram.
 - **Real author photo**: currently `assets/img/Автор_new.jpeg`, layered by
   `.author__portrait-frame`'s `background` (`center top / cover`, cropped
   to the 3:4 frame) — drop in a new file and update that `url()` to swap
