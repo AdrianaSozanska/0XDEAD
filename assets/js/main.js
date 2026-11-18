@@ -895,7 +895,11 @@
     if (cls) p.className = cls;
     p.textContent = text;
     terminalBody.appendChild(p);
-    terminalBody.scrollTop = terminalBody.scrollHeight;
+    /* Deferred a frame: reading scrollHeight right after appendChild
+       forces a synchronous layout recalculation (forced reflow). */
+    requestAnimationFrame(() => {
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    });
   }
 
   function bootTerminal() {
