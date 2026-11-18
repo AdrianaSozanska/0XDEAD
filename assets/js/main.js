@@ -73,8 +73,14 @@
     }
 
     window.addEventListener("resize", resize);
-    resize();
-    rafId = requestAnimationFrame(draw);
+    /* Deferred a frame: calling resize() (getBoundingClientRect) right
+       here, synchronously during initial script execution, forces the
+       browser to flush layout early instead of using the one it was
+       already about to compute for first paint. */
+    requestAnimationFrame(() => {
+      resize();
+      rafId = requestAnimationFrame(draw);
+    });
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
