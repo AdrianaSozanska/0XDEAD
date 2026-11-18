@@ -113,7 +113,7 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   classes and the "— скоро" text) in `index.html`, same as Ranok. The
   publisher (READBERRY) is credited just below the buttons, linking to its
   Instagram.
-- **Real author photo**: currently `assets/img/Автор_new.jpeg`, layered by
+- **Real author photo**: currently `assets/img/Автор_new.webp`, layered by
   `.author__portrait-frame`'s `background` (`center top / cover`, cropped
   to the 3:4 frame) — drop in a new file and update that `url()` to swap
   it. Until the referenced file exists the browser just skips that layer
