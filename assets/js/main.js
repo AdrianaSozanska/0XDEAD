@@ -21,6 +21,10 @@
         window.plausible(name, params ? { props: params } : undefined);
       } else if (window.umami && typeof window.umami.track === "function") {
         window.umami.track(name, params);
+      } else if (window.fathom && typeof window.fathom.trackEvent === "function") {
+        /* Fathom only counts named events, no extra properties like
+           suspect_id/stage/etc. — params is intentionally dropped here. */
+        window.fathom.trackEvent(name);
       }
     } catch (e) {
       /* analytics must never break the site */
