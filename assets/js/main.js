@@ -840,10 +840,12 @@
         <button type="button" class="share-btn" data-action="share" hidden>📸 Поділитися</button>
         <button type="button" class="share-btn share-btn--ghost" data-action="download">⬇ Завантажити картку</button>
       </div>
+      <p class="share-card__hint" hidden>Постиш сам(-а)? Відкрий Instagram (→ <a href="https://www.instagram.com/" target="_blank" rel="noopener">www.instagram.com</a>) чи Threads (→ <a href="https://www.threads.net/" target="_blank" rel="noopener">www.threads.net</a>) і додай завантажену картку до історії.</p>
     `;
 
     const loadingEl = wrap.querySelector(".share-card__loading");
     const actionsEl = wrap.querySelector(".share-card__actions");
+    const hintEl = wrap.querySelector(".share-card__hint");
     const shareBtn = wrap.querySelector('[data-action="share"]');
     const downloadBtn = wrap.querySelector('[data-action="download"]');
 
@@ -863,6 +865,7 @@
         const canNativeShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
         shareBtn.hidden = !canNativeShare;
         actionsEl.hidden = false;
+        hintEl.hidden = false;
       })
       .catch(() => { wrap.remove(); });
 
