@@ -840,7 +840,7 @@
         <button type="button" class="share-btn" data-action="share" hidden>📸 Поділитися</button>
         <button type="button" class="share-btn share-btn--ghost" data-action="download">⬇ Завантажити картку</button>
       </div>
-      <p class="share-card__hint" hidden>Постиш сам(-а)? Відкрий <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a> чи <a href="https://www.threads.net/" target="_blank" rel="noopener">Threads</a> і додай завантажену картку до історії.</p>
+      <p class="share-card__hint" hidden>Постиш сам(-а)? Відкрий <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a> чи <a href="https://www.threads.net/" target="_blank" rel="noopener">Threads</a> і додай завантажену картку до історії — познач <a href="https://www.instagram.com/readberry_ua/" target="_blank" rel="noopener">@readberry_ua</a> та <a href="https://www.instagram.com/adriana_sozanska/" target="_blank" rel="noopener">@adriana_sozanska</a>!</p>
     `;
 
     const loadingEl = wrap.querySelector(".share-card__loading");
