@@ -1449,6 +1449,11 @@ code {
   position: relative;
   z-index: 1;
   width: min(420px, 90vw);
+  /* Capped so tall content (the share card added below the buy button)
+     can never push the close button or the bottom of the text off
+     screen on a shorter laptop display — .accuse-modal__scroll below
+     scrolls internally instead. */
+  max-height: 86vh;
   padding: 2rem 1.75rem;
   background: linear-gradient(160deg, #141b1d, #070b0c);
   border: 1px solid var(--red);
@@ -1457,12 +1462,23 @@ code {
   opacity: 0;
   transform: scale(0.94);
   transition: opacity 0.25s ease, transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 .accuse-modal.is-visible .accuse-modal__panel {
   opacity: 1;
   transform: scale(1);
 }
 .accuse-modal__panel:focus { outline: none; }
+
+/* Only this inner wrapper scrolls — the close button lives outside it
+   (a sibling, not scrolled away) so it's always reachable. */
+.accuse-modal__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
 
 .accuse-modal__close {
   position: absolute;
@@ -1476,6 +1492,7 @@ code {
   color: var(--text-dim);
   font-family: var(--font-display);
   cursor: pointer;
+  z-index: 2;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
 .accuse-modal__close:hover, .accuse-modal__close:focus-visible {

@@ -242,20 +242,22 @@
     <div class="accuse-modal__backdrop" id="accuseBackdrop"></div>
     <div class="accuse-modal__panel" id="accusePanel" role="dialog" aria-modal="true" tabindex="-1">
       <button class="accuse-modal__close" id="accuseClose" aria-label="Закрити">✕</button>
-      <div class="accuse-modal__step" id="accuseStepConfirm">
-        <p class="accuse-modal__eyebrow">// citizen_report.sh</p>
-        <h3 class="accuse-modal__title">Подати сигнал про підозру?</h3>
-        <p class="accuse-modal__text">Ти впевнений(-а), що <strong id="accuseSuspectName">цей підозрюваний</strong> — вбивця?</p>
-        <div class="accuse-modal__actions">
-          <button type="button" class="btn btn--primary" id="accuseYes">Так, це він(-вона)</button>
-          <button type="button" class="btn btn--ghost" id="accuseNo">Ні, відміна</button>
+      <div class="accuse-modal__scroll">
+        <div class="accuse-modal__step" id="accuseStepConfirm">
+          <p class="accuse-modal__eyebrow">// citizen_report.sh</p>
+          <h3 class="accuse-modal__title">Подати сигнал про підозру?</h3>
+          <p class="accuse-modal__text">Ти впевнений(-а), що <strong id="accuseSuspectName">цей підозрюваний</strong> — вбивця?</p>
+          <div class="accuse-modal__actions">
+            <button type="button" class="btn btn--primary" id="accuseYes">Так, це він(-вона)</button>
+            <button type="button" class="btn btn--ghost" id="accuseNo">Ні, відміна</button>
+          </div>
         </div>
-      </div>
-      <div class="accuse-modal__step" id="accuseStepResult" hidden>
-        <p class="accuse-modal__eyebrow">// system.response</p>
-        <h3 class="accuse-modal__title">Не так швидко.</h3>
-        <p class="accuse-modal__text">Думаєш, розкрити цю справу так просто? Правду дізнаєшся лише одним способом.</p>
-        <a href="#buy" class="btn btn--primary is-locked" id="accuseBuyLink" title="Доступ обмежено до релізу">🔒 Дізнатися правду — замовити книгу</a>
+        <div class="accuse-modal__step" id="accuseStepResult" hidden>
+          <p class="accuse-modal__eyebrow">// system.response</p>
+          <h3 class="accuse-modal__title">Не так швидко.</h3>
+          <p class="accuse-modal__text">Думаєш, розкрити цю справу так просто? Правду дізнаєшся лише одним способом.</p>
+          <a href="#buy" class="btn btn--primary is-locked" id="accuseBuyLink" title="Доступ обмежено до релізу">🔒 Дізнатися правду — замовити книгу</a>
+        </div>
       </div>
     </div>
   </div>
