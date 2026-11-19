@@ -31,6 +31,30 @@
     }
   }
 
+  /* ---------------- section-reach + buy-link tracking ---------------- */
+  /* Fires once per section, the first time a visitor scrolls far enough
+     into it — tells the funnel apart from a bare pageview: how many
+     people actually get to the terminal, the dossier, the archive, the
+     buy section, not just how many land on the hero. */
+  if ("IntersectionObserver" in window) {
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        trackEvent("section_reached", { section: entry.target.id });
+        sectionObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.25 });
+
+    ["terminal", "dossier", "archive", "buy"].forEach((id) => {
+      const section = document.getElementById(id);
+      if (section) sectionObserver.observe(section);
+    });
+  }
+
+  document.getElementById("buyRanokLink")?.addEventListener("click", () => {
+    trackEvent("buy_link_click", { retailer: "ranok" });
+  });
+
   /* ---------------- nav toggle ---------------- */
 
   const navToggle = document.getElementById("navToggle");
@@ -439,6 +463,7 @@
   function openArchive(idx, originEl) {
     if (!archiveModal || !archivePanel) return;
 
+    trackEvent("archive_file_opened", { file: archiveFiles[idx].id });
     archiveOpenIndex = idx;
     archiveOriginRect = originEl.getBoundingClientRect();
     archiveLastFocused = originEl;
