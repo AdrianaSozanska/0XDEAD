@@ -9,6 +9,24 @@
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* Forwards a custom event to whichever analytics script the page has
+     loaded (GA4, Plausible, or Umami) — a no-op if none is present.
+     Fire-and-forget: must never throw, so a tracking hiccup can't break
+     the feature that triggered it. */
+  function trackEvent(name, params) {
+    try {
+      if (typeof window.gtag === "function") {
+        window.gtag("event", name, params || {});
+      } else if (typeof window.plausible === "function") {
+        window.plausible(name, params ? { props: params } : undefined);
+      } else if (window.umami && typeof window.umami.track === "function") {
+        window.umami.track(name, params);
+      }
+    } catch (e) {
+      /* analytics must never break the site */
+    }
+  }
+
   /* ---------------- nav toggle ---------------- */
 
   const navToggle = document.getElementById("navToggle");
@@ -573,7 +591,7 @@
     /* Every file lets you "accuse" its subject of the murder except
        Марк's (СПРАВА №02) — he's the victim, not a suspect. */
     const accuseHtml = person.id === "mark" ? "" : `
-      <button type="button" class="dossier-accuse-btn" data-accuse-name="${person.name}">
+      <button type="button" class="dossier-accuse-btn" data-accuse-name="${person.name}" data-accuse-id="${person.id}">
         <span class="dossier-accuse-btn__icon" aria-hidden="true"></span>
         <span>Підозра у вбивстві</span>
       </button>
@@ -792,6 +810,55 @@
     });
   }
 
+  /* ---------------- share cards ---------------- */
+  /* Thin wiring around window.ShareCards (assets/js/share-cards.js, loaded
+     before this file) — draws nothing itself, just: kicks off drawing +
+     File-prepping the moment a button is shown (so the click handler can
+     call shareFile() synchronously, which mobile Safari requires), shows
+     "Готуємо картку…" disabled until that File is ready, and reports the
+     outcome via trackEvent(). */
+
+  const shareCardsReady = typeof window.ShareCards !== "undefined" ? window.ShareCards : null;
+
+  function createShareButton({ label, cardPromise, filename, text, trackLabel }) {
+    if (!shareCardsReady) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "share-btn";
+    btn.disabled = true;
+    btn.textContent = "Готуємо картку…";
+
+    let file = null;
+    Promise.resolve(cardPromise)
+      .then((canvas) => shareCardsReady.prepare(canvas, filename))
+      .then((f) => {
+        file = f;
+        btn.disabled = false;
+        btn.textContent = label;
+      })
+      .catch(() => { btn.remove(); });
+
+    btn.addEventListener("click", () => {
+      if (!file) return;
+      Promise.resolve(shareCardsReady.shareFile(file, { text }))
+        .then((result) => trackEvent("share_click", { card: trackLabel, result }));
+    });
+
+    return btn;
+  }
+
+  /* Appends a share button into the terminal scrollback, same place
+     printLine() writes to, and scrolls to it the same deferred way. */
+  function appendTerminalShareButton(opts) {
+    if (!terminalBody) return;
+    const btn = createShareButton(opts);
+    if (!btn) return;
+    terminalBody.appendChild(btn);
+    requestAnimationFrame(() => {
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    });
+  }
+
   /* ---------------- "accuse the suspect" popup (dossier files, except Марк) ---------------- */
 
   const accuseModal = document.getElementById("accuseModal");
@@ -806,12 +873,28 @@
   const accuseBuyLink = document.getElementById("accuseBuyLink");
 
   let accuseLastFocused = null;
+  let accuseCurrentSuspect = null;
 
-  function openAccuseModal(name) {
+  function showAccuseShareButton(suspectObj) {
+    if (!accuseStepResult || !accuseBuyLink) return;
+    accuseStepResult.querySelectorAll(".share-btn").forEach((el) => el.remove());
+    const btn = createShareButton({
+      label: "📸 Поділитися версією",
+      cardPromise: shareCardsReady ? shareCardsReady.suspect({ suspect: suspectObj }) : Promise.reject(new Error("ShareCards missing")),
+      filename: "0xdead-suspect.png",
+      text: `Я підозрюю: ${suspectObj.name}. А ти кого?`,
+      trackLabel: "suspect"
+    });
+    if (btn) accuseBuyLink.insertAdjacentElement("afterend", btn);
+  }
+
+  function openAccuseModal(name, id) {
     if (!accuseModal || !accusePanel) return;
+    accuseCurrentSuspect = dossierFiles.find((p) => p.id === id) || null;
     if (accuseSuspectName) accuseSuspectName.textContent = name;
     if (accuseStepConfirm) accuseStepConfirm.hidden = false;
     if (accuseStepResult) accuseStepResult.hidden = true;
+    accuseStepResult?.querySelectorAll(".share-btn").forEach((el) => el.remove());
     accuseLastFocused = document.activeElement;
 
     accuseModal.classList.add("is-active");
@@ -831,11 +914,15 @@
   if (accuseModal) {
     dossierModalContent?.addEventListener("click", (e) => {
       const btn = e.target.closest(".dossier-accuse-btn");
-      if (btn) openAccuseModal(btn.dataset.accuseName || "цей підозрюваний");
+      if (btn) openAccuseModal(btn.dataset.accuseName || "цей підозрюваний", btn.dataset.accuseId);
     });
     accuseYes?.addEventListener("click", () => {
       if (accuseStepConfirm) accuseStepConfirm.hidden = true;
       if (accuseStepResult) accuseStepResult.hidden = false;
+      if (accuseCurrentSuspect) {
+        trackEvent("accuse", { suspect_id: accuseCurrentSuspect.id });
+        showAccuseShareButton(accuseCurrentSuspect);
+      }
     });
     accuseNo?.addEventListener("click", closeAccuseModal);
     accuseClose?.addEventListener("click", closeAccuseModal);
@@ -1000,7 +1087,9 @@
     unlockedFiles: [],
     connectionMade: false,
     hintsUsed: 0,
-    completed: false
+    completed: false,
+    startedAt: null,
+    completionTimeMs: 0
   };
   let gameStageHintIndex = 0;
 
@@ -1019,7 +1108,10 @@
     gameState.connectionMade = false;
     gameState.hintsUsed = 0;
     gameState.completed = false;
+    gameState.startedAt = Date.now();
+    gameState.completionTimeMs = 0;
     gameStageHintIndex = 0;
+    trackEvent("game_started");
     const intro = gameFiles.intro;
     const lines = intro ? [intro.content_ua] : ["Гру не вдалося завантажити."];
     lines.push("Введи 'game-help', щоб побачити список команд гри.");
@@ -1069,6 +1161,8 @@
 
     if (fileId === "final_note" && gameState.stage === 3 && !gameState.completed) {
       gameState.completed = true;
+      gameState.completionTimeMs = gameState.startedAt ? Date.now() - gameState.startedAt : 0;
+      trackEvent("game_completed", { hints: gameState.hintsUsed, seconds: Math.round(gameState.completionTimeMs / 1000) });
       lines.push(gameEndingMessage.replace("{hintsUsed}", String(gameState.hintsUsed)));
     }
     return lines;
@@ -1111,6 +1205,7 @@
     const text = hints[gameStageHintIndex];
     gameStageHintIndex += 1;
     gameState.hintsUsed += 1;
+    trackEvent("game_hint", { stage: gameState.stage });
     return [`[Підказка ${gameStageHintIndex}/${hints.length}]: ${text}`];
   }
 
@@ -1122,6 +1217,7 @@
       "  connect <code1> <code2> — зіставити два коди",
       "  decrypt <file> <code>   — розшифрувати файл кодом",
       "  hint                    — підказка для поточного етапу",
+      "  share                   — поділитися результатом (після завершення)",
       "  game-help               — цей список команд",
       "  exit                    — вийти з режиму розслідування"
     ];
@@ -1136,6 +1232,7 @@
     ],
     map: () => {
       openMapModal();
+      trackEvent("map_opened");
       return ["> ініціалізація мережевої карти...", "> знайдено 5 активних вузлів"];
     },
     game: () => startGame(),
@@ -1154,6 +1251,7 @@
     },
     matrix: () => {
       runMatrixEffect(6000);
+      trackEvent("matrix_run");
       return ["> ініціалізація matrix.exe..."];
     }
   };
@@ -1192,6 +1290,14 @@
           printLine("Пароль прийнято.", "t-cyan");
           printLine("Вітаємо, guest. Доступ root надано.", "");
           printLine("Спробуй ввести: ls -a", "t-dim");
+          trackEvent("sudo_success");
+          appendTerminalShareButton({
+            label: "📸 Поділитися root-доступом",
+            cardPromise: shareCardsReady ? shareCardsReady.root() : Promise.reject(new Error("ShareCards missing")),
+            filename: "0xdead-root.png",
+            text: "Root-доступ до 0xDEAD отримано. Пароль? Шукай сам(-а).",
+            trackLabel: "root"
+          });
         } else {
           sudoAttempts += 1;
           if (sudoAttempts >= SUDO_MAX_ATTEMPTS) {
@@ -1199,6 +1305,7 @@
             printLine("Permission denied. Nice try.", "t-red");
             sudoAttempts = 0;
             exitSudoPasswordMode("guest@0xdead:~$");
+            trackEvent("sudo_failed_lockout");
           } else {
             printLine("Sorry, try again.", "t-red");
           }
@@ -1216,11 +1323,17 @@
          everything else (help, map, sudo, cat, matrix, ...) is locked out
          until the player types `exit`, so the game actually traps you. */
       if (gameState.active) {
+        const wasCompleted = gameState.completed;
         let gameLines = null;
         if (cmd === "evidence") gameLines = gameEvidence();
         else if (cmd === "game-help") gameLines = gameHelp();
         else if (cmd === "hint") gameLines = gameHint();
         else if (cmd === "exit") gameLines = gameExit();
+        else if (cmd === "share") {
+          gameLines = gameState.completed
+            ? ["> генерую картку результату..."]
+            : ["Спочатку заверши розслідування."];
+        }
         else if (cmd.startsWith("open ")) gameLines = gameOpen(cmd.slice(5).trim());
         else if (cmd.startsWith("connect ")) {
           const [c1, c2] = cmd.slice(8).trim().split(/\s+/);
@@ -1235,6 +1348,15 @@
         } else {
           printLine(`команду не знайдено: "${raw}". введи 'game-help'.`, "t-red");
         }
+        if (gameState.completed && (cmd === "share" || !wasCompleted)) {
+          appendTerminalShareButton({
+            label: "📸 Поділитися результатом",
+            cardPromise: shareCardsReady ? shareCardsReady.solved({ hints: gameState.hintsUsed, timeMs: gameState.completionTimeMs }) : Promise.reject(new Error("ShareCards missing")),
+            filename: "0xdead-case-solved.png",
+            text: "Справу 0xDEAD розкрито. А ти зможеш?",
+            trackLabel: "solved"
+          });
+        }
         updateTerminalCursor();
         return;
       }
@@ -1245,6 +1367,7 @@
           printLine(`cat: ${filename}: Дозвіл заборонено`, "t-red");
         } else if (Object.prototype.hasOwnProperty.call(SUDO_FILES, filename)) {
           printLine(`«${SUDO_FILES[filename]}»`, "t-dim");
+          trackEvent("hidden_file_opened", { file: filename });
         } else {
           printLine(`cat: ${filename}: Файл не знайдено`, "t-red");
         }

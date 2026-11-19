@@ -1312,6 +1312,40 @@ code {
   transform: translateY(-1px);
 }
 
+/* Share-card buttons (terminal game ending, root access, accuse-modal
+   result) — same cut-from-the-same-cloth look as .dossier-accuse-btn,
+   just green instead of red since these are "share a win", not a warning. */
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.55em 1em;
+  background: rgba(57,255,20,0.1);
+  border: 1px solid var(--green);
+  border-radius: var(--radius);
+  color: var(--green);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(57,255,20,0.2);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+.share-btn:hover, .share-btn:focus-visible {
+  background: rgba(57,255,20,0.2);
+  box-shadow: 0 0 20px rgba(57,255,20,0.4);
+  transform: translateY(-1px);
+}
+.share-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+  box-shadow: none;
+  transform: none;
+}
+
 @media (max-width: 640px) {
   .dossier-modal__nav { width: 34px; height: 34px; font-size: 1.1rem; }
   .dossier-modal__nav--prev { left: 0.3rem; }
