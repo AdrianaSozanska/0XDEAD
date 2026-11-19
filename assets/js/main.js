@@ -875,17 +875,75 @@
   let accuseLastFocused = null;
   let accuseCurrentSuspect = null;
 
+  /* Shows the generated "I suspect…" card inline (not just a blind share
+     button): a preview image, then — once the File is ready — either a
+     native-share button (mobile: opens the OS share sheet, which is the
+     only way a web page can hand a file straight to the Instagram/Threads
+     app) or, where that's not available (desktop), a direct download
+     button plus plain links to open Instagram/Threads to post it manually,
+     since no site can post into those apps for someone without their own
+     official app integration. */
   function showAccuseShareButton(suspectObj) {
     if (!accuseStepResult || !accuseBuyLink) return;
-    accuseStepResult.querySelectorAll(".share-btn").forEach((el) => el.remove());
-    const btn = createShareButton({
-      label: "📸 Поділитися версією",
-      cardPromise: shareCardsReady ? shareCardsReady.suspect({ suspect: suspectObj }) : Promise.reject(new Error("ShareCards missing")),
-      filename: "0xdead-suspect.png",
-      text: `Я підозрюю: ${suspectObj.name}. А ти кого?`,
-      trackLabel: "suspect"
+    accuseStepResult.querySelectorAll(".accuse-share").forEach((el) => el.remove());
+    if (!shareCardsReady) return;
+
+    const wrap = document.createElement("div");
+    wrap.className = "accuse-share";
+    wrap.innerHTML = `
+      <p class="accuse-share__loading">Готуємо картку…</p>
+      <div class="accuse-share__actions" hidden>
+        <button type="button" class="share-btn" data-action="share" hidden>📸 Поділитися</button>
+        <button type="button" class="share-btn share-btn--ghost" data-action="download">⬇ Завантажити картку</button>
+      </div>
+      <p class="accuse-share__hint" hidden>Постиш сам(-а)? Відкрий <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a> чи <a href="https://www.threads.net/" target="_blank" rel="noopener">Threads</a> і додай завантажену картку до історії.</p>
+    `;
+    accuseBuyLink.insertAdjacentElement("afterend", wrap);
+
+    const loadingEl = wrap.querySelector(".accuse-share__loading");
+    const actionsEl = wrap.querySelector(".accuse-share__actions");
+    const hintEl = wrap.querySelector(".accuse-share__hint");
+    const shareBtn = wrap.querySelector('[data-action="share"]');
+    const downloadBtn = wrap.querySelector('[data-action="download"]');
+    const shareText = `Я підозрюю: ${suspectObj.name}. А ти кого?`;
+
+    let file = null;
+
+    shareCardsReady.suspect({ suspect: suspectObj })
+      .then((canvas) => {
+        const img = document.createElement("img");
+        img.className = "accuse-share__preview";
+        img.alt = `Картка: Я підозрюю ${suspectObj.name}`;
+        img.src = canvas.toDataURL("image/png");
+        loadingEl.replaceWith(img);
+        return shareCardsReady.prepare(canvas, "0xdead-suspect.png");
+      })
+      .then((f) => {
+        file = f;
+        const canNativeShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+        shareBtn.hidden = !canNativeShare;
+        actionsEl.hidden = false;
+        hintEl.hidden = false;
+      })
+      .catch(() => { wrap.remove(); });
+
+    shareBtn.addEventListener("click", () => {
+      if (!file) return;
+      Promise.resolve(shareCardsReady.shareFile(file, { text: shareText }))
+        .then((result) => trackEvent("share_click", { card: "suspect", result }));
     });
-    if (btn) accuseBuyLink.insertAdjacentElement("afterend", btn);
+
+    downloadBtn.addEventListener("click", () => {
+      if (!file) return;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(file);
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      trackEvent("share_click", { card: "suspect", result: "downloaded" });
+    });
   }
 
   function openAccuseModal(name, id) {
@@ -894,7 +952,7 @@
     if (accuseSuspectName) accuseSuspectName.textContent = name;
     if (accuseStepConfirm) accuseStepConfirm.hidden = false;
     if (accuseStepResult) accuseStepResult.hidden = true;
-    accuseStepResult?.querySelectorAll(".share-btn").forEach((el) => el.remove());
+    accuseStepResult?.querySelectorAll(".accuse-share").forEach((el) => el.remove());
     accuseLastFocused = document.activeElement;
 
     accuseModal.classList.add("is-active");
