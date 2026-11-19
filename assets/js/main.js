@@ -840,12 +840,10 @@
         <button type="button" class="share-btn" data-action="share" hidden>📸 Поділитися</button>
         <button type="button" class="share-btn share-btn--ghost" data-action="download">⬇ Завантажити картку</button>
       </div>
-      <p class="share-card__hint" hidden>Постиш сам(-а)? Відкрий <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a> чи <a href="https://www.threads.net/" target="_blank" rel="noopener">Threads</a> і додай завантажену картку до історії.</p>
     `;
 
     const loadingEl = wrap.querySelector(".share-card__loading");
     const actionsEl = wrap.querySelector(".share-card__actions");
-    const hintEl = wrap.querySelector(".share-card__hint");
     const shareBtn = wrap.querySelector('[data-action="share"]');
     const downloadBtn = wrap.querySelector('[data-action="download"]');
 
@@ -865,7 +863,6 @@
         const canNativeShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
         shareBtn.hidden = !canNativeShare;
         actionsEl.hidden = false;
-        hintEl.hidden = false;
       })
       .catch(() => { wrap.remove(); });
 
@@ -891,11 +888,14 @@
   }
 
   /* Appends a share card into the terminal scrollback, same place
-     printLine() writes to, and scrolls to it the same deferred way. */
+     printLine() writes to, and scrolls to it the same deferred way.
+     Tighter spacing than the accuse-modal's card (--compact) since it
+     sits between terminal lines rather than standalone in a popup. */
   function appendTerminalShareCard(opts) {
     if (!terminalBody) return;
     const card = buildShareCard(opts);
     if (!card) return;
+    card.classList.add("share-card--compact");
     terminalBody.appendChild(card);
     requestAnimationFrame(() => {
       terminalBody.scrollTop = terminalBody.scrollHeight;
@@ -1334,7 +1334,6 @@
           exitSudoPasswordMode("root@0xdead:~#");
           printLine("Пароль прийнято.", "t-cyan");
           printLine("Вітаємо, guest. Доступ root надано.", "");
-          printLine("Спробуй ввести: ls -a", "t-dim");
           trackEvent("sudo_success");
           appendTerminalShareCard({
             cardPromise: shareCardsReady ? shareCardsReady.root() : Promise.reject(new Error("ShareCards missing")),
@@ -1343,6 +1342,7 @@
             altText: "Картка: доступ root отримано",
             trackLabel: "root"
           });
+          printLine("Спробуй ввести: ls -a", "t-dim");
         } else {
           sudoAttempts += 1;
           if (sudoAttempts >= SUDO_MAX_ATTEMPTS) {
