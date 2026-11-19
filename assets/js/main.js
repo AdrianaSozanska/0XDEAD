@@ -812,48 +812,91 @@
 
   /* ---------------- share cards ---------------- */
   /* Thin wiring around window.ShareCards (assets/js/share-cards.js, loaded
-     before this file) — draws nothing itself, just: kicks off drawing +
-     File-prepping the moment a button is shown (so the click handler can
-     call shareFile() synchronously, which mobile Safari requires), shows
-     "Готуємо картку…" disabled until that File is ready, and reports the
-     outcome via trackEvent(). */
+     before this file). Builds an inline "<image preview> + actions" block
+     for a share card, used at every share point on the site (accuse
+     modal, root access, game ending): draws the card and prepares its
+     File the moment the block is built (so a click handler can call
+     shareFile() synchronously, which mobile Safari requires), shows a
+     preview image once it's ready, then either a native-share button
+     (phones whose OS share sheet accepts files — this is how Instagram,
+     Threads, Telegram etc. actually show up as share targets) or, where
+     that's not available (desktop), a direct download button plus plain
+     links to open Instagram/Threads to post it manually, since no
+     website can hand a file straight into those apps without their own
+     official integration. Reports the outcome via trackEvent(). Returns
+     the wrapper element for the caller to insert, or null if
+     window.ShareCards never loaded. */
 
   const shareCardsReady = typeof window.ShareCards !== "undefined" ? window.ShareCards : null;
 
-  function createShareButton({ label, cardPromise, filename, text, trackLabel }) {
+  function buildShareCard({ cardPromise, filename, text, altText, trackLabel }) {
     if (!shareCardsReady) return null;
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "share-btn";
-    btn.disabled = true;
-    btn.textContent = "Готуємо картку…";
+
+    const wrap = document.createElement("div");
+    wrap.className = "share-card";
+    wrap.innerHTML = `
+      <p class="share-card__loading">Готуємо картку…</p>
+      <div class="share-card__actions" hidden>
+        <button type="button" class="share-btn" data-action="share" hidden>📸 Поділитися</button>
+        <button type="button" class="share-btn share-btn--ghost" data-action="download">⬇ Завантажити картку</button>
+      </div>
+      <p class="share-card__hint" hidden>Постиш сам(-а)? Відкрий <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a> чи <a href="https://www.threads.net/" target="_blank" rel="noopener">Threads</a> і додай завантажену картку до історії.</p>
+    `;
+
+    const loadingEl = wrap.querySelector(".share-card__loading");
+    const actionsEl = wrap.querySelector(".share-card__actions");
+    const hintEl = wrap.querySelector(".share-card__hint");
+    const shareBtn = wrap.querySelector('[data-action="share"]');
+    const downloadBtn = wrap.querySelector('[data-action="download"]');
 
     let file = null;
+
     Promise.resolve(cardPromise)
-      .then((canvas) => shareCardsReady.prepare(canvas, filename))
+      .then((canvas) => {
+        const img = document.createElement("img");
+        img.className = "share-card__preview";
+        img.alt = altText || "";
+        img.src = canvas.toDataURL("image/png");
+        loadingEl.replaceWith(img);
+        return shareCardsReady.prepare(canvas, filename);
+      })
       .then((f) => {
         file = f;
-        btn.disabled = false;
-        btn.textContent = label;
+        const canNativeShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+        shareBtn.hidden = !canNativeShare;
+        actionsEl.hidden = false;
+        hintEl.hidden = false;
       })
-      .catch(() => { btn.remove(); });
+      .catch(() => { wrap.remove(); });
 
-    btn.addEventListener("click", () => {
+    shareBtn.addEventListener("click", () => {
       if (!file) return;
       Promise.resolve(shareCardsReady.shareFile(file, { text }))
         .then((result) => trackEvent("share_click", { card: trackLabel, result }));
     });
 
-    return btn;
+    downloadBtn.addEventListener("click", () => {
+      if (!file) return;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(file);
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      trackEvent("share_click", { card: trackLabel, result: "downloaded" });
+    });
+
+    return wrap;
   }
 
-  /* Appends a share button into the terminal scrollback, same place
+  /* Appends a share card into the terminal scrollback, same place
      printLine() writes to, and scrolls to it the same deferred way. */
-  function appendTerminalShareButton(opts) {
+  function appendTerminalShareCard(opts) {
     if (!terminalBody) return;
-    const btn = createShareButton(opts);
-    if (!btn) return;
-    terminalBody.appendChild(btn);
+    const card = buildShareCard(opts);
+    if (!card) return;
+    terminalBody.appendChild(card);
     requestAnimationFrame(() => {
       terminalBody.scrollTop = terminalBody.scrollHeight;
     });
@@ -875,75 +918,19 @@
   let accuseLastFocused = null;
   let accuseCurrentSuspect = null;
 
-  /* Shows the generated "I suspect…" card inline (not just a blind share
-     button): a preview image, then — once the File is ready — either a
-     native-share button (mobile: opens the OS share sheet, which is the
-     only way a web page can hand a file straight to the Instagram/Threads
-     app) or, where that's not available (desktop), a direct download
-     button plus plain links to open Instagram/Threads to post it manually,
-     since no site can post into those apps for someone without their own
-     official app integration. */
+  /* Shows the generated "I suspect…" card inline on the accuse-modal
+     result step — see buildShareCard() above for what it renders. */
   function showAccuseShareButton(suspectObj) {
     if (!accuseStepResult || !accuseBuyLink) return;
-    accuseStepResult.querySelectorAll(".accuse-share").forEach((el) => el.remove());
-    if (!shareCardsReady) return;
-
-    const wrap = document.createElement("div");
-    wrap.className = "accuse-share";
-    wrap.innerHTML = `
-      <p class="accuse-share__loading">Готуємо картку…</p>
-      <div class="accuse-share__actions" hidden>
-        <button type="button" class="share-btn" data-action="share" hidden>📸 Поділитися</button>
-        <button type="button" class="share-btn share-btn--ghost" data-action="download">⬇ Завантажити картку</button>
-      </div>
-      <p class="accuse-share__hint" hidden>Постиш сам(-а)? Відкрий <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a> чи <a href="https://www.threads.net/" target="_blank" rel="noopener">Threads</a> і додай завантажену картку до історії.</p>
-    `;
-    accuseBuyLink.insertAdjacentElement("afterend", wrap);
-
-    const loadingEl = wrap.querySelector(".accuse-share__loading");
-    const actionsEl = wrap.querySelector(".accuse-share__actions");
-    const hintEl = wrap.querySelector(".accuse-share__hint");
-    const shareBtn = wrap.querySelector('[data-action="share"]');
-    const downloadBtn = wrap.querySelector('[data-action="download"]');
-    const shareText = `Я підозрюю: ${suspectObj.name}. А ти кого?`;
-
-    let file = null;
-
-    shareCardsReady.suspect({ suspect: suspectObj })
-      .then((canvas) => {
-        const img = document.createElement("img");
-        img.className = "accuse-share__preview";
-        img.alt = `Картка: Я підозрюю ${suspectObj.name}`;
-        img.src = canvas.toDataURL("image/png");
-        loadingEl.replaceWith(img);
-        return shareCardsReady.prepare(canvas, "0xdead-suspect.png");
-      })
-      .then((f) => {
-        file = f;
-        const canNativeShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
-        shareBtn.hidden = !canNativeShare;
-        actionsEl.hidden = false;
-        hintEl.hidden = false;
-      })
-      .catch(() => { wrap.remove(); });
-
-    shareBtn.addEventListener("click", () => {
-      if (!file) return;
-      Promise.resolve(shareCardsReady.shareFile(file, { text: shareText }))
-        .then((result) => trackEvent("share_click", { card: "suspect", result }));
+    accuseStepResult.querySelectorAll(".share-card").forEach((el) => el.remove());
+    const card = buildShareCard({
+      cardPromise: shareCardsReady ? shareCardsReady.suspect({ suspect: suspectObj }) : Promise.reject(new Error("ShareCards missing")),
+      filename: "0xdead-suspect.png",
+      text: `Я підозрюю: ${suspectObj.name}. А ти кого?`,
+      altText: `Картка: Я підозрюю ${suspectObj.name}`,
+      trackLabel: "suspect"
     });
-
-    downloadBtn.addEventListener("click", () => {
-      if (!file) return;
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(file);
-      a.download = file.name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      trackEvent("share_click", { card: "suspect", result: "downloaded" });
-    });
+    if (card) accuseBuyLink.insertAdjacentElement("afterend", card);
   }
 
   function openAccuseModal(name, id) {
@@ -952,7 +939,7 @@
     if (accuseSuspectName) accuseSuspectName.textContent = name;
     if (accuseStepConfirm) accuseStepConfirm.hidden = false;
     if (accuseStepResult) accuseStepResult.hidden = true;
-    accuseStepResult?.querySelectorAll(".accuse-share").forEach((el) => el.remove());
+    accuseStepResult?.querySelectorAll(".share-card").forEach((el) => el.remove());
     accuseLastFocused = document.activeElement;
 
     accuseModal.classList.add("is-active");
@@ -1349,11 +1336,11 @@
           printLine("Вітаємо, guest. Доступ root надано.", "");
           printLine("Спробуй ввести: ls -a", "t-dim");
           trackEvent("sudo_success");
-          appendTerminalShareButton({
-            label: "📸 Поділитися root-доступом",
+          appendTerminalShareCard({
             cardPromise: shareCardsReady ? shareCardsReady.root() : Promise.reject(new Error("ShareCards missing")),
             filename: "0xdead-root.png",
             text: "Root-доступ до 0xDEAD отримано. Пароль? Шукай сам(-а).",
+            altText: "Картка: доступ root отримано",
             trackLabel: "root"
           });
         } else {
@@ -1407,11 +1394,11 @@
           printLine(`команду не знайдено: "${raw}". введи 'game-help'.`, "t-red");
         }
         if (gameState.completed && (cmd === "share" || !wasCompleted)) {
-          appendTerminalShareButton({
-            label: "📸 Поділитися результатом",
+          appendTerminalShareCard({
             cardPromise: shareCardsReady ? shareCardsReady.solved({ hints: gameState.hintsUsed, timeMs: gameState.completionTimeMs }) : Promise.reject(new Error("ShareCards missing")),
             filename: "0xdead-case-solved.png",
             text: "Справу 0xDEAD розкрито. А ти зможеш?",
+            altText: "Картка: справу розкрито",
             trackLabel: "solved"
           });
         }

@@ -1360,38 +1360,51 @@ code {
 
 /* Accuse-modal result step: inline preview of the generated "I suspect…"
    card, plus its share/download actions (see showAccuseShareButton()). */
-.accuse-share {
+/* Shared "share card" component — built by buildShareCard() in main.js
+   and dropped in wherever a share point is: the accuse-modal result
+   step, root-access success, and the game ending, all inside the
+   terminal scrollback. Same look everywhere: an inline preview of the
+   generated image, then share/download actions once ready. Deliberately
+   centered (even inside the otherwise left-aligned terminal feed) so it
+   reads as a distinct embedded card, not another line of output; the
+   dashed top border reinforces that separation. Image is capped at a
+   fixed px width rather than a %, so it stays a small, consistent
+   "card" size on any screen instead of stretching full-width on a
+   narrow phone. */
+.share-card {
   width: 100%;
   margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--panel-border);
   text-align: center;
 }
-.accuse-share__loading {
+.share-card__loading {
   color: var(--text-dim);
   font-family: var(--font-display);
   font-size: 0.8rem;
 }
-.accuse-share__preview {
+.share-card__preview {
   display: block;
   width: 100%;
-  max-width: 220px;
+  max-width: 200px;
   margin: 0 auto 0.85rem;
   border-radius: var(--radius);
   border: 1px solid var(--panel-border);
   box-shadow: 0 0 24px rgba(57,255,20,0.18);
 }
-.accuse-share__actions {
+.share-card__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
   justify-content: center;
 }
-.accuse-share__hint {
+.share-card__hint {
   margin: 0.7rem 0 0;
   font-size: 0.78rem;
   color: var(--text-dim);
   line-height: 1.4;
 }
-.accuse-share__hint a { color: var(--green-soft); }
+.share-card__hint a { color: var(--green-soft); }
 
 @media (max-width: 640px) {
   .dossier-modal__nav { width: 34px; height: 34px; font-size: 1.1rem; }
