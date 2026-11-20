@@ -104,13 +104,12 @@ assets/img/                   Placeholder cover art + favicon (SVG)
   replace the file and update the `<img>`'s `width`/`height`
   attributes in the hero section of `index.html` to match its real pixel
   dimensions (avoids layout shift).
-- **Marketplace links** (`// 05 — access_request.sh` / "Де купити"): Amazon
-  and EPUB/PDF are still non-interactive placeholders
-  (`<span class="btn btn--ghost btn--disabled">`, not real links) with
-  "— скоро" labels, since those don't exist yet. Ranok is live — the
-  author's real page there. Once a new marketplace link exists, swap its
-  `<span>` for a real `<a href="...">` (drop the `btn--disabled`/`is-locked`
-  classes and the "— скоро" text) in `index.html`, same as Ranok. The
+- **Marketplace links** (`// 05 — access_request.sh` / "Де купити"): Ranok's
+  preorder page for the book is the only live link
+  (`#buyRanokLink` — note it points at the book's own product page, not
+  the author's general page). When a new marketplace goes live, add a
+  plain `<a class="btn btn--ghost" href="...">` next to it in `index.html`
+  (`.buy-links` centers however many links are there, 1 or more). The
   publisher (READBERRY) is credited just below the buttons, linking to its
   Instagram.
 - **Real author photo**: currently `assets/img/Автор_new.webp`, layered by
