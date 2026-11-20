@@ -1005,6 +1005,7 @@
     accuseClose?.addEventListener("click", closeAccuseModal);
     accuseBackdrop?.addEventListener("click", closeAccuseModal);
     accuseBuyLink?.addEventListener("click", () => {
+      trackEvent("buy_link_click", { retailer: "ranok", source: "accuse" });
       closeAccuseModal();
       closeDossier();
     });
